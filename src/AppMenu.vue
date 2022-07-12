@@ -16,22 +16,22 @@ export default {
             model : [
 				{label: "Dashboard", icon: "pi pi-fw pi-home", to:"/"},
 				{
-					label: "Vehicles", icon: "pi pi-fw pi-car", to: "/"
+					label: "Vehicles", icon: "pi pi-fw pi-car", to: "/vehicles"
 				},
 				{
-					label: "Spare Parts", icon:"pi pi-fw pi-building", to: "/"
+					label: "Spare Parts", icon:"pi pi-fw pi-building", to: "/spareparts"
 				},
 				{
-					label: "Repairs", icon: "pi pi-fw pi-book", to: "/"
+					label: "Repairs", icon: "pi pi-fw pi-book", to: "/repairs"
 				},
 				{
-					label: "Employees", icon: "pi pi-fw pi-users", to: "/"
+					label: "Employees", icon: "pi pi-fw pi-users", to: "/employees"
 				},
 				{
-					label: "Suppliers", icon: "pi pi-fw pi-users", to: "/"
+					label: "Suppliers", icon: "pi pi-fw pi-users", to: "/suppliers"
 				},
 				{
-					label: "Set up", icon: "pi pi-fw pi-cog", to: "/"
+					label: "Set up", icon: "pi pi-fw pi-cog", to: "/setup"
 				},
 			]
         }
