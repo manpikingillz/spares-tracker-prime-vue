@@ -1,7 +1,7 @@
 <template>
 	<div class="layout-topbar">
 		<div class="layout-topbar-logo" @click="$router.push({path: '/'})">
-			<img class="logo" src="layout/images/logo.png" alt="">
+			<img class="logo" src="layout/images/police-logo2.png" alt="">
         </div>
 
         <a class="layout-menu-button" href="#" @click="onMenuButtonClick">
