@@ -19,19 +19,19 @@ export default {
 					label: "Vehicles", icon: "pi pi-fw pi-star-fill", to: "/"
 				},
 				{
-					label: "Spare Parts", icon:"pi pi-fw pi-compass", to: "/"
+					label: "Spare Parts", icon:"pi pi-fw pi-building", to: "/"
 				},
 				{
-					label: "Repairs", icon: "pi pi-fw pi-align-left", to: "/"
+					label: "Repairs", icon: "pi pi-fw pi-book", to: "/"
 				},
 				{
-					label: "Employees", icon: "pi pi-fw pi-align-left", to: "/"
+					label: "Employees", icon: "pi pi-fw pi-users", to: "/"
 				},
 				{
-					label: "Suppliers", icon: "pi pi-fw pi-align-left", to: "/"
+					label: "Suppliers", icon: "pi pi-fw pi-users", to: "/"
 				},
 				{
-					label: "Set up", icon: "pi pi-fw pi-align-left", to: "/"
+					label: "Set up", icon: "pi pi-fw pi-cog", to: "/"
 				},
 			]
         }

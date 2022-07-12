@@ -3,7 +3,7 @@
 		<div class="col-12 md:col-6 lg:col-3">
 			<div class="overview-box box-sales">
 				<div class="overview-box-icon">
-					<i class="pi pi-dollar"></i>
+					<i class="pi pi-building"></i>
 				</div>
 				<div class="overview-box-title">Total Spare Parts</div>
 				<div class="overview-box-value">5092 </div>
@@ -13,7 +13,7 @@
 		<div class="col-12 md:col-6 lg:col-3">
 			<div class="overview-box box-views">
 				<div class="overview-box-icon">
-					<i class="pi pi-search"></i>
+					<i class="pi pi-book"></i>
 				</div>
 				<div class="overview-box-title">Total Repairs Done</div>
 				<div class="overview-box-value">70</div>
@@ -23,21 +23,21 @@
 		<div class="col-12 md:col-6 lg:col-3">
 			<div class="overview-box box-users">
 				<div class="overview-box-icon">
-					<i class="pi pi-user"></i>
+					<i class="pi pi-car"></i>
 				</div>
 				<div class="overview-box-title">Total Vehicles</div>
 				<div class="overview-box-value">9522</div>
-				<div class="overview-box-status">20 Added this month </div>
+				<div class="overview-box-status">20 added this month </div>
 			</div>
 		</div>
 		<div class="col-12 md:col-6 lg:col-3">
 			<div class="overview-box box-checkins">
 				<div class="overview-box-icon">
-					<i class="pi pi-map-marker"></i>
+					<i class="pi pi-users"></i>
 				</div>
-				<div class="overview-box-title">Check-ins</div>
-				<div class="overview-box-value">4211</div>
-				<div class="overview-box-status"><b>3%</b> more than yesterday </div>
+				<div class="overview-box-title">Total Suppliers</div>
+				<div class="overview-box-value">11</div>
+				<div class="overview-box-status">10 added this month </div>
 			</div>
 		</div>
 
