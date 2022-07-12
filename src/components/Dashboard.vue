@@ -43,13 +43,13 @@
 
 		<div class="col-12 lg:col-4">
 			<div class="card donut ">
-				<h5>Income Statistics</h5>
+				<h5>Repairs</h5>
 				<div class="container">
 					<div class="donut-chart">
-						<p>%48</p>
-						<p>%16</p>
-						<p>%33</p>
-						<p>%6</p>
+						<p>30</p>
+						<p>20</p>
+						<p>14</p>
+						<p>6</p>
 						<div class="part1 portion-block">
 							<div class="circle"></div>
 						</div>
@@ -65,223 +65,123 @@
 						<div class="part5 portion-block">
 							<div class="circle"></div>
 						</div>
-						<p class="center">$23,904<span>Total</span></p>
+						<p class="center">70<span>Total</span></p>
 					</div>
 					<div class="donut-chart-titles">
 						<div class="detail1 title">
 							<div class="color-code"></div>
-							<p>Detail 1</p>
+							<p>Isuzu</p>
 						</div>
 						<div class="detail2 title">
 							<div class="color-code"></div>
-							<p>Detail 2</p>
+							<p>Toyota</p>
 						</div>
 						<div class="detail3 title">
 							<div class="color-code"></div>
-							<p>Detail 3</p>
+							<p>Suzuki</p>
 						</div>
 						<div class="detail4 title">
 							<div class="color-code"></div>
-							<p>Detail 4</p>
+							<p>Yamaha</p>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="col-12 md:col-6 lg:col-4">
-			<div class="card progress-card">
-				<h5>Great News!</h5>
-				<p>Podcasting operational change management inside of workflows to establish a framework. Collaboratively administrate empowered markets via plug-and-play networks.</p>
-				<div class="progressbars">
-					<ul>
-						<li class="grid">
-							<label class="col-fixed">Sapphire</label>
-							<div class="progressbar col-fixed">
-								<div class="progress" style="width:70%;"></div>
-							</div>
-						</li>
-						<li class="grid">
-							<label class="col-fixed">Roma</label>
-							<div class="progressbar col-fixed">
-								<div class="progress" style="width:60%;"></div>
-							</div>
-						</li>
-						<li class="grid">
-							<label class="col-fixed">Ultima</label>
-							<div class="progressbar col-fixed">
-								<div class="progress" style="width:65%;"></div>
-							</div>
-						</li>
-						<li class="grid">
-							<label class="col-fixed">Barcelona</label>
-							<div class="progressbar col-fixed">
-								<div class="progress" style="width:30%;"></div>
-							</div>
-						</li>
-						<li class="grid">
-							<label class="col-fixed">Prestige</label>
-							<div class="progressbar col-fixed">
-								<div class="progress" style="width:85%;"></div>
-							</div>
-						</li>
-					</ul>
-				</div>
-				<div class="month-buttons">
-					<a><i class="pi pi-angle-left"></i> Previous Month</a>
-					<a>Next Month <i class="pi pi-angle-right"></i></a>
+			<div class="card donut ">
+				<h5>Available Spare Parts</h5>
+				<div class="container">
+					<div class="donut-chart">
+						<p>100</p>
+						<p>80</p>
+						<p>30</p>
+						<p>15</p>
+						<div class="part1 portion-block">
+							<div class="circle"></div>
+						</div>
+						<div class="part2 portion-block">
+							<div class="circle"></div>
+						</div>
+						<div class="part3 portion-block">
+							<div class="circle"></div>
+						</div>
+						<div class="part4 portion-block">
+							<div class="circle"></div>
+						</div>
+						<div class="part5 portion-block">
+							<div class="circle"></div>
+						</div>
+						<p class="center">225<span>Total</span></p>
+					</div>
+					<div class="donut-chart-titles">
+						<div class="detail1 title">
+							<div class="color-code"></div>
+							<p>Isuzu</p>
+						</div>
+						<div class="detail2 title">
+							<div class="color-code"></div>
+							<p>Toyota</p>
+						</div>
+						<div class="detail3 title">
+							<div class="color-code"></div>
+							<p>Suzuki</p>
+						</div>
+						<div class="detail4 title">
+							<div class="color-code"></div>
+							<p>Yamaha</p>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 		<div class="col-12 md:col-6 lg:col-4">
-			<div class="card statistics grid grid-nogutter direction-column justify-content-between">
-				<ul>
-					<li>
-						<img src="layout/images/dashboard/bmw.jpg" alt="">
-						<div class="car-box">
-							<span class="car-info">BMW | 2018, Black</span>
-							<span class="car-id">#156122641</span>
+			<div class="card donut ">
+				<h5>Available Spare Parts</h5>
+				<div class="container">
+					<div class="donut-chart">
+						<p>8</p>
+						<p>5</p>
+						<p>4</p>
+						<p>3</p>
+						<div class="part1 portion-block">
+							<div class="circle"></div>
 						</div>
-						<div class="percentage">
-							+%44
+						<div class="part2 portion-block">
+							<div class="circle"></div>
 						</div>
-					</li>
-					<li>
-						<img src="layout/images/dashboard/honda.jpg" alt="">
-						<div class="car-box">
-							<span class="car-info">Honda | 2019, White</span>
-							<span class="car-id">#995123552</span>
+						<div class="part3 portion-block">
+							<div class="circle"></div>
 						</div>
-						<div class="percentage">
-							+%44
+						<div class="part4 portion-block">
+							<div class="circle"></div>
 						</div>
-					</li>
-					<li>
-						<img src="layout/images/dashboard/volkswagen.jpg" alt="">
-						<div class="car-box">
-							<span class="car-info">Volkswagen | 2000, Red</span>
-							<span class="car-id">#480016380</span>
+						<div class="part5 portion-block">
+							<div class="circle"></div>
 						</div>
-						<div class="percentage">
-							+%44
+						<p class="center">20<span>Total</span></p>
+					</div>
+					<div class="donut-chart-titles">
+						<div class="detail1 title">
+							<div class="color-code"></div>
+							<p>Isuzu</p>
 						</div>
-					</li>
-				</ul>
-				<img class="statistic" src="layout/images/dashboard/graph@2x.png" alt="">
-			</div>
-		</div>
-
-		<div class="col-12 md:col-6  lg:col-4">
-			<div class="card tasks">
-				<h5>Tasks</h5>
-				<ul>
-					<li>
-						<Checkbox name="task" value="reports" v-model="tasksCheckbox" />
-						<span>Sales Report</span>
-						<span class="task-badge-open">Open<i class="pi pi-circle-on"></i></span>
-					</li>
-					<li>
-						<Checkbox name="task" value="invoices" v-model="tasksCheckbox" />
-						<span>Pay Invoices</span>
-						<span class="task-badge-open">Open<i class="pi pi-circle-on"></i></span>
-					</li>
-					<li>
-						<Checkbox name="task" value="party" v-model="tasksCheckbox" />
-						<span>Birthday Party</span>
-						<span class="task-badge-open">Open<i class="pi pi-circle-on"></i></span>
-					</li>
-					<li>
-						<Checkbox name="task" value="meeting" v-model="tasksCheckbox" />
-						<span>Client Meeting</span>
-						<span class="task-badge-closed">Closed<i class="pi pi-circle-on"></i></span>
-					</li>
-					<li>
-						<Checkbox name="task" value="themes" v-model="tasksCheckbox" />
-						<span>New Themes</span>
-						<span class="task-badge-closed">Closed<i class="pi pi-circle-on"></i></span>
-					</li>
-					<li>
-						<Checkbox name="task" value="ticket" v-model="tasksCheckbox" />
-						<span>Flight Ticket</span>
-						<span class="task-badge-closed">Closed<i class="pi pi-circle-on"></i></span>
-					</li>
-				</ul>
-			</div>
-		</div>
-
-		<div class="col-12 md:col-6 lg:col-4">
-			<div class="card resolution-center ">
-				<h5>Resolution Center</h5>
-				<div class="p-inputgroup">
-					<span class="p-inputgroup-addon">
-						<i class="pi pi-user"></i>
-					</span>
-					<InputText placeholder="Username" />
-				</div>
-				<div class="p-inputgroup">
-					<span class="p-inputgroup-addon">
-						<i class="pi pi-envelope"></i>
-					</span>
-					<InputText placeholder="E-Mail" />
-				</div>
-				<Textarea v-model="textAreaValue" rows="9" cols="30" placeholder="Your Message"  />
-				<div class="resolution-button-bar">
-					<Button type="button" label="Send Message" />
-					<a>View old messages</a>
+						<div class="detail2 title">
+							<div class="color-code"></div>
+							<p>Toyota</p>
+						</div>
+						<div class="detail3 title">
+							<div class="color-code"></div>
+							<p>Suzuki</p>
+						</div>
+						<div class="detail4 title">
+							<div class="color-code"></div>
+							<p>Yamaha</p>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-
-		<div class="col-12 lg:col-4">
-			<div class="card team">
-				<h5>Team Members</h5>
-				<ul>
-					<li>
-						<img src="layout/images/avatar/avatar-pedro.jpg" alt="">
-						<div class="team-box">
-							<span class="team-member">
-								<div class="team-member-status"></div>Pedro Anorim
-							</span>
-							<span class="team-member-job">Development</span>
-						</div>
-						<Button type="button" label="Add" />
-					</li>
-					<li>
-						<img src="layout/images/avatar/avatar-daisy.jpg" alt="">
-						<div class="team-box">
-							<span class="team-member">
-								<div class="team-member-status"></div>Daisy Murphy
-							</span>
-							<span class="team-member-job">Design</span>
-						</div>
-						<Button type="button" label="Add" />
-					</li>
-					<li>
-						<img src="layout/images/avatar/avatar-mbah.jpg" alt="">
-						<div class="team-box">
-							<span class="team-member">
-								<div class="team-member-status"></div>Mbah ENow
-							</span>
-							<span class="team-member-job">Management</span>
-						</div>
-						<Button type="button" label="Add" />
-					</li>
-					<li>
-						<img src="layout/images/avatar/avatar-qin.jpg" alt="">
-						<div class="team-box">
-							<span class="team-member">
-								<div class="team-member-status"></div>Qin Shi
-							</span>
-							<span class="team-member-job">Management</span>
-						</div>
-					<Button type="button" label="Add" />
-					</li>
-				</ul>
-				<div class="all-members-link">
-					<a>See all team members</a>
-				</div>
-			</div>
-		</div>
-
 	</div>
 </template>
 

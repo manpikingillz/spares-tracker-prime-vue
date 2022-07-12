@@ -16,7 +16,7 @@ export default {
             model : [
 				{label: "Dashboard", icon: "pi pi-fw pi-home", to:"/"},
 				{
-					label: "Vehicles", icon: "pi pi-fw pi-star-fill", to: "/"
+					label: "Vehicles", icon: "pi pi-fw pi-car", to: "/"
 				},
 				{
 					label: "Spare Parts", icon:"pi pi-fw pi-building", to: "/"
