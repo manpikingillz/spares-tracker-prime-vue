@@ -51,6 +51,7 @@
 							</a>
 						</li>
 						<li>
+							<router-link to="/login">
 							<a href="#" >
 								<i class="topbar-icon pi pi-sign-out"></i>
 								<div class="menu-text">
@@ -59,6 +60,7 @@
 								</div>
 								<i class="right-icon pi pi-angle-right"></i>
 							</a>
+							</router-link>
 						</li>
 					</ul>
 				</transition>
