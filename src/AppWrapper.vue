@@ -16,8 +16,8 @@
 	export default {
         data() {
             return {
-                theme: 'blue',
-                layout: 'layout-blue'
+                theme: 'Amethyst',
+                layout: 'layout-amethyst'
             }
         },
         methods: {
