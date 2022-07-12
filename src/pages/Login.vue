@@ -50,6 +50,17 @@
 	}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
+.login-body {
+  background-image: linear-gradient(to right, #12aeee, #0080d4);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: top;
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  padding: 0;
+}
 </style>
