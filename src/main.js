@@ -1,6 +1,7 @@
 import { createApp, h } from 'vue';
 import { reactive } from 'vue';
 import router from './router';
+import store from './store'
 import AppWrapper from './AppWrapper.vue';
 import PrimeVue from 'primevue/config';
 import AutoComplete from 'primevue/autocomplete';
@@ -109,6 +110,7 @@ app.use(PrimeVue, { ripple: true });
 app.use(ConfirmationService);
 app.use(ToastService);
 app.use(router);
+app.use(store)
 
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);
