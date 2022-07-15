@@ -19,25 +19,19 @@ const mutations = {
     setToken: (state, token) => {
         if(token) {
             state.token = token
-            // state.refreshToken = token
-            // axios.defaults.headers.common['Authorization'] = token;
-            // axios.defaults.headers.common['X-Refresh-Token'] = token;
-            // localStorage.setItem('refresh_token', token);
             localStorage.setItem('auth_token', token);
         }
+    },
+
+    clearToken: (state) => {
+        state.token = null
+        delete axios.defaults.headers.common['Authorization'];
+        localStorage.removeItem('auth_token');
     },
 
     setUser(state, user) {
         state.state = user
     }
-
-    // clearToken: (state) => {
-    //     state.token = null
-    //     delete axios.defaults.headers.common['Authorization'];
-    //     delete axios.defaults.headers.common['X-Refresh-Token'];
-    //     localstorage.removeItem('auth_token');
-    //     localStorage.removeItem('refresh_token');
-    // }
 }
 
 const actions = {
