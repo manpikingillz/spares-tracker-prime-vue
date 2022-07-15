@@ -5,7 +5,8 @@ const routes = [
 		path: '/',
 		name: 'dashboard',
 		meta: {
-			breadcrumb: [{parent:'Dashboard', label:''}]
+			breadcrumb: [{parent:'Dashboard', label:''}],
+			title: 'Dashboard'
 		},
 		exact: true,
 		component: () => import('./components/Dashboard.vue')
@@ -14,7 +15,8 @@ const routes = [
 		path: '/vehicles',
 		name: 'vehicles',
 		meta: {
-			breadcrumb: [{parent:'Vehicles', label:''}]
+			breadcrumb: [{parent:'Vehicles', label:''}],
+			title: 'Vehicles'
 		},
 		exact: true,
 		component: () => import('./pages/Vehicles.vue')
@@ -23,7 +25,8 @@ const routes = [
 		path: '/spareparts',
 		name: 'Spare Parts',
 		meta: {
-			breadcrumb: [{parent:'Spare Parts', label:''}]
+			breadcrumb: [{parent:'Spare Parts', label:''}],
+			title: 'Spare Parts'
 		},
 		exact: true,
 		component: () => import('./pages/SpareParts.vue')
@@ -32,7 +35,8 @@ const routes = [
 		path: '/repairs',
 		name: 'Repairs',
 		meta: {
-			breadcrumb: [{parent:'Repairs', label:''}]
+			breadcrumb: [{parent:'Repairs', label:''}],
+			title: 'Repairs'
 		},
 		exact: true,
 		component: () => import('./pages/Repairs.vue')
@@ -41,7 +45,8 @@ const routes = [
 		path: '/employees',
 		name: 'Employees',
 		meta: {
-			breadcrumb: [{parent:'Employees', label:''}]
+			breadcrumb: [{parent:'Employees', label:''}],
+			title: 'Employees'
 		},
 		exact: true,
 		component: () => import('./pages/Employees.vue')
@@ -50,7 +55,8 @@ const routes = [
 		path: '/suppliers',
 		name: 'Suppliers',
 		meta: {
-			breadcrumb: [{parent:'Suppliers', label:''}]
+			breadcrumb: [{parent:'Suppliers', label:''}],
+			title: 'Suppliers'
 		},
 		exact: true,
 		component: () => import('./pages/Suppliers.vue')
@@ -59,7 +65,8 @@ const routes = [
 		path: '/setup',
 		name: 'Setup',
 		meta: {
-			breadcrumb: [{parent:'Set up', label:''}]
+			breadcrumb: [{parent:'Set up', label:''}],
+			title: 'Setup'
 		},
 		exact: true,
 		component: () => import('./pages/Setup.vue')
@@ -67,6 +74,9 @@ const routes = [
 	{
         path: '/login',
         name: 'login',
+		meta: {
+			title: 'Login'
+		},
         component: () => import('./pages/Login.vue')
     },
 ];
@@ -78,5 +88,13 @@ const router = createRouter({
         return { left: 0, top: 0 };
     }
 });
+
+// Add document title on every navigation
+router.beforeEach(async (to, from) => {
+	//Set title
+	if (to.matched.length) document.title = to.meta.title
+  console.log('to: ', to)
+  console.log('from: ', from)
+})
 
 export default router;

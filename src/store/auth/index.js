@@ -64,10 +64,8 @@ const actions = {
     async getCurrentUser(context) {
         return await axios.get(CURRENT_USER_URL).then(response => {
             context.commit('setUser', response.data)
-            console.log('current user: ', response.data);
         }).catch(error => {
-            console.log('token: ', context.state.token)
-            console.log('get user error: ', error);
+            console.error('Error getting user: ', error);
         })
     }
 }

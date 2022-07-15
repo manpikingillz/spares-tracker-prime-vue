@@ -128,6 +128,15 @@ axios.interceptors.response.use(function (response) {
     return Promise.reject(error);
   });
 
+//   Ensure user is available in the state if for whatever reason they are not available anymore
+// E.g User may nolonger be available in store when a page refresh happens
+  router.beforeEach(async (to, from) => {
+      //Set title
+      if (to.matched.length) document.title = to.meta.title
+    console.log('to: ', to)
+    console.log('from: ', from)
+  })
+
 const app = createApp({
     render () { return h(AppWrapper); }
 });
