@@ -14,7 +14,7 @@
 				<a href="#">
 					<div class="user-profile-info profile-link">
 						<span class="user-profile-name">Gilbert Twesigomwe</span>
-						<span class="user-profile-role">Mechanical Engineer</span>
+						<span class="user-profile-role">{{ getUser.email }}</span>
 					</div>
 					<img class="logo" src="layout/images/avatar/avatar-ava.jpg" alt="prestige-layout" />
 				</a>
@@ -71,12 +71,18 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 	export default {
 		emits: ['topbar-item-click', 'menubutton-click', 'topbar-menubutton-click'],
 		props: {
 			topbarMenuActive: Boolean,
 			activeTopbarItem: String
 		},
+
+		computed: {
+			...mapGetters('auth', ['getUser'])
+		},
+
 		methods: {
 			onMenuButtonClick(event) {
 				this.$emit('menubutton-click', event);
@@ -84,9 +90,6 @@
 			onTopbarMenuButtonClick(event) {
 				this.$emit('topbar-menubutton-click', event);
 			}
-		},
-		computed: {
-
 		}
 	}
 </script>

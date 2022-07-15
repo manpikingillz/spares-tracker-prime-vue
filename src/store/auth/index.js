@@ -11,7 +11,7 @@ const state = {
 }
 
 const getters = {
-
+    getUser: state => state.user,
 }
 
 const mutations = {
@@ -30,7 +30,7 @@ const mutations = {
     },
 
     setUser(state, user) {
-        state.state = user
+        state.user = user
     }
 }
 
@@ -63,7 +63,8 @@ const actions = {
 
     async getCurrentUser(context) {
         return await axios.get(CURRENT_USER_URL).then(response => {
-            console.log('current user: ', response);
+            context.commit('setUser', response.data)
+            console.log('current user: ', response.data);
         }).catch(error => {
             console.log('token: ', context.state.token)
             console.log('get user error: ', error);
