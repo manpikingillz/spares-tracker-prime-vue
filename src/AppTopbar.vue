@@ -50,8 +50,7 @@
 								<i class="right-icon pi pi-angle-right"></i>
 							</a>
 						</li>
-						<li>
-							<router-link to="/login">
+						<li @click="logout">
 							<a href="#" >
 								<i class="topbar-icon pi pi-sign-out"></i>
 								<div class="menu-text">
@@ -60,7 +59,6 @@
 								</div>
 								<i class="right-icon pi pi-angle-right"></i>
 							</a>
-							</router-link>
 						</li>
 					</ul>
 				</transition>
@@ -71,7 +69,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 	export default {
 		emits: ['topbar-item-click', 'menubutton-click', 'topbar-menubutton-click'],
 		props: {
@@ -84,6 +82,12 @@ import { mapGetters } from 'vuex';
 		},
 
 		methods: {
+			...mapActions('auth', ['performLogout']),
+
+			logout() {
+				this.performLogout();
+			},
+
 			onMenuButtonClick(event) {
 				this.$emit('menubutton-click', event);
 			},
