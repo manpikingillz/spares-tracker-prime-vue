@@ -137,12 +137,16 @@ router.beforeEach(async (to) => {
 
     // When token is not found locally, perform a logout and go to login page.
     if (!token && to.name !== 'Login') {
+        console.info('Token not in local storage while away from Login Page. Calling logout!')
         await store.dispatch('auth/performLogout')
         return {name: 'Login'}
     }
 
     // When a user was not found, but we have a token, fetch the user
-    if (!user && token) await store.dispatch('auth/getCurrentUser')
+    if (!user && token) {
+        console.info('User not in state, while token is available. Fetching user!')
+        await store.dispatch('auth/getCurrentUser')
+    }
 });
 
 const app = createApp({
