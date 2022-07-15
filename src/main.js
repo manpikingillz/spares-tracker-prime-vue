@@ -104,8 +104,9 @@ import './assets/demo/flags/flags.css';
 
 axios.defaults.baseURL = 'http://localhost:8000'
 
-if (localStorage.getItem('auth_token')) {
-    axios.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('auth_token')
+const authToken = localStorage.getItem('auth_token');
+if (authToken) {
+    axios.defaults.headers['Authorization'] = 'Bearer ' + authToken
 }
 
 // Add a request interceptor
@@ -128,14 +129,21 @@ axios.interceptors.response.use(function (response) {
     return Promise.reject(error);
   });
 
-//   Ensure user is available in the state if for whatever reason they are not available anymore
+// Ensure user is available in the state if for whatever reason they are not available anymore
 // E.g User may nolonger be available in store when a page refresh happens
-  router.beforeEach(async (to, from) => {
-      //Set title
-      if (to.matched.length) document.title = to.meta.title
-    console.log('to: ', to)
-    console.log('from: ', from)
-  })
+router.beforeEach(async (to) => {
+    const user = store.getters['auth/getUser']
+    const token = localStorage.getItem('auth_token')
+
+    // When token is not found locally, perform a logout and go to login page.
+    if (!token && to.name !== 'Login') {
+        await store.dispatch('auth/performLogout')
+        return {name: 'Login'}
+    }
+
+    // When a user was not found, but we have a token, fetch the user
+    if (!user && token) await store.dispatch('auth/getCurrentUser')
+});
 
 const app = createApp({
     render () { return h(AppWrapper); }

@@ -3,7 +3,7 @@ import {createRouter, createWebHashHistory} from 'vue-router';
 const routes = [
 	{
 		path: '/',
-		name: 'dashboard',
+		name: 'Dashboard',
 		meta: {
 			breadcrumb: [{parent:'Dashboard', label:''}],
 			title: 'Dashboard'
@@ -13,7 +13,7 @@ const routes = [
 	},
 	{
 		path: '/vehicles',
-		name: 'vehicles',
+		name: 'Vehicles',
 		meta: {
 			breadcrumb: [{parent:'Vehicles', label:''}],
 			title: 'Vehicles'
@@ -73,7 +73,7 @@ const routes = [
 	},
 	{
         path: '/login',
-        name: 'login',
+        name: 'Login',
 		meta: {
 			title: 'Login'
 		},
@@ -90,11 +90,8 @@ const router = createRouter({
 });
 
 // Add document title on every navigation
-router.beforeEach(async (to, from) => {
-	//Set title
+router.beforeEach(async (to) => {
 	if (to.matched.length) document.title = to.meta.title
-  console.log('to: ', to)
-  console.log('from: ', from)
 })
 
 export default router;
