@@ -147,6 +147,12 @@ router.beforeEach(async (to) => {
         console.info('User not in state, while token is available. Fetching user!')
         await store.dispatch('auth/getCurrentUser')
     }
+
+    // If use goes to login page but is logged, redirect them to home page.
+    if (to.name === 'Login' && token) {
+        console.info('Attempted to go to Login page while already loggedin. Redirecting to home!')
+        return {name: 'Dashboard'}
+    }
 });
 
 const app = createApp({
