@@ -2,6 +2,7 @@ import { createApp, h } from 'vue';
 import { reactive } from 'vue';
 import router from './router';
 import store from './store'
+import axios from 'axios'
 import AppWrapper from './AppWrapper.vue';
 import PrimeVue from 'primevue/config';
 import AutoComplete from 'primevue/autocomplete';
@@ -99,6 +100,13 @@ import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css'
 import 'prismjs/themes/prism-coy.css';
 import './assets/demo/flags/flags.css';
+
+
+axios.defaults.baseURL = 'http://localhost:8000'
+
+if (localStorage.getItem('auth_token')) {
+    axios.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('auth_token')
+}
 
 const app = createApp({
     render () { return h(AppWrapper); }

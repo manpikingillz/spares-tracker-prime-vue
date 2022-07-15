@@ -1,10 +1,13 @@
 import axios from 'axios'
 
 
-const LOGIN_URL = 'http://localhost:8000/api/auth/jwt/login/'
+const LOGIN_URL = '/api/auth/jwt/login/'
+const CURRENT_USER_URL = '/api/auth/me/'
 
 const state = {
-
+    toke: '',
+    isAuthenticated: true,
+    user: ''
 }
 
 const getters = {
@@ -13,7 +16,28 @@ const getters = {
 
 const mutations = {
 
+    setToken: (state, token) => {
+        if(token) {
+            state.token = token
+            // state.refreshToken = token
+            // axios.defaults.headers.common['Authorization'] = token;
+            // axios.defaults.headers.common['X-Refresh-Token'] = token;
+            // localStorage.setItem('refresh_token', token);
+            localStorage.setItem('auth_token', token);
+        }
+    },
 
+    setUser(state, user) {
+        state.state = user
+    }
+
+    // clearToken: (state) => {
+    //     state.token = null
+    //     delete axios.defaults.headers.common['Authorization'];
+    //     delete axios.defaults.headers.common['X-Refresh-Token'];
+    //     localstorage.removeItem('auth_token');
+    //     localStorage.removeItem('refresh_token');
+    // }
 }
 
 const actions = {
@@ -26,8 +50,12 @@ const actions = {
 
         return new Promise((resolve, reject) => {
             axios.post(LOGIN_URL, formData).then(response => {
-                if(response.token) {
-                    localStorage.setItem('token', response.token);
+                if(response.data && response.data.token) {
+                    context.commit('setToken', response.data.token)
+
+                    axios.defaults.headers.common['Authorization'] = "Bearer " + response.data.token;
+
+                    context.dispatch('getCurrentUser');
                 } else {
                     console.log('login response: ', response);
                 }
@@ -36,6 +64,15 @@ const actions = {
                 console.error('Error ocurred on Logig: ', error);
                 reject(error);
             })
+        })
+    },
+
+    async getCurrentUser(context) {
+        return await axios.get(CURRENT_USER_URL).then(response => {
+            console.log('current user: ', response);
+        }).catch(error => {
+            console.log('token: ', context.state.token)
+            console.log('get user error: ', error);
         })
     }
 }

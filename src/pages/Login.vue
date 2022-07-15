@@ -51,12 +51,13 @@
 		methods: {
 			...mapActions('auth', ['performLogin']),
 
-			authLogin() {
+			async authLogin() {
 				const data = {
 					email: this.email,
 					password: this.password
 				}
-				this.performLogin(data)
+				await this.performLogin(data)
+				this.$router.push('/')
 			}
 		}
 	}
