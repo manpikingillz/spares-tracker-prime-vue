@@ -148,7 +148,7 @@ router.beforeEach(async (to) => {
         await store.dispatch('auth/getCurrentUser')
     }
 
-    // If use goes to login page but is logged, redirect them to home page.
+    // If user goes to login page but is logged, redirect them to home page.
     if (to.name === 'Login' && token) {
         console.info('Attempted to go to Login page while already loggedin. Redirecting to home!')
         return {name: 'Dashboard'}
