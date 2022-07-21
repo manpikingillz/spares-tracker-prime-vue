@@ -1,12 +1,14 @@
 <template>
   
       <Dialog header="Add New Vehicle" :visible="showModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :maximizable="true" :modal="true">
+          <form id="vehicleAddForm" @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
           <div class="col-12">
                 <div class="card">
                   <div class="p-fluid formgrid grid">
                     <div class="field col-12 md:col-6">
-                      <label for="lastname2">Number Plate</label>
-                      <InputText id="lastname2" v-model="vehicle.number_plate" name="lastname2" type="text"/>
+                      <label for="lastname2" :class="{'p-error':v$.vehicle.number_plate.$invalid && submitted}">Number Plate</label>
+                      <InputText id="lastname2" v-model="v$.vehicle.number_plate.$model" name="lastname2" type="text" :class="{'p-invalid':v$.vehicle.number_plate.$invalid && submitted}" />
+                      <small v-if="(v$.vehicle.number_plate.$invalid && submitted)" class="p-error">{{v$.vehicle.number_plate.required.$message.replace('Value', 'Vehicle Number')}}</small>
                     </div>
                     <div class="field col-12 md:col-6">
                       <label for="state">Country of Registration</label>
@@ -75,18 +77,24 @@
               </div>
             </div>
           </div>
-          <template #footer>
+        </form>
+        <template #footer>
               <Button label="No" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
-              <Button label="Yes" icon="pi pi-check" @click="addNewVehicle()" autofocus />
-          </template>
+              <Button label="Yes" icon="pi pi-check"  type="submit" form="vehicleAddForm"  autofocus />
+        </template>
       </Dialog>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import moment from 'moment'
+import useVuelidate from '@vuelidate/core'
+import { required, numeric} from '@vuelidate/validators'
 
 export default {
+    setup () {
+        return { v$: useVuelidate() }
+    },
     data() {
         return {
             registrationYears: this.years(1950, moment().year()),
@@ -184,6 +192,17 @@ export default {
                 body_type: '',
                 drive_train: '',
                 steering: ''
+            },
+
+            submitted: false
+        }
+    },
+
+    validations() {
+        return {
+            vehicle: {
+                number_plate: { required },
+                engine_size: { required, numeric}
             }
         }
     },
@@ -231,7 +250,13 @@ export default {
             this.fetchVehicleModels(event.value.code);
         },
 
-        addNewVehicle() {
+        handleSubmit(isFormValid) {
+            this.submitted = true;
+
+            if (!isFormValid) {
+                return;
+            }
+
             const newVehicle = {
                 number_plate: this.vehicle.number_plate,
                 country_of_registration: parseInt(this.vehicle.country_of_registration.code),
@@ -253,7 +278,7 @@ export default {
 
             //TODO: check if there are no errors befor invoking save
             this.saveVehicle(newVehicle);
-            this.$emit('close-modal')
+            // this.$emit('close-modal')
         }
     }
 }
