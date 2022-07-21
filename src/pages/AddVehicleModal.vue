@@ -3,6 +3,7 @@
       <Dialog header="Add New Vehicle" :visible="showModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :maximizable="true" :modal="true">
           <form id="vehicleAddForm" @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
           <div class="col-12">
+            <Toast position="top-center" group="tr" />
                 <div class="card">
                   <div class="p-fluid formgrid grid">
                     <div class="field col-12 md:col-6">
@@ -11,68 +12,83 @@
                       <small v-if="(v$.vehicle.number_plate.$invalid && submitted)" class="p-error">{{v$.vehicle.number_plate.required.$message.replace('Value', 'Vehicle Number')}}</small>
                     </div>
                     <div class="field col-12 md:col-6">
-                      <label for="state">Country of Registration</label>
-                      <Dropdown id="state" v-model="vehicle.country_of_registration" :options="getCountries" optionLabel="name" placeholder="Select One" filter=true></Dropdown>
+                      <label for="state" :class="{'p-error':v$.vehicle.country_of_registration.$invalid && submitted}">Country of Registration</label>
+                      <Dropdown id="state" v-model="vehicle.country_of_registration" :options="getCountries" optionLabel="name" placeholder="Select One" filter=true :class="{'p-invalid':v$.vehicle.country_of_registration.$invalid && submitted}"></Dropdown>
+                      <small v-if="(v$.vehicle.country_of_registration.$invalid && submitted)" class="p-error">{{v$.vehicle.country_of_registration.required.$message.replace('Value', 'Country of Registration')}}</small>
                     </div>
                     <div class="field col-12 md:col-6">
-                      <label for="lastname2">Chasis Number</label>
-                      <InputText id="lastname2" v-model="vehicle.chasis_number" type="text"/>
+                      <label for="lastname2" :class="{'p-error':v$.vehicle.chasis_number.$invalid && submitted}">Chasis Number</label>
+                      <InputText id="lastname2" v-model="vehicle.chasis_number" type="text"  :class="{'p-invalid':v$.vehicle.chasis_number.$invalid && submitted}"/>
+                      <small v-if="(v$.vehicle.chasis_number.$invalid && submitted)" class="p-error">{{v$.vehicle.chasis_number.required.$message.replace('Value', 'Chasis Number')}}</small>
                     </div>
                     <div class="field col-12 md:col-3">
-                      <label for="state">Registration Year</label>
-                      <Dropdown id="state" v-model="vehicle.registration_year" :options="registrationYears" optionLabel="name" placeholder="Select One" filter=true></Dropdown>
+                      <label for="state" :class="{'p-error':v$.vehicle.registration_year.$invalid && submitted}">Registration Year</label>
+                      <Dropdown id="state" v-model="vehicle.registration_year" :options="registrationYears" optionLabel="name" placeholder="Select One" filter=true :class="{'p-invalid':v$.vehicle.registration_year.$invalid && submitted}"></Dropdown>
+                      <small v-if="(v$.vehicle.registration_year.$invalid && submitted)" class="p-error">{{v$.vehicle.registration_year.required.$message.replace('Value', 'Registration Year')}}</small>
                     </div>
                     <div class="field col-12 md:col-3">
-                      <label for="state">Month</label>
-                      <Dropdown id="state" v-model="vehicle.registration_month" :options="registrationMonths" optionLabel="name" placeholder="Select One"></Dropdown>
+                      <label for="state" :class="{'p-error':v$.vehicle.registration_month.$invalid && submitted}">Month</label>
+                      <Dropdown id="state" v-model="vehicle.registration_month" :options="registrationMonths" optionLabel="name" placeholder="Select One" :class="{'p-invalid':v$.vehicle.registration_month.$invalid && submitted}"></Dropdown>
+                       <small v-if="(v$.vehicle.registration_month.$invalid && submitted)" class="p-error">{{v$.vehicle.registration_month.required.$message.replace('Value', 'Month')}}</small>
                     </div>
                     <div class="field col-12 md:col-6">
-                      <label for="state">Engine Size (cc)</label>
-                      <InputText id="lastname2" v-model="vehicle.engine_size" name="lastname2" type="text"/>
+                      <label for="state" :class="{'p-error':v$.vehicle.engine_size.$invalid && submitted}">Engine Size (cc)</label>
+                      <InputText id="lastname2" v-model="vehicle.engine_size" name="lastname2" type="text" :class="{'p-invalid':v$.vehicle.engine_size.$invalid && submitted}"/>
+                      <small v-if="(v$.vehicle.engine_size.$invalid && submitted)" class="p-error">{{v$.vehicle.engine_size.required.$message.replace('Value', 'Engine Size')}}</small>
                     </div>
                     <div class="field col-12 md:col-3">
-                      <label for="state">Manufacture Year</label>
-                      <Dropdown id="state" v-model="vehicle.manufacture_year" :options="manufactureYears" optionLabel="name" placeholder="Select One" filter=true></Dropdown>
+                      <label for="state" :class="{'p-error':v$.vehicle.manufacture_year.$invalid && submitted}">Manufacture Year</label>
+                      <Dropdown id="state" v-model="vehicle.manufacture_year" :options="manufactureYears" optionLabel="name" placeholder="Select One" filter=true :class="{'p-invalid':v$.vehicle.manufacture_year.$invalid && submitted}"></Dropdown>
+                      <small v-if="(v$.vehicle.manufacture_year.$invalid && submitted)" class="p-error">{{v$.vehicle.manufacture_year.required.$message.replace('Value', 'Manufacture Year')}}</small>
                     </div>
                     <div class="field col-12 md:col-3">
-                      <label for="state">Month</label>
-                      <Dropdown id="state" v-model="vehicle.manufacture_month" :options="manufactureMonths" optionLabel="name" placeholder="Select One"></Dropdown>
+                      <label for="state" :class="{'p-error':v$.vehicle.manufacture_month.$invalid && submitted}">Month</label>
+                      <Dropdown id="state" v-model="vehicle.manufacture_month" :options="manufactureMonths" optionLabel="name" placeholder="Select One" :class="{'p-invalid':v$.vehicle.manufacture_month.$invalid && submitted}"></Dropdown>
+                      <small v-if="(v$.vehicle.manufacture_month.$invalid && submitted)" class="p-error">{{v$.vehicle.manufacture_month.required.$message.replace('Value', 'Month')}}</small>
                     </div>
                     <div class="field col-12 md:col-6">
-                      <label for="state">Exterior Color</label>
-                      <Dropdown id="state" v-model="vehicle.exterior_color" :options="exteriorColors" optionLabel="name" placeholder="Select One" filter=true></Dropdown>
+                      <label for="state" :class="{'p-error':v$.vehicle.exterior_color.$invalid && submitted}">Exterior Color</label>
+                      <Dropdown id="state" v-model="vehicle.exterior_color" :options="exteriorColors" optionLabel="name" placeholder="Select One" filter=true :class="{'p-invalid':v$.vehicle.exterior_color.$invalid && submitted}"></Dropdown>
+                      <small v-if="(v$.vehicle.exterior_color.$invalid && submitted)" class="p-error">{{v$.vehicle.exterior_color.required.$message.replace('Value', 'Exterior Color')}}</small>
                     </div>
                     <div class="field col-12 md:col-6">
                       <label for="state">Make</label>
                       <Dropdown id="state" v-model="vehicle.make" :options="getVehicleMakes" optionLabel="name" placeholder="Select One" filter=true @change="selectVehicleMake($event)"></Dropdown>
                     </div>
                     <div class="field col-12 md:col-6">
-                      <label for="state">Fuel</label>
-                      <Dropdown id="state" v-model="vehicle.fuel" :options="fuels" optionLabel="name" placeholder="Select One"></Dropdown>
+                      <label for="state" :class="{'p-error':v$.vehicle.fuel.$invalid && submitted}">Fuel</label>
+                      <Dropdown id="state" v-model="vehicle.fuel" :options="fuels" optionLabel="name" placeholder="Select One" :class="{'p-invalid':v$.vehicle.fuel.$invalid && submitted}"></Dropdown>
+                      <small v-if="(v$.vehicle.fuel.$invalid && submitted)" class="p-error">{{v$.vehicle.fuel.required.$message.replace('Value', 'Fuel')}}</small>
                     </div>
                     <div class="field col-12 md:col-6">
-                      <label for="state">Model</label>
-                      <Dropdown id="state" v-model="vehicle.vehicle_model" :options="getVehicleModels" optionLabel="name" placeholder="Select One"></Dropdown>
+                      <label for="state" :class="{'p-error':v$.vehicle.vehicle_model.$invalid && submitted}">Model</label>
+                      <Dropdown id="state" v-model="vehicle.vehicle_model" :options="getVehicleModels" optionLabel="name" placeholder="Select One" :class="{'p-invalid':v$.vehicle.vehicle_model.$invalid && submitted}"></Dropdown>
+                      <small v-if="(v$.vehicle.vehicle_model.$invalid && submitted)" class="p-error">{{v$.vehicle.vehicle_model.required.$message.replace('Value', 'Model')}}</small>
                     </div>
                     <div class="field col-12 md:col-6">
-                      <label for="state">Transmission</label>
-                      <Dropdown id="state" v-model="vehicle.transmission" :options="transmissions" optionLabel="name" placeholder="Select One"></Dropdown>
+                      <label for="state" :class="{'p-error':v$.vehicle.transmission.$invalid && submitted}">Transmission</label>
+                      <Dropdown id="state" v-model="vehicle.transmission" :options="transmissions" optionLabel="name" placeholder="Select One" :class="{'p-invalid':v$.vehicle.transmission.$invalid && submitted}"></Dropdown>
+                      <small v-if="(v$.vehicle.transmission.$invalid && submitted)" class="p-error">{{v$.vehicle.transmission.required.$message.replace('Value', 'Transmission')}}</small>
                     </div>
                     <div class="field col-12 md:col-6">
-                      <label for="lastname2">Model Code</label>
-                      <InputText id="lastname2" v-model="vehicle.vehicle_model_code" type="text"/>
+                      <label for="lastname2" :class="{'p-error':v$.vehicle.vehicle_model_code.$invalid && submitted}">Model Code</label>
+                      <InputText id="lastname2" v-model="vehicle.vehicle_model_code" type="text" :class="{'p-invalid':v$.vehicle.vehicle_model_code.$invalid && submitted}"/>
+                      <small v-if="(v$.vehicle.vehicle_model_code.$invalid && submitted)" class="p-error">{{v$.vehicle.vehicle_model_code.required.$message.replace('Value', 'Model Code')}}</small>
                     </div>
                     <div class="field col-12 md:col-6">
-                      <label for="state">Body Type</label>
-                      <Dropdown id="state" v-model="vehicle.body_type" :options="bodyTypes" optionLabel="name" placeholder="Select One"></Dropdown>
+                      <label for="state" :class="{'p-error':v$.vehicle.body_type.$invalid && submitted}">Body Type</label>
+                      <Dropdown id="state" v-model="vehicle.body_type" :options="bodyTypes" optionLabel="name" placeholder="Select One" :class="{'p-invalid':v$.vehicle.body_type.$invalid && submitted}"></Dropdown>
+                      <small v-if="(v$.vehicle.body_type.$invalid && submitted)" class="p-error">{{v$.vehicle.body_type.required.$message.replace('Value', 'Body Type')}}</small>
                     </div>
                     <div class="field col-12 md:col-6">
-                      <label for="state">Steering</label>
-                      <Dropdown id="state" v-model="vehicle.steering" :options="steerings" optionLabel="name" placeholder="Select One"></Dropdown>
+                      <label for="state" :class="{'p-error':v$.vehicle.steering.$invalid && submitted}">Steering</label>
+                      <Dropdown id="state" v-model="vehicle.steering" :options="steerings" optionLabel="name" placeholder="Select One" :class="{'p-invalid':v$.vehicle.steering.$invalid && submitted}"></Dropdown>
+                      <small v-if="(v$.vehicle.steering.$invalid && submitted)" class="p-error">{{v$.vehicle.steering.required.$message.replace('Value', 'Steering')}}</small>
                     </div>
                     <div class="field col-12 md:col-6">
-                      <label for="state">Drivetrain</label>
-                      <Dropdown id="state" v-model="vehicle.drive_train" :options="driveTrains" optionLabel="name" placeholder="Select One"></Dropdown>
+                      <label for="state" :class="{'p-error':v$.vehicle.drive_train.$invalid && submitted}">Drivetrain</label>
+                      <Dropdown id="state" v-model="vehicle.drive_train" :options="driveTrains" optionLabel="name" placeholder="Select One" :class="{'p-invalid':v$.vehicle.drive_train.$invalid && submitted}"></Dropdown>
+                      <small v-if="(v$.vehicle.drive_train.$invalid && submitted)" class="p-error">{{v$.vehicle.drive_train.required.$message.replace('Value', 'Drivetrain')}}</small>
                     </div>
               </div>
             </div>
@@ -86,7 +102,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import moment from 'moment'
 import useVuelidate from '@vuelidate/core'
 import { required, numeric} from '@vuelidate/validators'
@@ -191,7 +207,8 @@ export default {
                 transmission: '',
                 body_type: '',
                 drive_train: '',
-                steering: ''
+                steering: '',
+                VEHICLE_POST_SUCCESS_MESSAGE: 'Vehicle saved successfully',
             },
 
             submitted: false
@@ -202,7 +219,21 @@ export default {
         return {
             vehicle: {
                 number_plate: { required },
-                engine_size: { required, numeric}
+                country_of_registration: { required },
+                chasis_number: { required },
+                registration_year: { required },
+                registration_month:{ required },
+                manufacture_year: { required },
+                manufacture_month:{ required },
+                vehicle_model: { required },
+                vehicle_model_code:{ required },
+                engine_size:{ required, numeric },
+                exterior_color: { required },
+                fuel: { required },
+                transmission: { required },
+                body_type: { required },
+                drive_train: { required },
+                steering: { required },
             }
         }
     },
@@ -220,6 +251,7 @@ export default {
     },
 
     computed: {
+        ...mapState('vehicles', ['VEHICLE_POST_LOADING', 'VEHICLE_POST_SUCCESS', 'VEHICLE_POST_ERROR']),
         ...mapGetters('setup', ['getCountries']),
         ...mapGetters('vehicles', ['getVehicleModels', 'getVehicleMakes']),
 
@@ -250,7 +282,11 @@ export default {
             this.fetchVehicleModels(event.value.code);
         },
 
-        handleSubmit(isFormValid) {
+        showFeedbackToast(detailMessage) {
+            this.$toast.add({severity: 'success', summary: 'Saved.', detail: detailMessage, group: 'tr', life: 10000});
+        },
+
+        async handleSubmit(isFormValid) {
             this.submitted = true;
 
             if (!isFormValid) {
@@ -276,9 +312,14 @@ export default {
                 steering: this.vehicle.steering.code
             }
 
-            //TODO: check if there are no errors befor invoking save
-            this.saveVehicle(newVehicle);
-            // this.$emit('close-modal')
+            await this.saveVehicle(newVehicle);
+
+            if (this.VEHICLE_POST_SUCCESS) {
+                this.$emit('close-modal', this.VEHICLE_POST_SUCCESS)
+            } else if (this.VEHICLE_POST_ERROR) {
+              this.$toast.add({severity: 'error', summary: 'Saved.', detail :this.VEHICLE_POST_ERROR, group: 'tr', life: 10000});
+            }
+
         }
     }
 }

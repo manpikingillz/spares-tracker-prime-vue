@@ -1,5 +1,6 @@
 <template>
 	<div class="grid">
+		<Toast position="top-center" group="tr" />
 		<div class="col-12">
       <!-- <Button label="Bookmark" icon="pi pi-bookmark" class="mr-2 mb-2"></Button> -->
 			<div class="card">
@@ -67,13 +68,14 @@
 
 		<AddVehicleModal
 			v-if="showAddVehicleModal"
-			@close-modal="showAddVehicleModal = false"
+			@close-modal="closeModal"
 			:show-modal="showAddVehicleModal"
 		/>
 	</div>
 </template>
 
 <script>
+	import { mapState } from 'vuex';
 	import ProductService from "../service/ProductService";
 	import AddVehicleModal from './AddVehicleModal.vue'
 
@@ -91,6 +93,10 @@
 				],
 				showAddVehicleModal: false
 			}
+		},
+
+		computed: {
+			...mapState('vehicles', ['VEHICLE_POST_SUCCESS'])
 		},
 
 		components:{
@@ -119,6 +125,13 @@
 					this.sortOrder = 1;
 					this.sortField = value;
 					this.sortKey = sortValue;
+				}
+			},
+
+			closeModal(success) {
+				if (success) {
+					this.showAddVehicleModal = false
+					this.$toast.add({severity: 'success', summary: 'Saved.', detail: 'Vehicle saved successfully.', group: 'tr', life: 10000});
 				}
 			}
 		}

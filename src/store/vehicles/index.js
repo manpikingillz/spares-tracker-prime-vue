@@ -17,6 +17,7 @@ const state = {
 
     //vehicle post
     VEHICLE_POST_LOADING: false,
+    VEHICLE_POST_SUCCESS: false,
     VEHICLE_POST_ERROR: ''
 
 }
@@ -65,6 +66,9 @@ const mutations= {
     SET_VEHICLE_POST_ERROR(state, data) {
         state.VEHICLE_POST_ERROR = data;
     },
+    SET_VEHICLE_POST_SUCCESS(state, data) {
+        state.VEHICLE_POST_SUCCESS = data
+    }
 
 }
 
@@ -99,15 +103,21 @@ const actions = {
         Object.keys(data).forEach(key => {
             formData.append(key, data[key])
         })
+
         context.commit('SET_VEHICLE_POST_LOADING', true)
-        return await axios.post(POST_VEHICLE_URL, formData).then(() => {
-            context.commit('SET_VEHICLE_POST_LOADING', false);
+        context.commit('SET_VEHICLE_POST_SUCCESS', false);
+        context.commit('SET_VEHICLE_POST_ERROR', '');
+        const response = await axios.post(POST_VEHICLE_URL, formData).then(() => {
+            context.commit('SET_VEHICLE_POST_SUCCESS', true);
             // TODO: refetch vehicles
         }).catch(error => {
-            context.commit('SET_VEHICLE_POST_LOADING', false);
-            context.commit('SET_VEHICLE_POST_ERROR', error);
-            console.error('Error Creating Vehicle: ', error);
+            context.commit('SET_VEHICLE_POST_ERROR',  JSON.stringify(error));
+            console.error('Error Creating Vehicle: ', JSON.stringify(error));
         })
+
+        context.commit('SET_VEHICLE_POST_LOADING', false);
+
+        return response;
     }
 }
 
