@@ -262,7 +262,7 @@ export default {
         ...mapActions('vehicles', ['fetchVehicleModels', 'fetchVehicleMakes', 'saveVehicle']),
 
         closeModal() {
-            this.$emit('close-modal')
+            this.$emit('close-modal', '')
         },
 
         years(start, end) {

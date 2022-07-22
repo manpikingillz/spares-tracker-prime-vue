@@ -132,6 +132,8 @@
 				if (success) {
 					this.showAddVehicleModal = false
 					this.$toast.add({severity: 'success', summary: 'Saved.', detail: 'Vehicle saved successfully.', group: 'tr', life: 10000});
+				} else {
+					this.showAddVehicleModal = false
 				}
 			}
 		}
