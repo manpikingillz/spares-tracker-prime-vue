@@ -93,7 +93,6 @@
                     <div class="field col-12 md:col-12">
                         <FileUpload name="vehicle_file[]"  :multiple="false" :customUpload="true" @uploader="uploadVehicle" :showUploadButton="false" :showCancelButton="false" :auto="true" accept="image/*"/>
                     </div>
-                    <Image :src="image" alt="Image Text" />
               </div>
             </div>
           </div>
@@ -216,8 +215,7 @@ export default {
                 vehicleImage: ''
             },
 
-            submitted: false,
-            image: ''
+            submitted: false
         }
     },
 
