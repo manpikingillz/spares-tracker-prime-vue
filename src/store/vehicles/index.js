@@ -3,6 +3,7 @@ import axios from 'axios'
 const FETCH_VEHICLE_MODELS_URL = '/api/vehicles/vehicle_models/'
 const FETCH_VEHICLE_MAKES_URL = '/api/vehicles/vehicle_makes/'
 const POST_VEHICLE_URL = '/api/vehicles/create/'
+const POST_FILE_URL = '/api/files/upload/standard/'
 
 const state = {
     // Vehicle models
@@ -99,6 +100,9 @@ const actions = {
     },
 
     async saveVehicle(context, data) {
+        const file = data['vehicleImage'];
+        delete data['vehicleImage']
+
         let formData = new FormData();
         Object.keys(data).forEach(key => {
             formData.append(key, data[key])
@@ -109,6 +113,8 @@ const actions = {
         context.commit('SET_VEHICLE_POST_ERROR', '');
         const response = await axios.post(POST_VEHICLE_URL, formData).then(() => {
             context.commit('SET_VEHICLE_POST_SUCCESS', true);
+            // upload file
+            context.dispatch('uploadVehicleImage', file)
             // TODO: refetch vehicles
         }).catch(error => {
             context.commit('SET_VEHICLE_POST_ERROR',  JSON.stringify(error));
@@ -118,7 +124,25 @@ const actions = {
         context.commit('SET_VEHICLE_POST_LOADING', false);
 
         return response;
+    },
+
+    async uploadVehicleImage(context, file) {
+        let formData = new FormData();
+        formData.append('file', file);
+
+        const headers = {
+            'Content-Type': 'multipart/form-data'
+        };
+
+        return await axios.post(POST_FILE_URL, formData,  { headers: headers }).then(response => {
+            // update vehicle
+            console.log('Uploaded Vehicle Image: ', response)
+        }).catch(error => {
+            console.error('Error uploading file: ', error)
+        });
     }
+
+
 }
 
 

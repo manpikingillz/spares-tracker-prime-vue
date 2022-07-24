@@ -90,6 +90,10 @@
                       <Dropdown id="state" v-model="vehicle.drive_train" :options="driveTrains" optionLabel="name" placeholder="Select One" :class="{'p-invalid':v$.vehicle.drive_train.$invalid && submitted}"></Dropdown>
                       <small v-if="(v$.vehicle.drive_train.$invalid && submitted)" class="p-error">{{v$.vehicle.drive_train.required.$message.replace('Value', 'Drivetrain')}}</small>
                     </div>
+                    <div class="field col-12 md:col-12">
+                        <FileUpload name="vehicle_file[]"  :multiple="false" :customUpload="true" @uploader="uploadVehicle" :showUploadButton="false" :showCancelButton="false" :auto="true" accept="image/*"/>
+                    </div>
+                    <Image :src="image" alt="Image Text" />
               </div>
             </div>
           </div>
@@ -209,9 +213,11 @@ export default {
                 drive_train: '',
                 steering: '',
                 VEHICLE_POST_SUCCESS_MESSAGE: 'Vehicle saved successfully',
+                vehicleImage: ''
             },
 
-            submitted: false
+            submitted: false,
+            image: ''
         }
     },
 
@@ -259,7 +265,7 @@ export default {
 
     methods: {
         ...mapActions('setup', ['fetchCountries',]),
-        ...mapActions('vehicles', ['fetchVehicleModels', 'fetchVehicleMakes', 'saveVehicle']),
+        ...mapActions('vehicles', ['fetchVehicleModels', 'fetchVehicleMakes', 'saveVehicle', 'uploadVehicleImage']),
 
         closeModal() {
             this.$emit('close-modal', '')
@@ -309,7 +315,8 @@ export default {
                 transmission: this.vehicle.transmission.code,
                 body_type: this.vehicle.body_type.code,
                 drive_train: this.vehicle.drive_train.code,
-                steering: this.vehicle.steering.code
+                steering: this.vehicle.steering.code,
+                vehicleImage: this.vehicleImage
             }
 
             await this.saveVehicle(newVehicle);
@@ -320,6 +327,17 @@ export default {
               this.$toast.add({severity: 'error', summary: 'Saved.', detail :this.VEHICLE_POST_ERROR, group: 'tr', life: 10000});
             }
 
+        },
+
+        async uploadVehicle(event) {
+
+          const objectURL = event.files[0].objectURL;
+          const name = event.files[0].name;
+          const type = event.files[0].type;
+
+          const blob = await fetch(objectURL).then(r => r.blob());
+
+          this.vehicleImage = new File([blob], name , {type: type, lastModified:new Date().getTime()})
         }
     }
 }
