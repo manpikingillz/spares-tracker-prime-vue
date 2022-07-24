@@ -253,7 +253,6 @@ app.component('Tree', Tree);
 app.component('TreeSelect', TreeSelect);
 app.component('TreeTable', TreeTable);
 app.component('TriStateCheckbox', TriStateCheckbox);
-
 app.component('BlockViewer', BlockViewer);
 
 app.mount('#app');

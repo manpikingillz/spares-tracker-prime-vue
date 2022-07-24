@@ -3,6 +3,7 @@ import axios from 'axios'
 const FETCH_VEHICLE_MODELS_URL = '/api/vehicles/vehicle_models/'
 const FETCH_VEHICLE_MAKES_URL = '/api/vehicles/vehicle_makes/'
 const POST_VEHICLE_URL = '/api/vehicles/create/'
+const POST_FILE_URL = '/api/files/upload/standard/'
 
 const state = {
     // Vehicle models
@@ -99,6 +100,9 @@ const actions = {
     },
 
     async saveVehicle(context, data) {
+        const file = data['vehicleImage'];
+        delete data['vehicleImage']
+
         let formData = new FormData();
         Object.keys(data).forEach(key => {
             formData.append(key, data[key])
@@ -107,8 +111,19 @@ const actions = {
         context.commit('SET_VEHICLE_POST_LOADING', true)
         context.commit('SET_VEHICLE_POST_SUCCESS', false);
         context.commit('SET_VEHICLE_POST_ERROR', '');
-        const response = await axios.post(POST_VEHICLE_URL, formData).then(() => {
+        const response = await axios.post(POST_VEHICLE_URL, formData).then(response => {
             context.commit('SET_VEHICLE_POST_SUCCESS', true);
+
+            // upload file
+            if (response.data.id && file) {
+                const vehilceIdAndImageToUpload = {
+                    vehicleId: response.data.id,
+                    vehicleImage: file
+                }
+
+                context.dispatch('uploadVehicleImage', vehilceIdAndImageToUpload)
+            }
+
             // TODO: refetch vehicles
         }).catch(error => {
             context.commit('SET_VEHICLE_POST_ERROR',  JSON.stringify(error));
@@ -118,7 +133,46 @@ const actions = {
         context.commit('SET_VEHICLE_POST_LOADING', false);
 
         return response;
+    },
+
+    async updateVehicle(context, data) {
+        let formData = new FormData();
+        Object.keys(data).forEach(key => {
+            formData.append(key, data[key])
+        })
+
+        const vehicleId = data['id'];
+        delete data['id'];
+
+        await axios.post(`/api/vehicles/${vehicleId}/update/`, formData).then(() => {
+            //TODO: update success state
+        }).catch(error => {
+            console.error('Vehicle update error: ' + error)
+        })
+    },
+
+    async uploadVehicleImage(context, vehilceIdAndImageToUpload) {
+        let formData = new FormData();
+        formData.append('file', vehilceIdAndImageToUpload.vehicleImage);
+
+        const headers = {
+            'Content-Type': 'multipart/form-data'
+        };
+
+        return await axios.post(POST_FILE_URL, formData,  { headers: headers }).then(response => {
+            const vehicleIdAndUploadedImageId = {
+                vehicle_image: response.data.id,
+                id: vehilceIdAndImageToUpload.vehicleId
+            }
+            // update vehicle to add image id
+            context.dispatch('updateVehicle', vehicleIdAndUploadedImageId);
+
+        }).catch(error => {
+            console.error('Error uploading file: ', error)
+        });
     }
+
+
 }
 
 
