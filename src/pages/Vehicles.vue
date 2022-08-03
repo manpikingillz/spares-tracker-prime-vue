@@ -2,7 +2,6 @@
 	<div class="grid">
 		<Toast position="top-center" group="tr" />
 		<div class="col-12">
-      <!-- <Button label="Bookmark" icon="pi pi-bookmark" class="mr-2 mb-2"></Button> -->
 			<div class="card">
         <Button label="Add Vehicle" icon="pi pi-plus-circle" class="mr-2 mb-2" @click="showAddVehicleModal = true"></Button>
 				<DataView :value="vehiclesList" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
@@ -23,7 +22,6 @@
 								<div class="flex-1 text-center md:text-left">
 									<div class="font-bold text-2xl">{{slotProps.data.number_plate}}</div>
 									<div class="mb-3">{{slotProps.data.chasis_number}}</div>
-									<!-- <Rating :modelValue="slotProps.data.rating" :readonly="true" :cancel="false" class="mb-2"></Rating> -->
 									<div class="flex align-items-center">
 										<i class="pi pi-tag mr-2"></i>
 										<span class="font-semibold">{{slotProps.data.vehicle_model_code}}</span>
@@ -33,7 +31,6 @@
 								<div class="flex flex-row md:flex-column justify-content-between w-full md:w-auto align-items-center md:align-items-end mt-5 md:mt-0">
 									<span class="text-2xl font-semibold mb-2 align-self-center md:align-self-end">{{slotProps.data.price}}</span>
 									<Button icon="pi pi-eye" label="View" class="mb-2"></Button>
-									<!-- <span :class="'product-badge status-'+slotProps.data.inventoryStatus.toLowerCase()">{{vehicle.fuel}}</span> -->
 								</div>
 							</div>
 						</div>
@@ -47,13 +44,11 @@
 										<i class="pi pi-tag mr-2"></i>
 										<span class="font-semibold">{{slotProps.data.number_plate}}</span>
 									</div>
-									<!-- <span :class="'product-badge status-'+slotProps.data.inventoryStatus.toLowerCase()">{{slotProps.data.inventoryStatus}}</span> -->
 								</div>
 								<div class="text-center">
 									<img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
 									<div class="text-2xl font-bold">{{slotProps.data.manufacture_year}}</div>
 									<div class="mb-3">{{slotProps.data.vehicle_model_code}}</div>
-									<!-- <Rating :modelValue="slotProps.data.rating" :readonly="true" :cancel="false"></Rating> -->
 								</div>
 								<div class="flex align-items-center justify-content-between">
 									<span class="text-2xl font-semibold">{{slotProps.data.transmission}}</span>
@@ -105,13 +100,9 @@
 		},
 
 
-		// async created() {
-		// 	await this.fetchVehicles();
-		// },
 		async mounted() {
 			await this.fetchVehicles();
 			this.vehiclesList = JSON.parse(JSON.stringify(this.vehicles))
-			console.log(this.vehiclesList)
 		},
 
 		methods: {
@@ -145,18 +136,9 @@
 			getUrl(vehicle) {
 				if (vehicle && vehicle.vehicle_image && vehicle.vehicle_image.file) {
 					const url = 'http://localhost:8000'+vehicle.vehicle_image.file;
-					console.log('url: ', url)
 					return url;
 				}
 				return ''
-			},
-
-			async getVehicles() {
-				try {
-					this.vehiclesList = await this.fetchAllVehicles()
-				} catch (e) {
-					console.error('Error Fetching Vehicles: ', e);
-				}
 			}
 		}
 	}
