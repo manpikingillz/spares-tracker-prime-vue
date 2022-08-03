@@ -10,8 +10,8 @@ sassdoc
 
 package-lock.json
 
-/public/layout/css/layout-*.css
-/public/layout/css/layout-*.css.map
-/public/theme/theme-*.css
-/public/theme/theme-*.css.map
-/src/assets/sass/theme/designer
+# /public/layout/css/layout-*.css
+# /public/layout/css/layout-*.css.map
+# /public/theme/theme-*.css
+# /public/theme/theme-*.css.map
+# /src/assets/sass/theme/designer
