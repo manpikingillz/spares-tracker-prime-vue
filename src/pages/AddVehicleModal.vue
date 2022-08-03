@@ -91,7 +91,7 @@
                       <small v-if="(v$.vehicle.drive_train.$invalid && submitted)" class="p-error">{{v$.vehicle.drive_train.required.$message.replace('Value', 'Drivetrain')}}</small>
                     </div>
                     <div class="field col-12 md:col-12">
-                        <FileUpload name="vehicle_file[]"  :multiple="false" :customUpload="true" @uploader="uploadVehicle" :showUploadButton="false" :showCancelButton="false" :auto="true" accept="image/*"/>
+                        <FileUpload name="vehicle_file[]"  :multiple="false" :customUpload="true" @uploader="uploadVehicle" :showUploadButton="false" :showCancelButton="false" :auto="true" accept="image/*" chooseLabel="Select Vehicle Image"/>
                     </div>
               </div>
             </div>
@@ -295,6 +295,9 @@ export default {
 
             if (!isFormValid) {
                 return;
+            } else if (!this.vehicleImage) {
+              this.$toast.add({severity: 'error', summary: 'Photo Missing.', detail :'Please Add a Vehicle Image.', group: 'tr', life: 10000});
+              return
             }
 
             const newVehicle = {
@@ -322,20 +325,21 @@ export default {
             if (this.VEHICLE_POST_SUCCESS) {
                 this.$emit('close-modal', this.VEHICLE_POST_SUCCESS)
             } else if (this.VEHICLE_POST_ERROR) {
-              this.$toast.add({severity: 'error', summary: 'Saved.', detail :this.VEHICLE_POST_ERROR, group: 'tr', life: 10000});
+              this.$toast.add({severity: 'error', summary: 'Error Occured.', detail :this.VEHICLE_POST_ERROR, group: 'tr', life: 10000});
             }
 
         },
 
         async uploadVehicle(event) {
+          if (event.files.length) {
+            const objectURL = event.files[0].objectURL;
+            const name = event.files[0].name;
+            const type = event.files[0].type;
 
-          const objectURL = event.files[0].objectURL;
-          const name = event.files[0].name;
-          const type = event.files[0].type;
+            const blob = await fetch(objectURL).then(r => r.blob());
 
-          const blob = await fetch(objectURL).then(r => r.blob());
-
-          this.vehicleImage = new File([blob], name , {type: type, lastModified:new Date().getTime()})
+            this.vehicleImage = new File([blob], name , {type: type, lastModified:new Date().getTime()})
+          }
         }
     }
 }

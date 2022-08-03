@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+const FETCH_VEHICLES_URL = '/api/vehicles/'
 const FETCH_VEHICLE_MODELS_URL = '/api/vehicles/vehicle_models/'
 const FETCH_VEHICLE_MAKES_URL = '/api/vehicles/vehicle_makes/'
 const POST_VEHICLE_URL = '/api/vehicles/create/'
@@ -19,7 +20,13 @@ const state = {
     //vehicle post
     VEHICLE_POST_LOADING: false,
     VEHICLE_POST_SUCCESS: false,
-    VEHICLE_POST_ERROR: ''
+    VEHICLE_POST_ERROR: '',
+
+    //Vehicles
+    vehicles: [],
+    VEHICLES_LOADING: false,
+    VEHICLES_SUCCESS: false,
+    VEHICLES_ERROR: ''
 
 }
 
@@ -69,6 +76,20 @@ const mutations= {
     },
     SET_VEHICLE_POST_SUCCESS(state, data) {
         state.VEHICLE_POST_SUCCESS = data
+    },
+
+    // Vehicles
+    SET_VEHICLES(state, data) {
+        state.vehicles = data;
+    },
+    SET_VEHICLES_LOADING(state, data) {
+        state.VEHICLES_LOADING = data;
+    },
+    SET_VEHICLES_SUCCESS(state, data) {
+        state.VEHICLES_SUCCESS = data
+    },
+    SET_VEHICLES_ERROR(state, data) {
+        state.VEHICLES_ERROR = data
     }
 
 }
@@ -170,8 +191,25 @@ const actions = {
         }).catch(error => {
             console.error('Error uploading file: ', error)
         });
-    }
+    },
 
+    async fetchVehicles(context) {
+        context.commit('SET_VEHICLES_LOADING', true)
+
+        const response = await axios.get(FETCH_VEHICLES_URL).then(response => {
+            context.commit('SET_VEHICLES_SUCCESS', false);
+            context.commit('SET_VEHICLES', response.data)
+        }).catch(error => {
+            context.commit('SET_VEHICLES_ERROR', error);
+            console.error('Error Fetching Vehicles: ', error);
+        })
+
+        return response;
+    },
+
+    async fetchAllVehicles() {
+        return await axios.get(FETCH_VEHICLES_URL);
+    }
 
 }
 
