@@ -3,6 +3,12 @@
 		<Toast position="top-center" group="tr" />
 		<div class="col-12">
       <Breadcrumb :home="home" :model="items" />
+      <!-- <div v-if="items.length == 3" class="card m-1 border-1 surface-border" style="cursor: pointer;">
+								<div class="text-center" style="height: 150px;">
+									<img :src="getUrl(selectedVehicleModel)" class="w-9 shadow-2 my-3 mx-0"/>
+									<div class="mb-3 font-bold">{{selectedVehicleModel.vehicle_model_name}}</div>
+								</div>
+			</div> -->
 			<div class="card">
 				<DataView v-if="items.length == 1" :value="vehicleMakesList" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
 					<template #grid="slotProps">
@@ -23,6 +29,18 @@
 								<div class="text-center" style="height: 150px;">
 									<img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
 									<div class="mb-3 font-bold">{{slotProps.data.vehicle_model_name}}</div>
+								</div>
+							</div>
+						</div>
+					</template>
+				</DataView>
+        <DataView v-if="items.length == 3" :value="sparepartsList" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
+					<template #grid="slotProps">
+						<div class="col-12 md:col-2">
+							<div class="card m-1 border-1 surface-border" style="cursor: pointer;" @click="openSparePartsCategory(slotProps.data)">
+								<div class="text-center" style="height: 150px;">
+									<img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
+									<div class="mb-3 font-bold">{{slotProps.data.category_name}}</div>
 								</div>
 							</div>
 						</div>
@@ -59,6 +77,8 @@
 
 				vehicleMakesList: [],
         vehicleModelList: [],
+        sparepartsList: [],
+        selectedVehicleModel: {},
 
         home: {
                 icon: 'pi pi-home',
@@ -71,22 +91,20 @@
 		},
 
 		computed: {
-			...mapState('vehicles', ['VEHICLE_POST_SUCCESS', 'vehicleMakes', 'vehicleModels'])
+			...mapState('vehicles', ['VEHICLE_POST_SUCCESS', 'vehicleMakes', 'vehicleModels', 'spareparts']),
+      ...mapState('spareparts', ['spareparts'])
 		},
-
-		// components:{
-		// 	AddVehicleModal
-		// },
 
 
 		async mounted() {
 			await this.fetchVehicleMakes();
 			this.vehicleMakesList = JSON.parse(JSON.stringify(this.vehicleMakes))
-      console.log('Vehicle make list: ', this.vehicleMakesList)
 		},
 
 		methods: {
 			...mapActions('vehicles', ['fetchVehicleMakes', 'fetchVehicleModels']),
+      ...mapActions('spareparts', ['fetchSpareparts', ]),
+
 
       async openVehicleMake(data){
        // ensure we're not adding dups
@@ -98,47 +116,30 @@
 
         await this.fetchVehicleModels(data.id)
         this.vehicleModelList = this.vehicleModels
-
-        console.log('vehicleModels::: ', this.vehicleModels)
       },
 
-      openVehicleModel(data) {
+      async openVehicleModel(data) {
+        this.selectedVehicleModel = data
         // ensure we're not adding dups
        const vehicle_make = this.items.filter(item => item.label === data.vehicle_make_name)
         if (!vehicle_make.length || this.items.length > 2) {
           this.items = this.items.slice(0, 2)
           this.items.push({ label: data.vehicle_model_name })
         }
+
+        await this.fetchSpareparts()
+        this.sparepartsList = this.spareparts
+        console.log('spareparts::: ', this.spareparts)
+
       },
 
-			onSortChange(event){
-				const value = event.value.value;
-				const sortValue = event.value;
+      openSparePartsCategory(data) {
+        console.log('spare parts category: ', data)
+      },
 
-				if (value.indexOf('!') === 0) {
-					this.sortOrder = -1;
-					this.sortField = value.substring(1, value.length);
-					this.sortKey = sortValue;
-				}
-				else {
-					this.sortOrder = 1;
-					this.sortField = value;
-					this.sortKey = sortValue;
-				}
-			},
-
-			// closeModal(success) {
-			// 	if (success) {
-			// 		this.showAddVehicleModal = false
-			// 		this.$toast.add({severity: 'success', summary: 'Saved.', detail: 'Vehicle saved successfully.', group: 'tr', life: 10000});
-			// 	} else {
-			// 		this.showAddVehicleModal = false
-			// 	}
-			// },
-
-			getUrl(vehicleMake) {
-				if (vehicleMake && vehicleMake.image && vehicleMake.image.file) {
-					const url = 'http://localhost:8000'+vehicleMake.image.file;
+			getUrl(data) {
+				if (data && data.image && data.image.file) {
+					const url = 'http://localhost:8000'+data.image.file;
 					return url;
 				}
 				return ''
