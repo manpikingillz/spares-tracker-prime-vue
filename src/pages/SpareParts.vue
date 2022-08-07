@@ -34,10 +34,10 @@
 						</div>
 					</template>
 				</DataView>
-        <DataView v-if="items.length == 3" :value="sparepartsCategoriesList" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
+        <DataView v-if="items.length == 3" :value="sparepartsCategoriesList" :layout="layout" :sortOrder="sortOrder" :sortField="sortField">
 					<template #grid="slotProps">
 						<div class="col-12 md:col-2">
-							<div class="card m-1 border-1 surface-border" style="cursor: pointer;" @click="openSparePartsCategory(slotProps.data)">
+							<div class="card m-1 border-1 surface-border" style="cursor: pointer;" @click="openSparePartsOrMoreCategories(slotProps.data)">
 								<div class="text-center" style="height: 150px;">
 									<img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
 									<div class="mb-3 font-bold">{{slotProps.data.category_name}}</div>
@@ -54,6 +54,37 @@
 			@close-modal="closeModal"
 			:show-modal="showAddVehicleModal"
 		/> -->
+
+    <div>
+        <DataTable v-if="sparepartsList.length" :value="sparepartsList" responsiveLayout="scroll">
+          <template #header>
+                <div class="table-header">
+                   {{ selectedVehicleModel.vehicle_model_name}} - {{ selectedSparePartCategory.category_name }} Spare Parts
+                </div>
+            </template>
+            <Column header="Image">
+                <template #body="slotProps">
+                    <img :src="getUrl(slotProps.data)" :alt="slotProps.data.image" class="product-image" />
+                </template>
+            </Column>
+            <Column field="name" header="Name">
+                {{slotProps.data.name}}
+            </Column>
+            <Column field="code" header="Code">
+                {{slotProps.data.code}}
+            </Column>
+            <Column field="price" header="Price">
+                <template #body="slotProps">
+                    {{slotProps.data.price}}
+                </template>
+            </Column>
+            <Column header="Quantity">
+                <template #body="slotProps">
+                    {{slotProps.data.quantity}}
+                </template>
+            </Column>
+        </DataTable>
+	</div>
 	</div>
 </template>
 
@@ -77,8 +108,10 @@
 
 				vehicleMakesList: [],
         vehicleModelList: [],
+        sparepartsList: [],
         sparepartsCategoriesList: [],
         selectedVehicleModel: {},
+        selectedSparePartCategory: {},
 
         home: {
                 icon: 'pi pi-home',
@@ -92,7 +125,7 @@
 
 		computed: {
 			...mapState('vehicles', ['VEHICLE_POST_SUCCESS', 'vehicleMakes', 'vehicleModels']),
-      ...mapState('spareparts', ['sparepartsCategories'])
+      ...mapState('spareparts', ['sparepartsCategories', 'spareparts'])
 		},
 
 
@@ -103,7 +136,7 @@
 
 		methods: {
 			...mapActions('vehicles', ['fetchVehicleMakes', 'fetchVehicleModels']),
-      ...mapActions('spareparts', ['fetchSparepartsCategories', ]),
+      ...mapActions('spareparts', ['fetchSparepartsCategories', 'fetchSpareparts']),
 
 
       async openVehicleMake(data){
@@ -133,8 +166,21 @@
 
       },
 
-      openSparePartsCategory(data) {
-        console.log('spare parts category: ', data)
+      async openSparePartsOrMoreCategories(data) {
+        this.selectedSparePartCategory = data
+        const sparepartsFilters = {}
+        const categoryFilters = {}
+        if (data) {
+          sparepartsFilters['category'] = data.id
+          categoryFilters['relates_to'] = data.id
+        }
+
+
+        await this.fetchSpareparts(sparepartsFilters)
+        this.sparepartsList = this.spareparts
+
+        await this.fetchSparepartsCategories(categoryFilters)
+        this.sparepartsCategoriesList = this.sparepartsCategories
       },
 
 			getUrl(data) {
@@ -150,4 +196,15 @@
 
 <style scoped lang="scss">
 @import '../assets/demo/styles/badges.scss';
+
+.table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.product-image {
+    width: 50px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
+}
 </style>
