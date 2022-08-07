@@ -34,7 +34,7 @@
 						</div>
 					</template>
 				</DataView>
-        <DataView v-if="items.length == 3" :value="sparepartsList" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
+        <DataView v-if="items.length == 3" :value="sparepartsCategoriesList" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
 					<template #grid="slotProps">
 						<div class="col-12 md:col-2">
 							<div class="card m-1 border-1 surface-border" style="cursor: pointer;" @click="openSparePartsCategory(slotProps.data)">
@@ -77,7 +77,7 @@
 
 				vehicleMakesList: [],
         vehicleModelList: [],
-        sparepartsList: [],
+        sparepartsCategoriesList: [],
         selectedVehicleModel: {},
 
         home: {
@@ -91,8 +91,8 @@
 		},
 
 		computed: {
-			...mapState('vehicles', ['VEHICLE_POST_SUCCESS', 'vehicleMakes', 'vehicleModels', 'spareparts']),
-      ...mapState('spareparts', ['spareparts'])
+			...mapState('vehicles', ['VEHICLE_POST_SUCCESS', 'vehicleMakes', 'vehicleModels']),
+      ...mapState('spareparts', ['sparepartsCategories'])
 		},
 
 
@@ -103,7 +103,7 @@
 
 		methods: {
 			...mapActions('vehicles', ['fetchVehicleMakes', 'fetchVehicleModels']),
-      ...mapActions('spareparts', ['fetchSpareparts', ]),
+      ...mapActions('spareparts', ['fetchSparepartsCategories', ]),
 
 
       async openVehicleMake(data){
@@ -127,9 +127,9 @@
           this.items.push({ label: data.vehicle_model_name })
         }
 
-        await this.fetchSpareparts()
-        this.sparepartsList = this.spareparts
-        console.log('spareparts::: ', this.spareparts)
+        await this.fetchSparepartsCategories()
+        this.sparepartsCategoriesList = this.sparepartsCategories
+        console.log('sparepartsCategories::: ', this.sparepartsCategories)
 
       },
 
