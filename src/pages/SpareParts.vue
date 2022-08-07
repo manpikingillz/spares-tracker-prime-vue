@@ -2,15 +2,27 @@
 	<div class="grid">
 		<Toast position="top-center" group="tr" />
 		<div class="col-12">
+      <Breadcrumb :home="home" :model="items" />
 			<div class="card">
-        <Button label="Add Vehicle" icon="pi pi-plus-circle" class="mr-2 mb-2" @click="showAddVehicleModal = true"></Button>
-				<DataView :value="vehicleMakesList" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
+				<DataView v-if="items.length == 1" :value="vehicleMakesList" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
 					<template #grid="slotProps">
 						<div class="col-12 md:col-2">
-							<div class="card m-1 border-1 surface-border" >
-								<div class="text-center" style="height: 150px">
+							<div class="card m-1 border-1 surface-border" style="cursor: pointer;" @click="openVehicleMake(slotProps.data)">
+								<div class="text-center" style="height: 150px;">
 									<img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
 									<div class="mb-3 font-bold">{{slotProps.data.vehicle_make_name}}</div>
+								</div>
+							</div>
+						</div>
+					</template>
+				</DataView>
+        <DataView v-if="items.length == 2" :value="vehicleModelList" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
+					<template #grid="slotProps">
+						<div class="col-12 md:col-2">
+							<div class="card m-1 border-1 surface-border" style="cursor: pointer;" @click="openVehicleModel(slotProps.data)">
+								<div class="text-center" style="height: 150px;">
+									<img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
+									<div class="mb-3 font-bold">{{slotProps.data.vehicle_model_name}}</div>
 								</div>
 							</div>
 						</div>
@@ -45,12 +57,21 @@
 				],
 				showAddVehicleModal: false,
 
-				vehicleMakesList: []
+				vehicleMakesList: [],
+        vehicleModelList: [],
+
+        home: {
+                icon: 'pi pi-home',
+                to: '/spareparts',
+            },
+        items: [
+            {label: 'Brands', to: '/spareparts'},
+        ]
 			}
 		},
 
 		computed: {
-			...mapState('vehicles', ['VEHICLE_POST_SUCCESS', 'vehicleMakes'])
+			...mapState('vehicles', ['VEHICLE_POST_SUCCESS', 'vehicleMakes', 'vehicleModels'])
 		},
 
 		// components:{
@@ -65,7 +86,30 @@
 		},
 
 		methods: {
-			...mapActions('vehicles', ['fetchVehicleMakes']),
+			...mapActions('vehicles', ['fetchVehicleMakes', 'fetchVehicleModels']),
+
+      async openVehicleMake(data){
+       // ensure we're not adding dups
+       const vehicle_make = this.items.filter(item => item.label === data.vehicle_make_name)
+        if (!vehicle_make.length || this.items.length > 1) {
+          this.items = this.items.slice(0, 1)
+          this.items.push({ label: data.vehicle_make_name })
+        }
+
+        await this.fetchVehicleModels(data.id)
+        this.vehicleModelList = this.vehicleModels
+
+        console.log('vehicleModels::: ', this.vehicleModels)
+      },
+
+      openVehicleModel(data) {
+        // ensure we're not adding dups
+       const vehicle_make = this.items.filter(item => item.label === data.vehicle_make_name)
+        if (!vehicle_make.length || this.items.length > 2) {
+          this.items = this.items.slice(0, 2)
+          this.items.push({ label: data.vehicle_model_name })
+        }
+      },
 
 			onSortChange(event){
 				const value = event.value.value;
