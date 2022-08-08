@@ -3,6 +3,7 @@ import axios from 'axios'
 const FETCH_SPAREPARTS_URL = '/api/spareparts/'
 const FETCH_SPAREPARTS_CATEGORIES_URL = '/api/spareparts/categories/'
 const FETCH_SPAREPARTS_PURCHASES_URL = '/api/spareparts/sparepart_purchases/'
+const POST_SPAREPART_PURCHASES_URL = '/api/spareparts/sparepart_purchases/create/'
 
 const state = {
     //Spareparts Categories
@@ -19,9 +20,18 @@ const state = {
 
     //Spareparts Purchases
     sparepartsPurchases: [],
-    SPAREPARTS_PURCHASES_LOADING: false,
-    SPAREPARTS_PURCHASES_SUCCESS: false,
-    SPAREPARTS_PURCHASES_ERROR: ''
+    SPAREPART_PURCHASE_POST_LOADING: false,
+    SPAREPART_PURCHASE_POST_SUCCESS: false,
+    SPAREPART_PURCHASE_POST_ERROR: '',
+}
+
+
+const getters = {
+    getSpareparts: state => {
+        return state.spareparts.map(sparepart => {
+                return {'name': sparepart.name, 'code': sparepart.id}
+        })
+    }
 }
 
 
@@ -67,7 +77,18 @@ const mutations= {
     },
     SET_SPAREPARTS_PURCHASES_ERROR(state, data) {
         state.SPAREPARTS_PURCHASES_ERROR = data
-    }
+    },
+
+    // Spare part purchase post
+    SET_SPAREPART_PURCHASE_POST_LOADING(state, data) {
+        state.SPAREPART_PURCHASE_POST_LOADING = data;
+    },
+    SET_SPAREPART_PURCHASE_POST_ERROR(state, data) {
+        state.SPAREPART_PURCHASE_POST_ERROR = data;
+    },
+    SET_SPAREPART_PURCHASE_POST_SUCCESS(state, data) {
+        state.SPAREPART_PURCHASE_POST_SUCCESS = data
+    },
 }
 
 const actions = {
@@ -106,12 +127,34 @@ const actions = {
             console.error('Error Fetching Spareparts Purchases: ', error);
         })
     },
+
+    async saveSparePartPurchase(context, data){
+        let formData = new FormData();
+        Object.keys(data).forEach(key => {
+            formData.append(key, data[key])
+        })
+
+        context.commit('SET_SPAREPART_PURCHASE_POST_LOADING', true)
+        context.commit('SET_SPAREPART_PURCHASE_POST_SUCCESS', false);
+        context.commit('SET_SPAREPART_PURCHASE_POST_ERROR', '');
+
+        const response = await axios.post(POST_SPAREPART_PURCHASES_URL, formData).then(() => {
+            context.commit('SET_SPAREPART_PURCHASE_POST_LOADING', false)
+            context.commit('SET_SPAREPART_PURCHASE_POST_SUCCESS', true);
+        }).catch(error => {
+            context.commit('SET_SPAREPART_PURCHASE_POST_ERROR',  JSON.stringify(error));
+            console.error('Error Creating Spare Part Purchase: ', JSON.stringify(error));
+        })
+
+        return response;
+    }
 }
 
 
 export default {
     namespaced: true,
     state,
+    getters,
     mutations,
     actions
 };

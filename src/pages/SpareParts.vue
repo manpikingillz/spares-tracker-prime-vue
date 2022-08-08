@@ -4,7 +4,6 @@
       <SelectButton v-model="listOrGrid" :options="options" @click="changeListOrGrid()" />
     </div>
     <div class="grid" v-if="listOrGrid === 'Grid'">
-      <Toast position="top-center" group="tr" />
       <div class="col-12">
         <Breadcrumb :home="home" :model="items">
           <template #item="{item}">
@@ -59,12 +58,6 @@
           </DataView>
         </div>
       </div>
-
-      <!-- <AddVehicleModal
-        v-if="showAddVehicleModal"
-        @close-modal="closeModal"
-        :show-modal="showAddVehicleModal"
-      /> -->
 
       <div>
           <div v-if="sparepartsList.length && items.length > 1" class="table-header">
@@ -156,11 +149,12 @@
     </div>
 
     <div v-if="listOrGrid == 'Purchases'">
+        <Toast position="top-center" group="tr" />
           <DataTable :value="sparepartsPurchasesList" responsiveLayout="scroll"  :filters="sparePartsFilters" :paginator="allSparepartsList.length > 10" :rows="10" >
 
             <template #header>
                   <div class="flex justify-content-between">
-                          <Button type="button" icon="pi pi-plus-circle" label="Add Purchase"/>
+                          <Button type="button" icon="pi pi-plus-circle" label="Add Purchase" @click="showAddSparePartPurchaseModal=true"/>
                           <span class="p-input-icon-left">
                               <i class="pi pi-search" />
                               <InputText v-model="sparePartsFilters['global'].value" placeholder="Keyword Search" />
@@ -209,6 +203,12 @@
               </Column>
           </DataTable>
     </div>
+
+      <AddSparePartPurchaseModal
+        v-if="showAddSparePartPurchaseModal"
+        @close-modal="closeModal"
+        :show-modal="showAddSparePartPurchaseModal"
+      />
   </div>
 </template>
 
@@ -216,7 +216,7 @@
 	import { mapState, mapActions } from 'vuex';
   import { FilterMatchMode } from 'primevue/api';
   import moment from 'moment'
-	// import AddVehicleModal from './AddVehicleModal.vue'
+	import AddSparePartPurchaseModal from './AddSparePartPurchaseModal.vue'
 
 	export default {
 		data() {
@@ -232,6 +232,7 @@
 				],
 				showAddVehicleModal: false,
         listOrGrid: 'Grid',
+        showAddSparePartPurchaseModal: false,
 
 				vehicleMakesList: [],
         vehicleModelList: [],
@@ -254,6 +255,10 @@
         sparePartsFilters: null,
 			}
 		},
+
+    components: {
+      AddSparePartPurchaseModal
+    },
 
 		computed: {
 			...mapState('vehicles', ['VEHICLE_POST_SUCCESS', 'vehicleMakes', 'vehicleModels']),
@@ -378,7 +383,18 @@
 
     dateFormat(date) {
         return moment(date).format('ll')
-    }
+    },
+
+    async closeModal(success) {
+				if (success) {
+					this.showAddSparePartPurchaseModal = false
+					this.$toast.add({severity: 'success', summary: 'Saved.', detail: 'Purchase saved successfully.', group: 'tr', life: 10000});
+				} else {
+					this.showAddSparePartPurchaseModal = false
+				}
+        await this.fetchSparepartsPurchases()
+        this.sparepartsPurchasesList = this.sparepartsPurchases
+			},
 		}
 	}
 </script>
