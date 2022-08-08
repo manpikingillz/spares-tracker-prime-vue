@@ -63,8 +63,10 @@ const actions = {
     },
 
     async fetchSpareparts(context, filters) {
+        console.log('filters: ', filters)
         context.commit('SET_SPAREPARTS_LOADING', true)
         return await axios.get(FETCH_SPAREPARTS_URL, {params: filters}).then(response => {
+            console.log('sparesss: '. response)
             context.commit('SET_SPAREPARTS_LOADING', false);
             context.commit('SET_SPAREPARTS', response.data)
         }).catch(error => {

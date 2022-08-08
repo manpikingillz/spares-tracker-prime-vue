@@ -1,109 +1,160 @@
 <template>
-	<div class="grid">
-		<Toast position="top-center" group="tr" />
-		<div class="col-12">
-      <Breadcrumb :home="home" :model="items">
-        <template #item="{item}">
-            <a :href="item.url" @click="clickBreadCrumb(item)" style="cursor:pointer">{{item.label}}</a>
-        </template>
-      </Breadcrumb>
-      <!-- <div v-if="items.length == 3" class="card m-1 border-1 surface-border" style="cursor: pointer;">
-								<div class="text-center" style="height: 150px;">
-									<img :src="getUrl(selectedVehicleModel)" class="w-9 shadow-2 my-3 mx-0"/>
-									<div class="mb-3 font-bold">{{selectedVehicleModel.vehicle_model_name}}</div>
-								</div>
-			</div> -->
-			<div class="card">
-				<DataView v-if="items.length == 1" :value="vehicleMakesList" :layout="layout" :paginator="vehicleMakesList.length > 18" :rows="18" :sortOrder="sortOrder" :sortField="sortField">
-					<template #grid="slotProps">
-						<div class="col-12 md:col-2">
-							<div class="card m-1 border-1 surface-border" style="cursor: pointer;" @click="openVehicleMake(slotProps.data)">
-								<div class="text-center" style="height: 250px;">
-									<img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
-									<div class="mb-3 font-bold">{{slotProps.data.vehicle_make_name}}</div>
-								</div>
-							</div>
-						</div>
-					</template>
-				</DataView>
-        <DataView v-if="items.length == 2" :value="vehicleModelList" :layout="layout" :paginator="vehicleModelList.length > 18" :rows="18" :sortOrder="sortOrder" :sortField="sortField">
-					<template #empty>No Models for {{selectedVehicleMake.vehicle_make_name}}</template>
-          <template #grid="slotProps">
-						<div class="col-12 md:col-2">
-							<div class="card m-1 border-1 surface-border" style="cursor: pointer;" @click="openVehicleModel(slotProps.data)">
-								<div class="text-center" style="height: 200px;">
-									<img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
-									<div class="mb-3 font-bold">{{slotProps.data.vehicle_model_name}}</div>
-								</div>
-							</div>
-						</div>
-					</template>
-				</DataView>
-        <DataView v-if="items.length == 3" :value="sparepartsCategoriesList" :layout="layout" :paginator="sparepartsCategoriesList.length > 18" :rows="18" :sortOrder="sortOrder" :sortField="sortField">
-					<template #empty>No further categories</template>
+  <div>
+    <div class="flex justify-content-end">
+      <SelectButton v-model="listOrGrid" :options="options" @click="changeListOrGrid()" />
+    </div>
+    <div class="grid" v-if="listOrGrid === 'Grid'">
+      <Toast position="top-center" group="tr" />
+      <div class="col-12">
+        <Breadcrumb :home="home" :model="items">
+          <template #item="{item}">
+              <a :href="item.url" @click="clickBreadCrumb(item)" style="cursor:pointer">{{item.label}}</a>
+          </template>
+        </Breadcrumb>
+        <!-- <div v-if="items.length == 3" class="card m-1 border-1 surface-border" style="cursor: pointer;">
+                  <div class="text-center" style="height: 150px;">
+                    <img :src="getUrl(selectedVehicleModel)" class="w-9 shadow-2 my-3 mx-0"/>
+                    <div class="mb-3 font-bold">{{selectedVehicleModel.vehicle_model_name}}</div>
+                  </div>
+        </div> -->
+        <div class="card">
+          <DataView v-if="items.length == 1" :value="vehicleMakesList" :layout="layout" :paginator="vehicleMakesList.length > 18" :rows="18" :sortOrder="sortOrder" :sortField="sortField">
+            <template #grid="slotProps">
+              <div class="col-12 md:col-2">
+                <div class="card m-1 border-1 surface-border" style="cursor: pointer;" @click="openVehicleMake(slotProps.data)">
+                  <div class="text-center" style="height: 250px;">
+                    <img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
+                    <div class="mb-3 font-bold">{{slotProps.data.vehicle_make_name}}</div>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </DataView>
+          <DataView v-if="items.length == 2" :value="vehicleModelList" :layout="layout" :paginator="vehicleModelList.length > 18" :rows="18" :sortOrder="sortOrder" :sortField="sortField">
+            <template #empty>No Models for {{selectedVehicleMake.vehicle_make_name}}</template>
+            <template #grid="slotProps">
+              <div class="col-12 md:col-2">
+                <div class="card m-1 border-1 surface-border" style="cursor: pointer;" @click="openVehicleModel(slotProps.data)">
+                  <div class="text-center" style="height: 200px;">
+                    <img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
+                    <div class="mb-3 font-bold">{{slotProps.data.vehicle_model_name}}</div>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </DataView>
+          <DataView v-if="items.length == 3" :value="sparepartsCategoriesList" :layout="layout" :paginator="sparepartsCategoriesList.length > 18" :rows="18" :sortOrder="sortOrder" :sortField="sortField">
+            <template #empty>No further categories</template>
 
-          <template #grid="slotProps">
-						<div class="col-12 md:col-2">
-							<div class="card m-1 border-1 surface-border" style="cursor: pointer;" @click="openSparePartsOrMoreCategories(slotProps.data)">
-								<div class="text-center" style="height: 250px;">
-									<img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
-									<div class="mb-3 font-bold">{{slotProps.data.category_name}}</div>
-								</div>
-							</div>
-						</div>
-					</template>
-				</DataView>
-			</div>
-		</div>
-
-		<!-- <AddVehicleModal
-			v-if="showAddVehicleModal"
-			@close-modal="closeModal"
-			:show-modal="showAddVehicleModal"
-		/> -->
-
-    <div>
-        <div v-if="sparepartsList.length && items.length > 1" class="table-header">
-            {{ selectedVehicleModel.vehicle_model_name}} - {{ selectedSparePartCategory.category_name }} - Spare Parts
+            <template #grid="slotProps">
+              <div class="col-12 md:col-2">
+                <div class="card m-1 border-1 surface-border" style="cursor: pointer;" @click="openSparePartsOrMoreCategories(slotProps.data)">
+                  <div class="text-center" style="height: 250px;">
+                    <img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
+                    <div class="mb-3 font-bold">{{slotProps.data.category_name}}</div>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </DataView>
         </div>
-        <DataTable v-if="sparepartsList.length && items.length > 1" :value="sparepartsList" responsiveLayout="scroll"  :filters="sparePartsFilters" >
-          
-          <template #header>
-                <div class="flex justify-content-end">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search" />
-                            <InputText v-model="sparePartsFilters['global'].value" placeholder="Keyword Search" />
-                        </span>
-                        <!-- <Button type="button" icon="pi pi-filter-slash" class="p-button-outlined" @click="clearSparePartsFilters()"/> -->
-                    </div>
-            </template>
-            <template #empty>
-                No Spare parts found
-            </template>
-            <Column header="Image">
-                <template #body="slotProps">
-                    <img :src="getUrl(slotProps.data)" :alt="slotProps.data.image" class="product-image" />
-                </template>
-            </Column>
-            <Column field="name" header="Name">
-                {{slotProps.data.name}}
-            </Column>
-            <Column field="code" header="Code">
-                {{slotProps.data.code}}
-            </Column>
-            <Column field="price" header="Price">
-                <template #body="slotProps">
-                    {{slotProps.data.price}}
-                </template>
-            </Column>
-            <Column header="Quantity">
-                <template #body="slotProps">
-                    {{slotProps.data.quantity}}
-                </template>
-            </Column>
-        </DataTable>
-	</div>
-	</div>
+      </div>
+
+      <!-- <AddVehicleModal
+        v-if="showAddVehicleModal"
+        @close-modal="closeModal"
+        :show-modal="showAddVehicleModal"
+      /> -->
+
+      <div>
+          <div v-if="sparepartsList.length && items.length > 1" class="table-header">
+              {{ selectedVehicleModel.vehicle_model_name}} - {{ selectedSparePartCategory.category_name }} - Spare Parts
+          </div>
+          <DataTable v-if="sparepartsList.length && items.length > 1" :value="sparepartsList" responsiveLayout="scroll"  :filters="sparePartsFilters" >
+
+            <template #header>
+                  <div class="flex justify-content-end">
+                          <span class="p-input-icon-left">
+                              <i class="pi pi-search" />
+                              <InputText v-model="sparePartsFilters['global'].value" placeholder="Keyword Search" />
+                          </span>
+                          <!-- <Button type="button" icon="pi pi-filter-slash" class="p-button-outlined" @click="clearSparePartsFilters()"/> -->
+                      </div>
+              </template>
+              <template #empty>
+                  No Spare parts found
+              </template>
+              <Column header="Image">
+                  <template #body="slotProps">
+                      <img :src="getUrl(slotProps.data)" :alt="slotProps.data.image" class="product-image" />
+                  </template>
+              </Column>
+              <Column field="name" header="Name">
+                  {{slotProps.data.name}}
+              </Column>
+              <Column field="code" header="Code">
+                  {{slotProps.data.code}}
+              </Column>
+              <Column field="price" header="Price">
+                  <template #body="slotProps">
+                      {{slotProps.data.price}}
+                  </template>
+              </Column>
+              <Column header="Quantity">
+                  <template #body="slotProps">
+                      {{slotProps.data.quantity}}
+                  </template>
+              </Column>
+          </DataTable>
+    </div>
+    </div>
+    <div v-if="listOrGrid == 'List'">
+          <DataTable :value="allSparepartsList" responsiveLayout="scroll"  :filters="sparePartsFilters" :paginator="allSparepartsList.length > 10" :rows="10" >
+
+            <template #header>
+                  <div class="flex justify-content-end">
+                          <span class="p-input-icon-left">
+                              <i class="pi pi-search" />
+                              <InputText v-model="sparePartsFilters['global'].value" placeholder="Keyword Search" />
+                          </span>
+                          <!-- <Button type="button" icon="pi pi-filter-slash" class="p-button-outlined" @click="clearSparePartsFilters()"/> -->
+                      </div>
+              </template>
+              <template #empty>
+                  No Spare parts found
+              </template>
+              <Column header="Image">
+                  <template #body="slotProps">
+                      <img :src="getUrl(slotProps.data)" :alt="slotProps.data.image" class="product-image" />
+                  </template>
+              </Column>
+              <Column field="name" header="Name">
+                  {{slotProps.data.name}}
+              </Column>
+              <Column field="code" header="Code">
+                  {{slotProps.data.code}}
+              </Column>
+              <Column field="price" header="Price">
+                  <template #body="slotProps">
+                      {{slotProps.data.price}}
+                  </template>
+              </Column>
+              <Column header="Quantity">
+                  <template #body="slotProps">
+                      {{slotProps.data.quantity}}
+                  </template>
+              </Column>
+              <Column header="Vehicle Model(s)">
+                  <template #body="slotProps">
+                    <span v-for="(item, index) in slotProps.data.vehicle_models" :key="`vehicle-model-${item.id}`">
+                      {{ item.vehicle_model_name }}{{index ===  slotProps.data.vehicle_models.length - 1 ? '' : ', '}}
+                    </span>
+                      <!-- {{ slotProps.data.vehicle_models}} -->
+                  </template>
+              </Column>
+          </DataTable>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -124,14 +175,17 @@
 					{label: 'Z-A', value: 'price'},
 				],
 				showAddVehicleModal: false,
+        listOrGrid: 'Grid',
 
 				vehicleMakesList: [],
         vehicleModelList: [],
         sparepartsList: [],
+        allSparepartsList: [],
         sparepartsCategoriesList: [],
         selectedVehicleMake: {},
         selectedVehicleModel: {},
         selectedSparePartCategory: {},
+        options: ['Grid', 'List'],
 
         home: {
                 icon: 'pi pi-home',
@@ -244,15 +298,23 @@
         }
       },
 
-      initSparePartsFilters() {
-          this.sparePartsFilters = {
-              'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
-          }
-      },
+    initSparePartsFilters() {
+        this.sparePartsFilters = {
+            'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
+        }
+    },
 
-      clearSparePartsFilters() {
-            this.initSparePartsFilters();
-        },
+    clearSparePartsFilters() {
+          this.initSparePartsFilters();
+    },
+
+    async changeListOrGrid(){
+      if (this.listOrGrid === 'List') {
+        await this.fetchSpareparts()
+        this.allSparepartsList = this.spareparts
+        console.log('list selected: ', this.allSparepartsList);
+      }
+    }
 		}
 	}
 </script>
