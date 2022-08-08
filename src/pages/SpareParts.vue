@@ -4,7 +4,6 @@
       <SelectButton v-model="listOrGrid" :options="options" @click="changeListOrGrid()" />
     </div>
     <div class="grid" v-if="listOrGrid === 'Grid'">
-      <Toast position="top-center" group="tr" />
       <div class="col-12">
         <Breadcrumb :home="home" :model="items">
           <template #item="{item}">
@@ -59,12 +58,6 @@
           </DataView>
         </div>
       </div>
-
-      <!-- <AddVehicleModal
-        v-if="showAddVehicleModal"
-        @close-modal="closeModal"
-        :show-modal="showAddVehicleModal"
-      /> -->
 
       <div>
           <div v-if="sparepartsList.length && items.length > 1" class="table-header">
@@ -154,13 +147,76 @@
               </Column>
           </DataTable>
     </div>
+
+    <div v-if="listOrGrid == 'Purchases'">
+        <Toast position="top-center" group="tr" />
+          <DataTable :value="sparepartsPurchasesList" responsiveLayout="scroll"  :filters="sparePartsFilters" :paginator="allSparepartsList.length > 10" :rows="10" >
+
+            <template #header>
+                  <div class="flex justify-content-between">
+                          <Button type="button" icon="pi pi-plus-circle" label="Add Purchase" @click="showAddSparePartPurchaseModal=true"/>
+                          <span class="p-input-icon-left">
+                              <i class="pi pi-search" />
+                              <InputText v-model="sparePartsFilters['global'].value" placeholder="Keyword Search" />
+                          </span>
+                          <!-- <Button type="button" icon="pi pi-filter-slash" class="p-button-outlined" @click="clearSparePartsFilters()"/> -->
+                      </div>
+              </template>
+              <template #empty>
+                  No Spare parts found
+              </template>
+              <Column header="Spare Part">
+                  <template #body="slotProps">
+                      {{slotProps.data.spare_part?.name}}
+                  </template>
+              </Column>
+              <Column field="order_number" header="Order Number">
+                  {{slotProps.data.order_number}}
+              </Column>
+              <Column field="quantity" header="Quantity">
+                  {{slotProps.data.quantity}}
+              </Column>
+              <Column field="unit_price" header="Unit Price">
+                  <template #body="slotProps">
+                      {{slotProps.data.unit_price}}
+                  </template>
+              </Column>
+              <Column header="Amount Paid">
+                  <template #body="slotProps">
+                      {{slotProps.data.amount_paid}}
+                  </template>
+              </Column>
+              <Column header="Supplied By">
+                  <template #body="slotProps">
+                      {{slotProps.data.supplied_by?.name}}
+                  </template>
+              </Column>
+              <Column header="Received By">
+                  <template #body="slotProps">
+                      {{slotProps.data.received_by?.full_name}}
+                  </template>
+              </Column>
+              <Column header="Date Received">
+                  <template #body="slotProps">
+                      {{dateFormat(slotProps.data.created_at)}}
+                  </template>
+              </Column>
+          </DataTable>
+    </div>
+
+      <AddSparePartPurchaseModal
+        v-if="showAddSparePartPurchaseModal"
+        @close-modal="closeModal"
+        :show-modal="showAddSparePartPurchaseModal"
+      />
   </div>
 </template>
 
 <script>
 	import { mapState, mapActions } from 'vuex';
   import { FilterMatchMode } from 'primevue/api';
-	// import AddVehicleModal from './AddVehicleModal.vue'
+  import moment from 'moment'
+	import AddSparePartPurchaseModal from './AddSparePartPurchaseModal.vue'
 
 	export default {
 		data() {
@@ -176,16 +232,18 @@
 				],
 				showAddVehicleModal: false,
         listOrGrid: 'Grid',
+        showAddSparePartPurchaseModal: false,
 
 				vehicleMakesList: [],
         vehicleModelList: [],
         sparepartsList: [],
         allSparepartsList: [],
         sparepartsCategoriesList: [],
+        sparepartsPurchasesList: [],
         selectedVehicleMake: {},
         selectedVehicleModel: {},
         selectedSparePartCategory: {},
-        options: ['Grid', 'List'],
+        options: ['Grid', 'List', 'Purchases'],
 
         home: {
                 icon: 'pi pi-home',
@@ -198,9 +256,13 @@
 			}
 		},
 
+    components: {
+      AddSparePartPurchaseModal
+    },
+
 		computed: {
 			...mapState('vehicles', ['VEHICLE_POST_SUCCESS', 'vehicleMakes', 'vehicleModels']),
-      ...mapState('spareparts', ['sparepartsCategories', 'spareparts'])
+      ...mapState('spareparts', ['sparepartsCategories', 'spareparts', 'sparepartsPurchases'])
 		},
 
     created() {
@@ -214,7 +276,7 @@
 
 		methods: {
 			...mapActions('vehicles', ['fetchVehicleMakes', 'fetchVehicleModels']),
-      ...mapActions('spareparts', ['fetchSparepartsCategories', 'fetchSpareparts']),
+      ...mapActions('spareparts', ['fetchSparepartsCategories', 'fetchSpareparts', 'fetchSparepartsPurchases']),
 
 
       async openVehicleMake(data){
@@ -312,7 +374,27 @@
         await this.fetchSpareparts()
         this.allSparepartsList = this.spareparts
       }
-    }
+
+      if (this.listOrGrid === 'Purchases') {
+        await this.fetchSparepartsPurchases()
+        this.sparepartsPurchasesList = this.sparepartsPurchases
+      }
+    },
+
+    dateFormat(date) {
+        return moment(date).format('ll')
+    },
+
+    async closeModal(success) {
+				if (success) {
+					this.showAddSparePartPurchaseModal = false
+					this.$toast.add({severity: 'success', summary: 'Saved.', detail: 'Purchase saved successfully.', group: 'tr', life: 10000});
+				} else {
+					this.showAddSparePartPurchaseModal = false
+				}
+        await this.fetchSparepartsPurchases()
+        this.sparepartsPurchasesList = this.sparepartsPurchases
+			},
 		}
 	}
 </script>
