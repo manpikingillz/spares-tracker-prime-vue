@@ -63,14 +63,22 @@
 		/> -->
 
     <div>
-        <DataTable v-if="sparepartsList.length && items.length > 1" :value="sparepartsList" responsiveLayout="scroll">
+        <div v-if="sparepartsList.length && items.length > 1" class="table-header">
+            {{ selectedVehicleModel.vehicle_model_name}} - {{ selectedSparePartCategory.category_name }} - Spare Parts
+        </div>
+        <DataTable v-if="sparepartsList.length && items.length > 1" :value="sparepartsList" responsiveLayout="scroll"  :filters="sparePartsFilters" >
+          
           <template #header>
-                <div class="table-header">
-                   {{ selectedVehicleModel.vehicle_model_name}} - {{ selectedSparePartCategory.category_name }} - Spare Parts
-                </div>
+                <div class="flex justify-content-end">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search" />
+                            <InputText v-model="sparePartsFilters['global'].value" placeholder="Keyword Search" />
+                        </span>
+                        <!-- <Button type="button" icon="pi pi-filter-slash" class="p-button-outlined" @click="clearSparePartsFilters()"/> -->
+                    </div>
             </template>
             <template #empty>
-                No Spare parts under the selected catory
+                No Spare parts found
             </template>
             <Column header="Image">
                 <template #body="slotProps">
@@ -100,6 +108,7 @@
 
 <script>
 	import { mapState, mapActions } from 'vuex';
+  import { FilterMatchMode } from 'primevue/api';
 	// import AddVehicleModal from './AddVehicleModal.vue'
 
 	export default {
@@ -130,7 +139,8 @@
             },
         items: [
             {label: 'Brands', to: '/spareparts'},
-        ]
+        ],
+        sparePartsFilters: null,
 			}
 		},
 
@@ -139,6 +149,9 @@
       ...mapState('spareparts', ['sparepartsCategories', 'spareparts'])
 		},
 
+    created() {
+      this.initSparePartsFilters();
+    },
 
 		async mounted() {
 			await this.fetchVehicleMakes();
@@ -229,7 +242,17 @@
           this.sparepartsList = []
           this.sparepartsCategoriesList = this.sparepartsCategories
         }
-      }
+      },
+
+      initSparePartsFilters() {
+          this.sparePartsFilters = {
+              'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
+          }
+      },
+
+      clearSparePartsFilters() {
+            this.initSparePartsFilters();
+        },
 		}
 	}
 </script>
