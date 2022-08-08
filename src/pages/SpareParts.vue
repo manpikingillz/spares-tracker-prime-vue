@@ -272,7 +272,6 @@
 			},
 
       async clickBreadCrumb(item) {
-        console.log('breadcrumb clicked: ', item)
         if (item.label === 'Brands') {
             await this.fetchVehicleMakes()
             this.items = this.items.slice(0, 1)
@@ -312,7 +311,6 @@
       if (this.listOrGrid === 'List') {
         await this.fetchSpareparts()
         this.allSparepartsList = this.spareparts
-        console.log('list selected: ', this.allSparepartsList);
       }
     }
 		}
