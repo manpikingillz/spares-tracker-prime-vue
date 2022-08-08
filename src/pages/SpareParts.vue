@@ -159,7 +159,8 @@
           <DataTable :value="sparepartsPurchasesList" responsiveLayout="scroll"  :filters="sparePartsFilters" :paginator="allSparepartsList.length > 10" :rows="10" >
 
             <template #header>
-                  <div class="flex justify-content-end">
+                  <div class="flex justify-content-between">
+                          <Button type="button" icon="pi pi-plus-circle" label="Add Purchase"/>
                           <span class="p-input-icon-left">
                               <i class="pi pi-search" />
                               <InputText v-model="sparePartsFilters['global'].value" placeholder="Keyword Search" />
@@ -201,6 +202,11 @@
                       {{slotProps.data.received_by?.full_name}}
                   </template>
               </Column>
+              <Column header="Date Received">
+                  <template #body="slotProps">
+                      {{dateFormat(slotProps.data.created_at)}}
+                  </template>
+              </Column>
           </DataTable>
     </div>
   </div>
@@ -209,6 +215,7 @@
 <script>
 	import { mapState, mapActions } from 'vuex';
   import { FilterMatchMode } from 'primevue/api';
+  import moment from 'moment'
 	// import AddVehicleModal from './AddVehicleModal.vue'
 
 	export default {
@@ -367,6 +374,10 @@
         await this.fetchSparepartsPurchases()
         this.sparepartsPurchasesList = this.sparepartsPurchases
       }
+    },
+
+    dateFormat(date) {
+        return moment(date).format('ll')
     }
 		}
 	}
