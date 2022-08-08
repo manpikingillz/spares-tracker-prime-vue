@@ -162,8 +162,6 @@
 
         await this.fetchSparepartsCategories()
         this.sparepartsCategoriesList = this.sparepartsCategories
-        console.log('sparepartsCategories::: ', this.sparepartsCategories)
-
       },
 
       async openSparePartsOrMoreCategories(data) {
@@ -175,6 +173,9 @@
           categoryFilters['relates_to'] = data.id
         }
 
+        if (this.selectedVehicleModel) {
+          sparepartsFilters['vehicle_models'] = this.selectedVehicleModel.id
+        }
 
         await this.fetchSpareparts(sparepartsFilters)
         this.sparepartsList = this.spareparts
