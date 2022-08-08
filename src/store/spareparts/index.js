@@ -2,6 +2,7 @@ import axios from 'axios'
 
 const FETCH_SPAREPARTS_URL = '/api/spareparts/'
 const FETCH_SPAREPARTS_CATEGORIES_URL = '/api/spareparts/categories/'
+const FETCH_SPAREPARTS_PURCHASES_URL = '/api/spareparts/sparepart_purchases/'
 
 const state = {
     //Spareparts Categories
@@ -14,7 +15,13 @@ const state = {
     spareparts: [],
     SPAREPARTS_LOADING: false,
     SPAREPARTS_SUCCESS: false,
-    SPAREPARTS_ERROR: ''
+    SPAREPARTS_ERROR: '',
+
+    //Spareparts Purchases
+    sparepartsPurchases: [],
+    SPAREPARTS_PURCHASES_LOADING: false,
+    SPAREPARTS_PURCHASES_SUCCESS: false,
+    SPAREPARTS_PURCHASES_ERROR: ''
 }
 
 
@@ -46,6 +53,20 @@ const mutations= {
     },
     SET_SPAREPARTS_ERROR(state, data) {
         state.SPAREPARTS_ERROR = data
+    },
+
+    // Spareparts Purchases
+    SET_SPAREPARTS_PURCHASES(state, data) {
+        state.sparepartsPurchases = data;
+    },
+    SET_SPAREPARTS_PURCHASES_LOADING(state, data) {
+        state.SPAREPARTS_PURCHASES_LOADING = data;
+    },
+    SET_SPAREPARTS_PURCHASES_SUCCESS(state, data) {
+        state.SPAREPARTS_PURCHASES_SUCCESS = data
+    },
+    SET_SPAREPARTS_PURCHASES_ERROR(state, data) {
+        state.SPAREPARTS_PURCHASES_ERROR = data
     }
 }
 
@@ -63,16 +84,26 @@ const actions = {
     },
 
     async fetchSpareparts(context, filters) {
-        console.log('filters: ', filters)
         context.commit('SET_SPAREPARTS_LOADING', true)
         return await axios.get(FETCH_SPAREPARTS_URL, {params: filters}).then(response => {
-            console.log('sparesss: '. response)
             context.commit('SET_SPAREPARTS_LOADING', false);
             context.commit('SET_SPAREPARTS', response.data)
         }).catch(error => {
             context.commit('SET_SPAREPARTS_LOADING', false);
             context.commit('SET_SPAREPARTS_ERROR', error);
             console.error('Error Fetching Spareparts: ', error);
+        })
+    },
+
+    async fetchSparepartsPurchases(context, filters) {
+        context.commit('SET_SPAREPARTS_PURCHASES_LOADING', true)
+        return await axios.get(FETCH_SPAREPARTS_PURCHASES_URL, {params: filters}).then(response => {
+            context.commit('SET_SPAREPARTS_PURCHASES_LOADING', false);
+            context.commit('SET_SPAREPARTS_PURCHASES', response.data)
+        }).catch(error => {
+            context.commit('SET_SPAREPARTS_PURCHASES_LOADING', false);
+            context.commit('SET_SPAREPARTS_PURCHASES_ERROR', error);
+            console.error('Error Fetching Spareparts Purchases: ', error);
         })
     },
 }

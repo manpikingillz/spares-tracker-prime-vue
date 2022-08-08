@@ -154,6 +154,55 @@
               </Column>
           </DataTable>
     </div>
+
+    <div v-if="listOrGrid == 'Purchases'">
+          <DataTable :value="sparepartsPurchasesList" responsiveLayout="scroll"  :filters="sparePartsFilters" :paginator="allSparepartsList.length > 10" :rows="10" >
+
+            <template #header>
+                  <div class="flex justify-content-end">
+                          <span class="p-input-icon-left">
+                              <i class="pi pi-search" />
+                              <InputText v-model="sparePartsFilters['global'].value" placeholder="Keyword Search" />
+                          </span>
+                          <!-- <Button type="button" icon="pi pi-filter-slash" class="p-button-outlined" @click="clearSparePartsFilters()"/> -->
+                      </div>
+              </template>
+              <template #empty>
+                  No Spare parts found
+              </template>
+              <Column header="Spare Part">
+                  <template #body="slotProps">
+                      {{slotProps.data.spare_part?.name}}
+                  </template>
+              </Column>
+              <Column field="order_number" header="Order Number">
+                  {{slotProps.data.order_number}}
+              </Column>
+              <Column field="quantity" header="Quantity">
+                  {{slotProps.data.quantity}}
+              </Column>
+              <Column field="unit_price" header="Unit Price">
+                  <template #body="slotProps">
+                      {{slotProps.data.unit_price}}
+                  </template>
+              </Column>
+              <Column header="Amount Paid">
+                  <template #body="slotProps">
+                      {{slotProps.data.amount_paid}}
+                  </template>
+              </Column>
+              <Column header="Supplied By">
+                  <template #body="slotProps">
+                      {{slotProps.data.supplied_by?.name}}
+                  </template>
+              </Column>
+              <Column header="Received By">
+                  <template #body="slotProps">
+                      {{slotProps.data.received_by?.full_name}}
+                  </template>
+              </Column>
+          </DataTable>
+    </div>
   </div>
 </template>
 
@@ -182,10 +231,11 @@
         sparepartsList: [],
         allSparepartsList: [],
         sparepartsCategoriesList: [],
+        sparepartsPurchasesList: [],
         selectedVehicleMake: {},
         selectedVehicleModel: {},
         selectedSparePartCategory: {},
-        options: ['Grid', 'List'],
+        options: ['Grid', 'List', 'Purchases'],
 
         home: {
                 icon: 'pi pi-home',
@@ -200,7 +250,7 @@
 
 		computed: {
 			...mapState('vehicles', ['VEHICLE_POST_SUCCESS', 'vehicleMakes', 'vehicleModels']),
-      ...mapState('spareparts', ['sparepartsCategories', 'spareparts'])
+      ...mapState('spareparts', ['sparepartsCategories', 'spareparts', 'sparepartsPurchases'])
 		},
 
     created() {
@@ -214,7 +264,7 @@
 
 		methods: {
 			...mapActions('vehicles', ['fetchVehicleMakes', 'fetchVehicleModels']),
-      ...mapActions('spareparts', ['fetchSparepartsCategories', 'fetchSpareparts']),
+      ...mapActions('spareparts', ['fetchSparepartsCategories', 'fetchSpareparts', 'fetchSparepartsPurchases']),
 
 
       async openVehicleMake(data){
@@ -311,6 +361,11 @@
       if (this.listOrGrid === 'List') {
         await this.fetchSpareparts()
         this.allSparepartsList = this.spareparts
+      }
+
+      if (this.listOrGrid === 'Purchases') {
+        await this.fetchSparepartsPurchases()
+        this.sparepartsPurchasesList = this.sparepartsPurchases
       }
     }
 		}
