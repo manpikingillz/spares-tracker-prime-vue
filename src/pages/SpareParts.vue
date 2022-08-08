@@ -2,7 +2,11 @@
 	<div class="grid">
 		<Toast position="top-center" group="tr" />
 		<div class="col-12">
-      <Breadcrumb :home="home" :model="items" />
+      <Breadcrumb :home="home" :model="items">
+        <template #item="{item}">
+            <a :href="item.url" @click="clickBreadCrumb(item)" style="cursor:pointer">{{item.label}}</a>
+        </template>
+      </Breadcrumb>
       <!-- <div v-if="items.length == 3" class="card m-1 border-1 surface-border" style="cursor: pointer;">
 								<div class="text-center" style="height: 150px;">
 									<img :src="getUrl(selectedVehicleModel)" class="w-9 shadow-2 my-3 mx-0"/>
@@ -10,11 +14,11 @@
 								</div>
 			</div> -->
 			<div class="card">
-				<DataView v-if="items.length == 1" :value="vehicleMakesList" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
+				<DataView v-if="items.length == 1" :value="vehicleMakesList" :layout="layout" :paginator="vehicleMakesList.length > 18" :rows="18" :sortOrder="sortOrder" :sortField="sortField">
 					<template #grid="slotProps">
 						<div class="col-12 md:col-2">
 							<div class="card m-1 border-1 surface-border" style="cursor: pointer;" @click="openVehicleMake(slotProps.data)">
-								<div class="text-center" style="height: 150px;">
+								<div class="text-center" style="height: 250px;">
 									<img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
 									<div class="mb-3 font-bold">{{slotProps.data.vehicle_make_name}}</div>
 								</div>
@@ -22,11 +26,12 @@
 						</div>
 					</template>
 				</DataView>
-        <DataView v-if="items.length == 2" :value="vehicleModelList" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
-					<template #grid="slotProps">
+        <DataView v-if="items.length == 2" :value="vehicleModelList" :layout="layout" :paginator="vehicleModelList.length > 18" :rows="18" :sortOrder="sortOrder" :sortField="sortField">
+					<template #empty>No Models for {{selectedVehicleMake.vehicle_make_name}}</template>
+          <template #grid="slotProps">
 						<div class="col-12 md:col-2">
 							<div class="card m-1 border-1 surface-border" style="cursor: pointer;" @click="openVehicleModel(slotProps.data)">
-								<div class="text-center" style="height: 150px;">
+								<div class="text-center" style="height: 200px;">
 									<img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
 									<div class="mb-3 font-bold">{{slotProps.data.vehicle_model_name}}</div>
 								</div>
@@ -34,11 +39,13 @@
 						</div>
 					</template>
 				</DataView>
-        <DataView v-if="items.length == 3" :value="sparepartsCategoriesList" :layout="layout" :sortOrder="sortOrder" :sortField="sortField">
-					<template #grid="slotProps">
+        <DataView v-if="items.length == 3" :value="sparepartsCategoriesList" :layout="layout" :paginator="sparepartsCategoriesList.length > 18" :rows="18" :sortOrder="sortOrder" :sortField="sortField">
+					<template #empty>No further categories</template>
+
+          <template #grid="slotProps">
 						<div class="col-12 md:col-2">
 							<div class="card m-1 border-1 surface-border" style="cursor: pointer;" @click="openSparePartsOrMoreCategories(slotProps.data)">
-								<div class="text-center" style="height: 150px;">
+								<div class="text-center" style="height: 250px;">
 									<img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
 									<div class="mb-3 font-bold">{{slotProps.data.category_name}}</div>
 								</div>
@@ -56,11 +63,14 @@
 		/> -->
 
     <div>
-        <DataTable v-if="sparepartsList.length" :value="sparepartsList" responsiveLayout="scroll">
+        <DataTable v-if="sparepartsList.length && items.length > 1" :value="sparepartsList" responsiveLayout="scroll">
           <template #header>
                 <div class="table-header">
-                   {{ selectedVehicleModel.vehicle_model_name}} - {{ selectedSparePartCategory.category_name }} Spare Parts
+                   {{ selectedVehicleModel.vehicle_model_name}} - {{ selectedSparePartCategory.category_name }} - Spare Parts
                 </div>
+            </template>
+            <template #empty>
+                No Spare parts under the selected catory
             </template>
             <Column header="Image">
                 <template #body="slotProps">
@@ -110,6 +120,7 @@
         vehicleModelList: [],
         sparepartsList: [],
         sparepartsCategoriesList: [],
+        selectedVehicleMake: {},
         selectedVehicleModel: {},
         selectedSparePartCategory: {},
 
@@ -140,11 +151,12 @@
 
 
       async openVehicleMake(data){
+        this.selectedVehicleMake = data
        // ensure we're not adding dups
        const vehicle_make = this.items.filter(item => item.label === data.vehicle_make_name)
         if (!vehicle_make.length || this.items.length > 1) {
           this.items = this.items.slice(0, 1)
-          this.items.push({ label: data.vehicle_make_name })
+          this.items.push({ label: data.vehicle_make_name, vehicle_make_id: data.id })
         }
 
         await this.fetchVehicleModels(data.id)
@@ -157,7 +169,7 @@
        const vehicle_make = this.items.filter(item => item.label === data.vehicle_make_name)
         if (!vehicle_make.length || this.items.length > 2) {
           this.items = this.items.slice(0, 2)
-          this.items.push({ label: data.vehicle_model_name })
+          this.items.push({ label: data.vehicle_model_name, vehicle_model_id: data.id })
         }
 
         await this.fetchSparepartsCategories()
@@ -190,7 +202,34 @@
 					return url;
 				}
 				return ''
-			}
+			},
+
+      async clickBreadCrumb(item) {
+        console.log('breadcrumb clicked: ', item)
+        if (item.label === 'Brands') {
+            await this.fetchVehicleMakes()
+            this.items = this.items.slice(0, 1)
+            this.vehicleMakesList = []
+            this.sparepartsList = []
+            this.vehicleMakesList = JSON.parse(JSON.stringify(this.vehicleMakes))
+        }
+
+        if (item.vehicle_make_id) {
+          await this.fetchVehicleModels(item.vehicle_make_id)
+          this.items = this.items.slice(0, 2)
+          this.vehicleModelList = []
+          this.sparepartsList = []
+          this.vehicleModelList = this.vehicleModels
+        }
+
+        if (item.vehicle_model_id) {
+          await this.fetchSparepartsCategories()
+          this.items = this.items.slice(0, 3)
+          this.sparepartsCategoriesList = []
+          this.sparepartsList = []
+          this.sparepartsCategoriesList = this.sparepartsCategories
+        }
+      }
 		}
 	}
 </script>

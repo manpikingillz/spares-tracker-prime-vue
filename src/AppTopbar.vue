@@ -16,7 +16,7 @@
 						<span class="user-profile-name">Gilbert Twesigomwe</span>
 						<span class="user-profile-role">{{ getUser.email }}</span>
 					</div>
-					<img class="logo" src="layout/images/avatar/avatar-ava.jpg" alt="prestige-layout" />
+					<img class="logo" src="layout/images/avatar/man_avatar.png" alt="prestige-layout" />
 				</a>
 				<transition name="layout-submenu-container">
 					<ul class="fadeInDown" v-show="activeTopbarItem === 'profile'">
