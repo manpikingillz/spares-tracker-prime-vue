@@ -9,6 +9,7 @@ sassdoc
 /.sass-cache
 
 package-lock.json
+yarn.lock
 
 # /public/layout/css/layout-*.css
 # /public/layout/css/layout-*.css.map
