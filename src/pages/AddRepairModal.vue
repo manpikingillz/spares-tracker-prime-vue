@@ -184,7 +184,6 @@ export default {
             await this.fetchRepairs(filters)
             this.prevVisits = this.repairs.length
             this.dateOfLastVisit = moment(this.repairs[this.repairs.length - 1].created_at).format('ll')
-            console.log('repairs: ', this.repairs)
         }
     },
 }

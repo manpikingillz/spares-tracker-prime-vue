@@ -97,13 +97,12 @@ export default {
             return moment(value).format('ll');
         },
 
-
-
-        closeModal(success) {
+        async closeModal(success) {
             if (success) {
 				this.$toast.add({severity: 'success', summary: 'Saved.', detail: 'Repair saved successfully.', group: 'tr', life: 10000});
 			}
             this.showAddNewRepair = false
+            await this.fetchRepairs();
         }
     },
     components: {
