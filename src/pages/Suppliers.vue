@@ -1,19 +1,19 @@
 <template>
     <div class="content-section implementation">
+        <Toast position="top-center" group="tr" />
         <div class="card">
             <Menubar :model="items">
                 <template #item="{item}">
                     <Button @click="showAddNewSupplier = true" :label="item.label" icon="pi pi-plus" />
                 </template>
                 <template #end>
-                    <InputText placeholder="Search" type="text" />
+                    <InputText placeholder="Search" type="text" v-model="supplierFilters['global'].value" />
                 </template>
             </Menubar>
             <DataTable :value="suppliersList" :paginator="true" class="p-datatable-suppliers" :rows="10"
                        dataKey="id" :rowHover="true" :loading="SUPPLIERS_LOADING"
                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
-                       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                       :globalFilterFields="['name', 'email', 'phone', 'address']" responsiveLayout="scroll">
+                       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" responsiveLayout="scroll" v-model="supplierFilters">
                 <template #empty>
                     No suppliers found.
                 </template>
@@ -45,14 +45,14 @@
     </div>
     <AddSupplierModal
         :show-modal='showAddNewSupplier'
-        @close-modal='showAddNewSupplier = false'
+        @close-modal='closeModal'
     />
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
-
-import AddSupplierModal from './AddSupplierModal.vue'
+import AddSupplierModal from './AddSupplierModal.vue';
+import {FilterMatchMode} from 'primevue/api';
 
 export default {
     data() {
@@ -66,6 +66,7 @@ export default {
             ],
             suppliersList: [],
             showAddNewSupplier: false,
+            supplierFilters: null
         }
     },
 
@@ -76,6 +77,7 @@ export default {
     async created() {
         await this.fetchSuppliers();
         this.suppliersList = this.suppliers;
+        this.initSupplierFilters()
     },
 
     computed: {
@@ -83,7 +85,22 @@ export default {
     },
 
     methods: {
-        ...mapActions('suppliers', ['fetchSuppliers'])
+        ...mapActions('suppliers', ['fetchSuppliers']),
+
+            async closeModal(success) {
+				if (success) {
+                    await this.fetchSuppliers();
+                    this.suppliersList = this.suppliers;
+					this.$toast.add({severity: 'success', summary: 'Saved.', detail: 'Supplier saved successfully.', group: 'tr', life: 10000});
+				}
+                this.showAddNewSupplier = false
+			},
+
+            initSupplierFilters() {
+                this.supplierFilters = {
+                    'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
+                }
+            }
     }
 }
 </script>
