@@ -1,5 +1,4 @@
 <template>
-<div>
     <Dialog header="Add Repair"
             :visible="show"
             :breakpoints="{'960px': '75vw', '640px': '90vw'}"
@@ -21,13 +20,13 @@
                     <Textarea id="problem" v-model="repair.problem"
                               :autoResize="true" rows="6" />
                 </div>
-                <ItemSelector title='Problem Description' :items='problems' @add-item="showAddProblemOnRepairModal=true" @remove-item="removeProblem" />
+                <ItemSelector title='Problem Description' :items='problems' @add-item="addProblem" @remove-item="removeProblem" />
                 <div class="field">
                     <label for="recommendation">Solution / Recommendation</label>
                     <Textarea id="recommendation" v-model="repair.recommendation"
                               :autoResize="true" rows="6" />
                 </div>
-                <ItemSelector title='Needed spare parts' :items='spareParts' @add-item="showAddSparePartOnRepairModal = true" @remove-item="removeSparePart" />
+                <ItemSelector title='Needed spare parts' :items='spareParts' @add-item="addSparePart" @remove-item="removeSparePart" />
             </form>
         </div>
         <template #footer>
@@ -35,23 +34,11 @@
             <Button label="Save" icon="pi pi-check" @click="close" autofocus />
         </template>
     </Dialog>
-
-    <AddProblemOnRepairModal
-        :show="showAddProblemOnRepairModal"
-        @close="showAddProblemOnRepairModal=false"
-        @accept-selection="acceptProblemSelection"/>
-    <AddSparePartOnRepairModal
-        :show="showAddSparePartOnRepairModal"
-        @close="showAddSparePartOnRepairModal=false"
-    />
-</div>
 </template>
 
 <script>
 
 import ItemSelector from '../components/ItemSelector.vue'
-import AddProblemOnRepairModal from './AddProblemOnRepairModal.vue'
-import AddSparePartOnRepairModal from './AddSparePartOnRepairModal.vue'
 
 export default {
     data() {
@@ -76,16 +63,10 @@ export default {
                 'Indicator (2)',
                 'Brake fluid'
             ],
-            showAddProblemOnRepairModal: false,
-            showAddSparePartOnRepairModal: false
         }
     },
     props: ['show'],
-    components: {
-        ItemSelector,
-        AddProblemOnRepairModal,
-        AddSparePartOnRepairModal
-        },
+    components: {ItemSelector},
     methods: {
         addProblem() {
             console.log('add problem');
@@ -101,10 +82,6 @@ export default {
 
         removeSparePart() {
             console.log('remove spare part event')
-        },
-
-        acceptProblemSelection(data) {
-            console.log('accept problem selection: ', data);
         },
 
         close() {

@@ -5,6 +5,7 @@ import vehicles from './vehicles'
 import spareparts from './spareparts'
 import employees from './employees'
 import suppliers from './suppliers'
+import repairs from './repairs'
 
 const store = createStore({
     modules: {
@@ -13,7 +14,8 @@ const store = createStore({
         vehicles,
         spareparts,
         employees,
-        suppliers
+        suppliers,
+        repairs
     }
 })
 
