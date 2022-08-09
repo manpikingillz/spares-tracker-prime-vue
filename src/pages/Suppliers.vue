@@ -9,15 +9,15 @@
                     <InputText placeholder="Search" type="text" />
                 </template>
             </Menubar>
-            <DataTable :value="suppliers" :paginator="true" class="p-datatable-suppliers" :rows="10"
-                       dataKey="id" :rowHover="true" :loading="loading"
+            <DataTable :value="suppliersList" :paginator="true" class="p-datatable-suppliers" :rows="10"
+                       dataKey="id" :rowHover="true" :loading="SUPPLIERS_LOADING"
                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                        :globalFilterFields="['name', 'email', 'phone', 'address']" responsiveLayout="scroll">
                 <template #empty>
                     No suppliers found.
                 </template>
-                <template #loading>
+                <template #SUPPLIERS_LOADING>
                     Loading suppliers data. Please wait.
                 </template>
                 <Column field="name" header="Name" sortable style="min-width: 14rem">
@@ -50,26 +50,13 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
 
 import AddSupplierModal from './AddSupplierModal.vue'
 
 export default {
     data() {
         return {
-            suppliers: [
-                {
-                    name: 'Gilbert Twesigomwe',
-                    email: 'gilbert@supplier.com',
-                    phone: '+268 77 888 9999',
-                    address: '33 Chester Avenue, Kampala'
-                },
-                {
-                    name: 'Jane Doe',
-                    email: 'jane@supplier.com',
-                    phone: '+44 22 333 4444',
-                    address: '127 Carmichael Avenue, Cardiff'
-                }
-            ],
             loading: false,
             items: [
                 {
@@ -77,11 +64,26 @@ export default {
                     icon:'pi pi-fw pi-plus'
                 }
             ],
+            suppliersList: [],
             showAddNewSupplier: false,
         }
     },
+
     components: {
         AddSupplierModal
+    },
+
+    async created() {
+        await this.fetchSuppliers();
+        this.suppliersList = this.suppliers;
+    },
+
+    computed: {
+        ...mapState('suppliers', ['suppliers', 'SUPPLIERS_LOADING'])
+    },
+
+    methods: {
+        ...mapActions('suppliers', ['fetchSuppliers'])
     }
 }
 </script>
