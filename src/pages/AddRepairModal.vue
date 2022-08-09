@@ -177,7 +177,6 @@ export default {
         },
 
         async changeNumberPlateSelection(event){
-            console.log('event: ', event.value.code)
             const filters = {
                 'vehicle': event.value.code
             }
