@@ -41,6 +41,12 @@ const getters = {
         return state.vehicleMakes.map(vehicleMake => {
                 return {'name': vehicleMake.vehicle_make_name, 'code': vehicleMake.id}
         })
+    },
+
+    getVehicles: state => {
+        return state.vehicles.map(vehicle => {
+                return {'name': vehicle.number_plate, 'code': vehicle.id}
+        })
     }
 }
 

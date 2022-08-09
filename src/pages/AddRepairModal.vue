@@ -9,8 +9,7 @@
             <form>
                 <div class="field">
                     <label for="registration">Number Plate</label>
-                    <InputText v-model="repair.registration"
-                               id="registration" type="text"/>
+                      <Dropdown id="registration" v-model="repair.vehicle" :options="getVehicles" optionLabel="name" placeholder="Select One" filter=true ></Dropdown>
                 </div>
                 <div class="visits">
                     <p>Previous visits: {{ !!repair.prevVisits ? repair.prevVisits : 'None' }}</p>
@@ -51,6 +50,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
 
 import ItemSelector from '../components/ItemSelector.vue'
 import AddProblemOnRepairModal from './AddProblemOnRepairModal.vue'
@@ -74,12 +74,24 @@ export default {
         }
     },
     props: ['show'],
+
+    created() {
+        this.fetchVehicles()
+    },
+
     components: {
         ItemSelector,
         AddProblemOnRepairModal,
         AddSparePartOnRepairModal
         },
+
+    computed: {
+        ...mapGetters('vehicles', ['getVehicles'])
+    },
+
     methods: {
+        ...mapActions('vehicles', ['fetchVehicles']),
+
         removeProblem(data) {
             this.problems = this.problems.filter(problem => problem.id !== data.id)
         },
@@ -98,7 +110,6 @@ export default {
             this.spareParts = data.map(item => {
                 return {'id': item.code, 'name': item.name}
             })
-            console.log('accept spare part selection: ', data);
         },
 
         close() {
