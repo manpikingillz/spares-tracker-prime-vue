@@ -13,7 +13,7 @@ const state = {
 const getters = {
     getRepairProblems: state => {
         return state.repairProblems.map(repairProblem => {
-                return {'name': repairProblem.name, 'code': repairProblem.id}
+                return {'name': repairProblem.name, 'code': repairProblem.id }
         })
     }
 }
@@ -38,7 +38,6 @@ const actions = {
     async fetchRepairProblems(context, filters) {
         context.commit('SET_REPAIR_PROBLEMS_LOADING', true)
         return await axios.get(FETCH_REPAIR_PROBLEMS_URL, {params: filters}).then(response => {
-            console.log('fetchRepairProblems: ', response)
             context.commit('SET_REPAIR_PROBLEMS_LOADING', false);
             context.commit('SET_REPAIR_PROBLEMS', response.data)
         }).catch(error => {

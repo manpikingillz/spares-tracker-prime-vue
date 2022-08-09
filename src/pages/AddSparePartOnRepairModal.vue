@@ -1,125 +1,71 @@
 <template>
-    <Dialog header="Add Repair"
+    <Dialog header="What problems does the car have?"
             :visible="show"
             :breakpoints="{'960px': '75vw', '640px': '90vw'}"
-            :style="{width: '50vw'}" :maximizable="true" :modal="true">
+            :style="{width: '30vw'}" :maximizable="true" :modal="true">
 
-        <div class="form-container">
-            <form>
-                <div class="field">
-                    <label for="registration">Number Plate</label>
-                    <InputText v-model="repair.registration"
-                               id="registration" type="text"/>
-                </div>
-                <div class="visits">
-                    <p>Previous visits: {{ !!repair.prevVisits ? repair.prevVisits : 'None' }}</p>
-                    <p>Date of last visit: {{ !!repair.prevVisits ? repair.date : 'N/A' }}</p>
-                </div>
-                <div class="field">
-                    <label for="problem">Problem Description</label>
-                    <Textarea id="problem" v-model="repair.problem"
-                              :autoResize="true" rows="6" />
-                </div>
-                <ItemSelector title='Problem Description' :items='problems' @add-item="addProblem" @remove-item="removeProblem" />
-                <div class="field">
-                    <label for="recommendation">Solution / Recommendation</label>
-                    <Textarea id="recommendation" v-model="repair.recommendation"
-                              :autoResize="true" rows="6" />
-                </div>
-                <ItemSelector title='Needed spare parts' :items='spareParts' @add-item="addSparePart" @remove-item="removeSparePart" />
-            </form>
-        </div>
+            <DataTable :value="getSpareparts" v-model:selection="selectedSpareParts" :filters="sparePartFilters"  dataKey="code" responsiveLayout="scroll" >
+                <template #header>
+                  <div class="flex justify-content-end">
+                          <span class="p-input-icon-left">
+                              <i class="pi pi-search" />
+                              <InputText v-model="sparePartFilters['global'].value" placeholder="Keyword Search" />
+                          </span>
+                      </div>
+              </template>
+                <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
+                <Column field="description" header="Name"></Column>
+            </DataTable>
         <template #footer>
             <Button label="Cancel" icon="pi pi-times" @click="close" class="p-button-text"/>
-            <Button label="Save" icon="pi pi-check" @click="close" autofocus />
+            <Button label="Save" icon="pi pi-check" @click="acceptSelection" autofocus />
         </template>
     </Dialog>
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
+  import { FilterMatchMode } from 'primevue/api';
 
-import ItemSelector from '../components/ItemSelector.vue'
 
 export default {
     data() {
         return {
-            repair: {
-                registration: 'UBH 473R',
-                problem: 'Has issue with Engine',
-                recommendation: 'Replace spark plugs',
-                date: new Date(2022,8,8),
-                prevVisits: 0,
-                approvalStage: 'Director'
-            },
-            problems: [
-                'Engine problem',
-                'Brake system problem',
-                'Mirror problem',
-                'Exhaust problem',
-            ],
-            spareParts: [
-                'Exhaust',
-                'Mirror (2)',
-                'Indicator (2)',
-                'Brake fluid'
-            ],
+            selectedSpareParts: null,
+            sparePartFilters: null
         }
     },
     props: ['show'],
-    components: {ItemSelector},
+
+    async created() {
+        await this.fetchSpareparts()
+        this.initSparePartFilters()
+    },
+
+    computed: {
+        ...mapGetters('spareparts', ['getSpareparts'])
+    },
+
     methods: {
-        addProblem() {
-            console.log('add problem');
-        },
+        ...mapActions('spareparts', ['fetchSpareparts']),
 
-        removeProblem() {
-            console.log('remove problem');
-        },
-
-        addSparePart() {
-            console.log('add spare part');
-        },
-
-        removeSparePart() {
-            console.log('remove spare part event')
+        initSparePartFilters() {
+            this.sparePartFilters = {
+                'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
+            }
         },
 
         close() {
             this.$emit('close')
         },
+
+        acceptSelection() {
+            this.$emit('accept-selection', this.selectedSpareParts)
+            this.$emit('close')
+        }
     },
 }
 </script>
 
 <style scoped lang="scss">
-    label {
-        display: block;
-    }
-
-    form {
-        display: grid;
-        grid-template-columns: 1fr 40%;
-        align-items: center;
-        gap: 12px;
-
-        .visits {
-            background-color: white;
-            padding: 8px 12px;
-            border-radius: 2px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
-
-            p {
-                margin: 0;
-            }
-        }
-    }
-
-    ::v-deep(input) {
-        display: block;
-        width: 100%;
-    }
-
-    ::v-deep(textarea) {
-        width: 100%;
-    }
 </style>

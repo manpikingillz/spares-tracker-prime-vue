@@ -29,7 +29,8 @@ const state = {
 const getters = {
     getSpareparts: state => {
         return state.spareparts.map(sparepart => {
-                return {'name': sparepart.name, 'code': sparepart.id}
+            const vehicleModals = sparepart.vehicle_models.map(vehicleModal => vehicleModal.vehicle_model_name);
+                return {'name': sparepart.name,  'code': sparepart.id, 'description': sparepart.name + ' -> ' + sparepart.code + ' -> ' + vehicleModals.join(", ")}
         })
     }
 }

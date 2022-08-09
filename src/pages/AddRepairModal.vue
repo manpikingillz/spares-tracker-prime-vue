@@ -39,10 +39,13 @@
     <AddProblemOnRepairModal
         :show="showAddProblemOnRepairModal"
         @close="showAddProblemOnRepairModal=false"
-        @accept-selection="acceptProblemSelection"/>
+        @accept-selection="acceptProblemSelection"
+        @remove-item="removeProblem"/>
     <AddSparePartOnRepairModal
         :show="showAddSparePartOnRepairModal"
         @close="showAddSparePartOnRepairModal=false"
+        @accept-selection="acceptSparePartSelection"
+        @remove-item="removeSparePart"/>
     />
 </div>
 </template>
@@ -64,18 +67,8 @@ export default {
                 prevVisits: 0,
                 approvalStage: 'Director'
             },
-            problems: [
-                'Engine problem',
-                'Brake system problem',
-                'Mirror problem',
-                'Exhaust problem',
-            ],
-            spareParts: [
-                'Exhaust',
-                'Mirror (2)',
-                'Indicator (2)',
-                'Brake fluid'
-            ],
+            problems: [],
+            spareParts: [],
             showAddProblemOnRepairModal: false,
             showAddSparePartOnRepairModal: false
         }
@@ -87,24 +80,25 @@ export default {
         AddSparePartOnRepairModal
         },
     methods: {
-        addProblem() {
-            console.log('add problem');
+        removeProblem(data) {
+            this.problems = this.problems.filter(problem => problem.id !== data.id)
         },
 
-        removeProblem() {
-            console.log('remove problem');
-        },
-
-        addSparePart() {
-            console.log('add spare part');
-        },
-
-        removeSparePart() {
-            console.log('remove spare part event')
+        removeSparePart(data) {
+            this.spareParts = this.spareParts.filter(sparePart => sparePart.id !== data.id)
         },
 
         acceptProblemSelection(data) {
-            console.log('accept problem selection: ', data);
+            this.problems = data.map(item => {
+                return {'id': item.code, 'name': item.name}
+            })
+        },
+
+        acceptSparePartSelection(data) {
+            this.spareParts = data.map(item => {
+                return {'id': item.code, 'name': item.name}
+            })
+            console.log('accept spare part selection: ', data);
         },
 
         close() {
