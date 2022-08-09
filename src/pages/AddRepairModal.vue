@@ -7,25 +7,28 @@
             :style="{width: '50vw'}" :maximizable="true" :modal="true">
 
         <div class="form-container">
-            <form @submit.prevent="handleSubmit()" id="repairAddForm">
+            <form @submit.prevent="handleSubmit(!v$.$invalid)" id="repairAddForm">
                 <div class="field">
-                    <label for="registration">Number Plate</label>
-                      <Dropdown id="registration" v-model="repair.vehicle" :options="getVehicles" optionLabel="name" placeholder="Select One" filter=true ></Dropdown>
+                    <label for="registration" :class="{'p-error': v$.repair.vehicle.$invalid && submitted}">Number Plate</label>
+                      <Dropdown class="dropdown" id="registration" v-model="repair.vehicle" :options="getVehicles" optionLabel="name" placeholder="Select One" filter=true ></Dropdown>
+                       <small v-if="(v$.repair.vehicle.$invalid && submitted)" class="p-error">{{v$.repair.vehicle.required.$message.replace('Value', 'Vehicle')}}</small>
                 </div>
                 <div class="visits">
                     <p>Previous visits: {{ !!prevVisits ? prevVisits : 'None' }}</p>
                     <p>Date of last visit: {{ !!prevVisits ? date : 'N/A' }}</p>
                 </div>
                 <div class="field">
-                    <label for="problem">Problem Description</label>
+                    <label for="problem" :class="{'p-error': v$.repair.problem_description.$invalid && submitted }">Problem Description</label>
                     <Textarea id="problem" v-model="repair.problem_description"
                               :autoResize="true" rows="6" />
+                    <small v-if="(v$.repair.problem_description.$invalid && submitted)" class="p-error">{{v$.repair.problem_description.required.$message.replace('Value', 'Problem Description')}}</small>
                 </div>
                 <ItemSelector title='Problem Description' :items='problems' @add-item="showAddProblemOnRepairModal=true" @remove-item="removeProblem" />
                 <div class="field">
-                    <label for="recommendation">Solution / Recommendation</label>
+                    <label for="recommendation" :class="{'p-error': v$.repair.solution_description.$invalid && submitted}">Solution / Recommendation</label>
                     <Textarea id="recommendation" v-model="repair.solution_description"
                               :autoResize="true" rows="6" />
+                    <small v-if="(v$.repair.solution_description.$invalid && submitted)" class="p-error">{{v$.repair.solution_description.required.$message.replace('Value', 'Solution Description')}}</small>
                 </div>
                 <ItemSelector title='Needed spare parts' :items='spareParts' @add-item="showAddSparePartOnRepairModal = true" @remove-item="removeSparePart" />
             </form>
@@ -56,8 +59,14 @@ import { mapActions, mapGetters, mapState } from 'vuex'
 import ItemSelector from '../components/ItemSelector.vue'
 import AddProblemOnRepairModal from './AddProblemOnRepairModal.vue'
 import AddSparePartOnRepairModal from './AddSparePartOnRepairModal.vue'
+import useVuelidate from '@vuelidate/core';
+import { required } from '@vuelidate/validators'
 
 export default {
+    setup () {
+        return { v$: useVuelidate() }
+    },
+
     data() {
         return {
             repair: {
@@ -72,9 +81,21 @@ export default {
             problems: [],
             spareParts: [],
             showAddProblemOnRepairModal: false,
-            showAddSparePartOnRepairModal: false
+            showAddSparePartOnRepairModal: false,
+            submitted: false
         }
     },
+
+    validations() {
+        return {
+            repair: {
+                vehicle: { required },
+                problem_description: { required },
+                solution_description: { required }
+            }
+        }
+    },
+
     props: ['show'],
 
     created() {
@@ -120,17 +141,28 @@ export default {
             this.$emit('close', '')
         },
 
-        async handleSubmit() {
-            const problems = this.problems.map(item => item.id).join(',');
-            const spareParts = this.spareParts.map(item =>item.id).join(',');
+        async handleSubmit(isFormValid) {
+            this.submitted = true
+
+            if(!isFormValid){
+                return;
+            }
 
             const newRepair = {
                 vehicle: parseInt(this.repair.vehicle.code),
                 problem_description: this.repair.problem_description,
-                solution_description: this.repair.solution_description,
-                problems: problems,
-                spare_parts: spareParts
+                solution_description: this.repair.solution_description
             };
+
+            const problems = this.problems.map(item => item.id).join(',');
+            if (problems.length) {
+                newRepair['problems'] = problems
+            }
+
+            const spareParts = this.spareParts.map(item =>item.id).join(',');
+            if(spareParts.length) {
+                newRepair['spare_parts'] = spareParts
+            }
 
             await this.saveRepair(newRepair);
 
@@ -165,6 +197,10 @@ export default {
             p {
                 margin: 0;
             }
+        }
+
+        .dropdown {
+            width: 100%
         }
     }
 
