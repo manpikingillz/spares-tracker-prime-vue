@@ -2,7 +2,7 @@
     <div>
         <div class="header">
             <h6>{{ title }}</h6>
-            <button @click="$emit('add-item')">
+            <button @click="$emit('add-item')" type="button">
                 <i class='pi pi-plus-circle'></i>
             </button>
         </div>

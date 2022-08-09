@@ -135,7 +135,6 @@ export default {
             await this.saveRepair(newRepair);
 
             if (this.REPAIR_POST_SUCCESS) {
-                console.log('emitting close: ', this.REPAIR_POST_SUCCESS)
                 this.$emit('close', this.REPAIR_POST_SUCCESS)
             } else if (this.REPAIR_POST_ERROR) {
               this.$toast.add({severity: 'error', summary: 'Error Occured.', detail :this.VEHICLE_POST_ERROR, group: 'tr', life: 10000});

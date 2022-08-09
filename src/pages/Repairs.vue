@@ -108,7 +108,6 @@ export default {
         },
 
         closeModal(success) {
-            console.log('successss: ', success)
             if (success) {
 				this.$toast.add({severity: 'success', summary: 'Saved.', detail: 'Repair saved successfully.', group: 'tr', life: 10000});
 			}
