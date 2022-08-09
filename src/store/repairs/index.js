@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 const FETCH_REPAIR_PROBLEMS_URL = '/api/repairs/problems/'
+const REPAIR_POST_URL = '/api/repairs/create/'
 
 const state = {
     //Repair Problems
@@ -8,6 +9,11 @@ const state = {
     REPAIR_PROBLEMS_LOADING: false,
     REPAIR_PROBLEMS_SUCCESS: false,
     REPAIR_PROBLEMS_ERROR: '',
+
+    //Create Repair
+    REPAIR_POST_LOADING: false,
+    REPAIR_POST_SUCCESS: false,
+    REPAIR_POST_ERROR: '',
 }
 
 const getters = {
@@ -32,6 +38,17 @@ const mutations = {
     SET_REPAIR_PROBLEMS_ERROR(state, data) {
         state.REPAIR_PROBLEMS_ERROR = data
     },
+
+    // Create Repair
+    SET_REPAIR_POST_LOADING(state, data) {
+        state.REPAIR_POST_LOADING = data;
+    },
+    SET_REPAIR_POST_SUCCESS(state, data) {
+        state.REPAIR_POST_SUCCESS = data
+    },
+    SET_REPAIR_POST_ERROR(state, data) {
+        state.REPAIR_POST_ERROR = data
+    },
 }
 
 const actions = {
@@ -47,7 +64,24 @@ const actions = {
         })
     },
 
+    async saveRepair(context, data) {
+        let formData = new FormData()
+        Object.keys(data).forEach(key => {
+            formData.append(key, data[key])
+        })
 
+        context.commit('SET_REPAIR_POST_LOADING', true)
+        context.commit('SET_REPAIR_POST_SUCCESS', false);
+        context.commit('SET_REPAIR_POST_ERROR', '');
+        await axios.post(REPAIR_POST_URL, formData).then(() => {
+            context.commit('SET_REPAIR_POST_SUCCESS', true);
+        }).catch(error => {
+            context.commit('SET_REPAIR_POST_ERROR',  JSON.stringify(error));
+            console.error('Error Creating Repair: ', JSON.stringify(error));
+        })
+
+        context.commit('SET_REPAIR_POST_LOADING', false);
+    },
 }
 
 

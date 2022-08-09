@@ -6,24 +6,24 @@
             :style="{width: '50vw'}" :maximizable="true" :modal="true">
 
         <div class="form-container">
-            <form>
+            <form @submit.prevent="handleSubmit()" id="repairAddForm">
                 <div class="field">
                     <label for="registration">Number Plate</label>
                       <Dropdown id="registration" v-model="repair.vehicle" :options="getVehicles" optionLabel="name" placeholder="Select One" filter=true ></Dropdown>
                 </div>
                 <div class="visits">
-                    <p>Previous visits: {{ !!repair.prevVisits ? repair.prevVisits : 'None' }}</p>
-                    <p>Date of last visit: {{ !!repair.prevVisits ? repair.date : 'N/A' }}</p>
+                    <p>Previous visits: {{ !!prevVisits ? prevVisits : 'None' }}</p>
+                    <p>Date of last visit: {{ !!prevVisits ? date : 'N/A' }}</p>
                 </div>
                 <div class="field">
                     <label for="problem">Problem Description</label>
-                    <Textarea id="problem" v-model="repair.problem"
+                    <Textarea id="problem" v-model="repair.problem_description"
                               :autoResize="true" rows="6" />
                 </div>
                 <ItemSelector title='Problem Description' :items='problems' @add-item="showAddProblemOnRepairModal=true" @remove-item="removeProblem" />
                 <div class="field">
                     <label for="recommendation">Solution / Recommendation</label>
-                    <Textarea id="recommendation" v-model="repair.recommendation"
+                    <Textarea id="recommendation" v-model="repair.solution_description"
                               :autoResize="true" rows="6" />
                 </div>
                 <ItemSelector title='Needed spare parts' :items='spareParts' @add-item="showAddSparePartOnRepairModal = true" @remove-item="removeSparePart" />
@@ -31,7 +31,7 @@
         </div>
         <template #footer>
             <Button label="Cancel" icon="pi pi-times" @click="close" class="p-button-text"/>
-            <Button label="Save" icon="pi pi-check" @click="close" autofocus />
+            <Button label="Save" type="submit" icon="pi pi-check" autofocus form="repairAddForm" />
         </template>
     </Dialog>
 
@@ -60,13 +60,14 @@ export default {
     data() {
         return {
             repair: {
-                registration: 'UBH 473R',
-                problem: 'Has issue with Engine',
-                recommendation: 'Replace spark plugs',
-                date: new Date(2022,8,8),
-                prevVisits: 0,
-                approvalStage: 'Director'
+                vehicle: '',
+                problem_description: '',
+                solution_description: '',
+                problems: '',
+                spare_parts: ''
             },
+            prevVisits: '',
+            date: new Date(),
             problems: [],
             spareParts: [],
             showAddProblemOnRepairModal: false,
@@ -91,6 +92,7 @@ export default {
 
     methods: {
         ...mapActions('vehicles', ['fetchVehicles']),
+        ...mapActions('repairs', ['saveRepair']),
 
         removeProblem(data) {
             this.problems = this.problems.filter(problem => problem.id !== data.id)
@@ -114,6 +116,28 @@ export default {
 
         close() {
             this.$emit('close')
+        },
+
+        async handleSubmit() {
+            const problems = this.problems.map(item => item.id).join(',');
+            const spareParts = this.spareParts.map(item =>item.id).join(',');
+
+            const newRepair = {
+                vehicle: parseInt(this.repair.vehicle.code),
+                problem_description: this.repair.problem_description,
+                solution_description: this.repair.solution_description,
+                problems: problems,
+                spare_parts: spareParts
+            };
+
+            await this.saveRepair(newRepair);
+
+            // if (this.REPAIR_POST_SUCCESS) {
+            //     this.$emit('close', this.REPAIR_POST_SUCCESS)
+            // } else if (this.REPAIR_POST_ERROR) {
+            //   this.$toast.add({severity: 'error', summary: 'Error Occured.', detail :this.VEHICLE_POST_ERROR, group: 'tr', life: 10000});
+            // }
+
         },
     },
 }
