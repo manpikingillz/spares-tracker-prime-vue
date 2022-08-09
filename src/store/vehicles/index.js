@@ -41,6 +41,12 @@ const getters = {
         return state.vehicleMakes.map(vehicleMake => {
                 return {'name': vehicleMake.vehicle_make_name, 'code': vehicleMake.id}
         })
+    },
+
+    getVehicles: state => {
+        return state.vehicles.map(vehicle => {
+                return {'name': vehicle.number_plate, 'code': vehicle.id}
+        })
     }
 }
 
@@ -193,10 +199,10 @@ const actions = {
         });
     },
 
-    async fetchVehicles(context) {
+    async fetchVehicles(context, filters) {
         context.commit('SET_VEHICLES_LOADING', true)
 
-        const response = await axios.get(FETCH_VEHICLES_URL).then(response => {
+        const response = await axios.get(FETCH_VEHICLES_URL, {params: filters}).then(response => {
             context.commit('SET_VEHICLES_SUCCESS', false);
             context.commit('SET_VEHICLES', response.data)
         }).catch(error => {

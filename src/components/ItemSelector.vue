@@ -2,14 +2,14 @@
     <div>
         <div class="header">
             <h6>{{ title }}</h6>
-            <button>
+            <button @click="$emit('add-item')" type="button">
                 <i class='pi pi-plus-circle'></i>
             </button>
         </div>
         <ul>
             <li v-for="(item, index) in items" :key="`item-${index}`">
-                <span>{{ item }}</span>
-                <button>
+                <span>{{ item.name }}</span>
+                <button @click="$emit('remove-item', item)">
                     <i class='pi pi-minus-circle'></i>
                 </button>
             </li>
@@ -38,6 +38,7 @@ export default {
         border: 0;
         padding: 0;
         background-color: transparent;
+        cursor: pointer;
     }
 
     .header {
