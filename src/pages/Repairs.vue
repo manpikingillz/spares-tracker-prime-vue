@@ -10,7 +10,7 @@
                     <InputText placeholder="Search" type="text" />
                 </template>
             </Menubar>
-            <DataTable :value="repairs" :paginator="true" class="p-datatable-repairs" :rows="10"
+            <DataTable :value="repairsList" :paginator="true" class="p-datatable-repairs" :rows="10"
                        dataKey="id" :rowHover="true" :loading="loading"
                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
@@ -79,11 +79,13 @@ export default {
                 }
             ],
             showAddNewRepair: false,
+            repairsList: []
         }
     },
 
     async created() {
         await this.fetchRepairs();
+        this.repairsList = this.repairs
     },
 
     computed: {
