@@ -9,7 +9,7 @@
                     <InputText placeholder="Search" type="text" />
                 </template>
             </Menubar>
-            <DataTable :value="employees" :paginator="true" class="p-datatable-employees" :rows="10"
+            <DataTable :value="employeesList" :paginator="true" class="p-datatable-employees" :rows="10"
                        dataKey="id" :rowHover="true" :loading="loading"
                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
@@ -37,7 +37,7 @@
                 </Column>
                 <Column field="phone" header="Phone Number" sortable filterMatchMode="contains" style="min-width: 14rem">
                     <template #body="{data}">
-                        <span>{{data.phone}}</span>
+                        <span>{{data.phone_number}}</span>
                     </template>
                 </Column>
                 <Column field="address" header="Address" sortable :filterMenuStyle="{'width':'14rem'}" style="min-width: 10rem">
@@ -61,33 +61,12 @@
 
 <script>
 
-import AddEmployeeModal from './AddEmployeeModal.vue'
+import AddEmployeeModal from './AddEmployeeModal.vue';
+import { mapActions, mapState } from 'vuex';
 
 export default {
     data() {
         return {
-            employees: [
-                {
-                    first_name: 'Gilbert',
-                    middle_name: '',
-                    last_name: 'Twesigomwe',
-                    gender: 'Male',
-                    email: 'gilbert@employee.com',
-                    phone: '+268 77 888 9999',
-                    address: '33 Chester Avenue, Kampala',
-                    station: 'Station 1',
-                },
-                {
-                    first_name: 'Jane',
-                    middle_name: 'M',
-                    last_name: 'Doe',
-                    gender: 'Female',
-                    email: 'jane@employee.com',
-                    phone: '+44 22 333 4444',
-                    address: '127 Carmichael Avenue, Cardiff',
-                    station: 'Station 2',
-                }
-            ],
             loading: false,
             items: [
                 {
@@ -100,6 +79,19 @@ export default {
     },
     components: {
         AddEmployeeModal
+    },
+
+    created() {
+        this.fetchEmployees()
+        this.employeesList = this.employees;
+    },
+
+    computed: {
+        ...mapState('employees', ['employees'])
+    },
+
+    methods: {
+        ...mapActions('employees', ['fetchEmployees'])
     }
 }
 </script>
