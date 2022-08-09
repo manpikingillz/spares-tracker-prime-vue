@@ -37,8 +37,9 @@
 </template>
 
 <script>
-import useVuelidate from '@vuelidate/core'
-import { required } from '@vuelidate/validators'
+import useVuelidate from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
+import { mapActions, mapState } from 'vuex';
 
 export default {
     setup () {
@@ -74,18 +75,36 @@ export default {
         }
     },
 
+    computed: {
+        ...mapState('suppliers', ['SUPPLIERS_POST_SUCCESS', 'SUPPLIERS_POST_ERROR'])
+    },
 
     methods: {
+        ...mapActions('suppliers', ['saveSupplier']),
 
         closeModal() {
             this.$emit('close-modal', '')
         },
 
-
         async handleSubmit(isFormValid) {
             this.submitted = true;
             if (!isFormValid) {
                 return;
+            }
+
+            const newSupplier = {
+                name: this.supplier.name,
+                email: this.supplier.email,
+                phone: this.supplier.phone,
+                address: this.supplier.address,
+            }
+            await this.saveSupplier(newSupplier);
+
+            if(this.SUPPLIERS_POST_SUCCESS) {
+                console.log('SUPPLIERS_POST_SUCCESS: ', this.SUPPLIERS_POST_SUCCESS)
+                this.$emit('close-modal', this.SUPPLIERS_POST_SUCCESS)
+            } else if (this.SUPPLIERS_POST_ERROR) {
+                this.$toast.add({severity: 'error', summary: 'Error Occured.', detail :this.SUPPLIERS_POST_ERROR, group: 'tr', life: 10000});
             }
         }
     }
