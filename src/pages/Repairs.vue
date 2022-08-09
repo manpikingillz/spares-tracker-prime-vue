@@ -1,6 +1,7 @@
 <template>
     <div class="content-section implementation">
         <div class="card">
+            <Toast position="top-center" group="tr" />
             <Menubar :model="items">
                 <template #item="{item}">
                     <Button @click="showAddNewRepair = true" :label="item.label" icon="pi pi-plus" />
@@ -55,7 +56,7 @@
     </div>
     <AddRepairModal
         :show='showAddNewRepair'
-        @close='showAddNewRepair = false'
+        @close='closeModal'
     />
 </template>
 
@@ -105,6 +106,14 @@ export default {
                 day: '2-digit'
             });
         },
+
+        closeModal(success) {
+            console.log('successss: ', success)
+            if (success) {
+				this.$toast.add({severity: 'success', summary: 'Saved.', detail: 'Repair saved successfully.', group: 'tr', life: 10000});
+			}
+            this.showAddNewRepair = false
+        }
     },
     components: {
         AddRepairModal

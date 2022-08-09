@@ -1,5 +1,6 @@
 <template>
 <div>
+    <Toast position="top-center" group="tr" />
     <Dialog header="Add Repair"
             :visible="show"
             :breakpoints="{'960px': '75vw', '640px': '90vw'}"
@@ -50,7 +51,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
 import ItemSelector from '../components/ItemSelector.vue'
 import AddProblemOnRepairModal from './AddProblemOnRepairModal.vue'
@@ -87,7 +88,8 @@ export default {
         },
 
     computed: {
-        ...mapGetters('vehicles', ['getVehicles'])
+        ...mapGetters('vehicles', ['getVehicles']),
+        ...mapState('repairs', ['REPAIR_POST_SUCCESS', 'REPAIR_POST_ERROR'])
     },
 
     methods: {
@@ -115,7 +117,7 @@ export default {
         },
 
         close() {
-            this.$emit('close')
+            this.$emit('close', '')
         },
 
         async handleSubmit() {
@@ -132,11 +134,12 @@ export default {
 
             await this.saveRepair(newRepair);
 
-            // if (this.REPAIR_POST_SUCCESS) {
-            //     this.$emit('close', this.REPAIR_POST_SUCCESS)
-            // } else if (this.REPAIR_POST_ERROR) {
-            //   this.$toast.add({severity: 'error', summary: 'Error Occured.', detail :this.VEHICLE_POST_ERROR, group: 'tr', life: 10000});
-            // }
+            if (this.REPAIR_POST_SUCCESS) {
+                console.log('emitting close: ', this.REPAIR_POST_SUCCESS)
+                this.$emit('close', this.REPAIR_POST_SUCCESS)
+            } else if (this.REPAIR_POST_ERROR) {
+              this.$toast.add({severity: 'error', summary: 'Error Occured.', detail :this.VEHICLE_POST_ERROR, group: 'tr', life: 10000});
+            }
 
         },
     },
