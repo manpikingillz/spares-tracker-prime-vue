@@ -23,22 +23,22 @@
                 </template>
                 <Column field="registration" header="Number Plate" sortable style="min-width: 14rem">
                     <template #body="{data}">
-                        {{data.registration}}
+                        {{data.vehicle.number_plate}}
                     </template>
                 </Column>
                 <Column field="problem" header="Problem" sortable filterMatchMode="contains" style="min-width: 14rem">
                     <template #body="{data}">
-                        <span>{{data.problem}}</span>
+                        <span>{{data.problem_description}}</span>
                     </template>
                 </Column>
                 <Column field="recommendation" header="Recommendation" sortable filterMatchMode="contains" style="min-width: 14rem">
                     <template #body="{data}">
-                        <span>{{data.recommendation}}</span>
+                        <span>{{data.solution_description}}</span>
                     </template>
                 </Column>
                 <Column field="date" header="Date brought" sortable dataType="date" style="min-width: 8rem">
                     <template #body="{data}">
-                        {{formatDate(data.date)}}
+                        {{formatDate(data.created_at)}}
                     </template>
                 </Column>
                 <Column field="prevVisits" header="Previous Visits" sortable dataType="numeric" style="min-width: 8rem">
@@ -61,30 +61,13 @@
 </template>
 
 <script>
-
-import AddRepairModal from './AddRepairModal.vue'
+import { mapActions, mapState } from 'vuex';
+import AddRepairModal from './AddRepairModal.vue';
+import moment from 'moment';
 
 export default {
     data() {
         return {
-            repairs: [
-                {
-                    registration: 'UBH 473R',
-                    problem: 'Has issue with Engine',
-                    recommendation: 'Replace spark plugs',
-                    date: new Date(2022,8,8),
-                    prevVisits: 0,
-                    approvalStage: 'Director'
-                },
-                {
-                    registration: 'UBL 9443L',
-                    problem: 'Mirrors are broken',
-                    recommendation: 'Replace mirrors',
-                    date: new Date(2022,8,9),
-                    prevVisits: 1,
-                    approvalStage: 'Stores'
-                }
-            ],
             loading: false,
             statuses: [
                 'director', 'stores', 'mechanic'
@@ -98,14 +81,23 @@ export default {
             showAddNewRepair: false,
         }
     },
+
+    async created() {
+        await this.fetchRepairs();
+    },
+
+    computed: {
+        ...mapState('repairs', ['repairs'])
+    },
+
     methods: {
+        ...mapActions('repairs', ['fetchRepairs']),
+
         formatDate(value) {
-            return value.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: '2-digit'
-            });
+            return moment(value).format('ll');
         },
+
+
 
         closeModal(success) {
             if (success) {
