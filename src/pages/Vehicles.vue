@@ -52,7 +52,7 @@
 								</div>
 								<div class="flex align-items-center justify-content-between">
 									<span class="text-2xl font-semibold">{{slotProps.data.transmission}}</span>
-									<Button icon="pi pi-eye"></Button>
+									<Button icon="pi pi-eye" @click="showViewVehicleModal = true"></Button>
 								</div>
 							</div>
 						</div>
@@ -66,12 +66,15 @@
 			@close-modal="closeModal"
 			:show-modal="showAddVehicleModal"
 		/>
+
+        <ViewVehicleModal :show='showViewVehicleModal' @close='showViewVehicleModal = false' />
 	</div>
 </template>
 
 <script>
 	import { mapState, mapActions } from 'vuex';
 	import AddVehicleModal from './AddVehicleModal.vue'
+    import ViewVehicleModal from '@/pages/ViewVehicleModal.vue';
 
 	export default {
 		data() {
@@ -86,7 +89,7 @@
 					{label: 'Z-A', value: 'price'},
 				],
 				showAddVehicleModal: false,
-
+                showViewVehicleModal: false,
 				vehiclesList: []
 			}
 		},
@@ -96,6 +99,7 @@
 		},
 
 		components:{
+            ViewVehicleModal,
 			AddVehicleModal
 		},
 
