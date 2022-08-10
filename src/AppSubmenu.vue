@@ -6,14 +6,14 @@
 			'active-menuitem': (($route.meta.breadcrumb && item.label === $route.meta.breadcrumb[0].parent && layoutMode === 'horizontal') ||
 			($route.meta.breadcrumb && item.label === $route.meta.breadcrumb[0].label && layoutMode === 'horizontal') ||
 			(activeIndex === i && layoutMode !== 'horizontal') || (activeIndex === i && !root && layoutMode === 'horizontal')) && !item.disabled}]">
-				<router-link v-if="item.to" :to="item.to" :style="item.style" :class="[item.class, 'p-ripple', {'p-disabled': item.disabled}]" :target="item.target" exact
+				<router-link v-if="item.to && hasPermission(item.permission)" :to="item.to" :style="item.style" :class="[item.class, 'p-ripple', {'p-disabled': item.disabled}]" :target="item.target" exact
 					@click="onMenuItemClick($event,item,i)" @mouseenter="onMenuItemMouseEnter(i)" role="menuitem" v-ripple>
 					<i :class="['layout-menuitem-icon',item.icon]"></i>
 					<span class="layout-menuitem-text">{{item.label}}</span>
 					<i v-if="item.items" class="pi pi-fw pi-angle-down layout-submenu-toggler"></i>
 					<Badge v-if="item.badge" :value="item.badge"></Badge>
 				</router-link>
-				<a v-if="!item.to" :href="item.url||'#'" :style="item.style" :class="[item.class, 'p-ripple', {'p-disabled': item.disabled}]" :target="item.target"
+				<a v-if="!item.to && !hasPermission(item.permission)" :href="item.url||'#'" :style="item.style" :class="[item.class, 'p-ripple', {'p-disabled': item.disabled}]" :target="item.target"
 					@mouseenter="onMenuItemMouseEnter(i)" @click="onMenuItemClick($event,item,i)" role="menuitem" v-ripple>
 					<i :class="['layout-menuitem-icon',item.icon]"></i>
 					<span class="layout-menuitem-text">{{item.label}}</span>
@@ -31,6 +31,7 @@
 </template>
 <script>
 	import EventBus from './event-bus';
+	import { mapGetters } from 'vuex';
 
 	export default {
 		name: 'appsubmenu',
@@ -60,6 +61,11 @@
 				}
 			});
 		},
+
+		computed: {
+			...mapGetters('auth', ['hasPermission'])
+		},
+
 		methods: {
 			onMenuItemClick(event, item, index) {
 				if (item.disabled) {

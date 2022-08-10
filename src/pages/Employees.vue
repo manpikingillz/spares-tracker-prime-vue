@@ -4,13 +4,13 @@
             <Toast position="top-center" group="tr" />
             <Menubar :model="items">
                 <template #item="{item}">
-                    <Button @click="showAddNewEmployee = true" :label="item.label" icon="pi pi-plus" />
+                    <Button v-if="hasPermission('employee.add_employee')" @click="showAddNewEmployee = true" :label="item.label" icon="pi pi-plus" />
                 </template>
                 <template #end>
-                    <InputText placeholder="Search" type="text" />
+                    <InputText v-if="hasPermission('employee.view_employee')" placeholder="Search" type="text" />
                 </template>
             </Menubar>
-            <DataTable :value="employeesList" :paginator="true" class="p-datatable-employees" :rows="10"
+            <DataTable v-if="hasPermission('employee.view_employee')" :value="employeesList" :paginator="true" class="p-datatable-employees" :rows="10"
                        dataKey="id" :rowHover="true" :loading="EMPLOYEES_LOADING"
                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
@@ -63,7 +63,7 @@
 <script>
 
 import AddEmployeeModal from './AddEmployeeModal.vue';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default {
     data() {
@@ -89,7 +89,8 @@ export default {
     },
 
     computed: {
-        ...mapState('employees', ['employees', 'EMPLOYEES_LOADING'])
+        ...mapState('employees', ['employees', 'EMPLOYEES_LOADING']),
+        ...mapGetters('auth', ['hasPermission'])
     },
 
     methods: {
