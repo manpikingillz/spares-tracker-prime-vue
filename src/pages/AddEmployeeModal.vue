@@ -16,9 +16,8 @@
                             <small v-if="(v$.employee.last_name.$invalid && submitted)" class="p-error">{{v$.employee.last_name.required.$message.replace('Value', 'Name')}}</small>
                         </div>
                         <div class="field col-12 md:col-6">
-                            <label for="middle_name" :class="{'p-error':v$.employee.middle_name.$invalid && submitted}">Middle Name</label>
-                            <InputText id="middle_name" v-model="employee.middle_name" name="name" type="text" :class="{'p-invalid':v$.employee.middle_name.$invalid && submitted}" />
-                            <small v-if="(v$.employee.middle_name.$invalid && submitted)" class="p-error">{{v$.employee.middle_name.required.$message.replace('Value', 'Name')}}</small>
+                            <label for="middle_name" >Middle Name</label>
+                            <InputText id="middle_name" v-model="employee.middle_name" name="name" type="text" />
                         </div>
                         <div class="field col-12 md:col-6">
                             <label for="gender" :class="{'p-error':v$.employee.gender.$invalid && submitted}">Gender</label>
@@ -31,18 +30,17 @@
                             <small v-if="(v$.employee.email.$invalid && submitted)" class="p-error">{{v$.employee.email.required.$message.replace('Value', 'Email')}}</small>
                         </div>
                         <div class="field col-12 md:col-6">
-                            <label for="phone" :class="{'p-error':v$.employee.phone.$invalid && submitted}">Phone Number</label>
-                            <InputText id="phone" v-model="employee.phone" type="tel"  :class="{'p-invalid':v$.employee.phone.$invalid && submitted}"/>
-                            <small v-if="(v$.employee.phone.$invalid && submitted)" class="p-error">{{v$.employee.phone.required.$message.replace('Value', 'Phone')}}</small>
+                            <label for="phone" :class="{'p-error':v$.employee.phone_number.$invalid && submitted}">Phone Number</label>
+                            <InputText id="phone" v-model="employee.phone_number" type="tel"  :class="{'p-invalid':v$.employee.phone_number.$invalid && submitted}"/>
+                            <small v-if="(v$.employee.phone_number.$invalid && submitted)" class="p-error">{{v$.employee.phone_number.required.$message.replace('Value', 'Phone Number')}}</small>
                         </div>
                         <div class="field col-12 md:col-6">
-                            <label for="address" :class="{'p-error':v$.employee.address.$invalid && submitted}">Address</label>
-                            <Textarea id="address" v-model="employee.address" rows='5'  :class="{'p-invalid':v$.employee.address.$invalid && submitted}"/>
-                            <small v-if="(v$.employee.address.$invalid && submitted)" class="p-error">{{v$.employee.address.required.$message.replace('Value', 'Amount Paid')}}</small>
+                            <label for="address">Address</label>
+                            <Textarea id="address" v-model="employee.address" rows='5'/>
                         </div>
                         <div class="field col-12 md:col-6">
                             <label for="station" :class="{'p-error':v$.employee.station.$invalid && submitted}">Station</label>
-                            <Dropdown id="station" v-model="employee.station" :options="stations" optionLabel="name" placeholder="Select Station" filter=true :class="{'p-invalid':v$.employee.station.$invalid && submitted}"></Dropdown>
+                            <Dropdown id="station" v-model="employee.station" :options="stationsList" optionLabel="description" placeholder="Select Station" filter=true :class="{'p-invalid':v$.employee.station.$invalid && submitted}"></Dropdown>
                             <small v-if="(v$.employee.station.$invalid && submitted)" class="p-error">{{v$.employee.station.required.$message.replace('Value', 'Spare Part')}}</small>
                         </div>
                     </div>
@@ -57,8 +55,9 @@
 </template>
 
 <script>
-import useVuelidate from '@vuelidate/core'
-import { required } from '@vuelidate/validators'
+import useVuelidate from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default {
     setup () {
@@ -72,19 +71,16 @@ export default {
                 last_name: '',
                 gender: '',
                 email: '',
-                phone: '',
+                phone_number: '',
                 address: '',
                 station: '',
             },
             genders: [
-                { name: 'Male' },
-                { name: 'Female' },
+                { name: 'Male', code: 'MALE' },
+                { name: 'Female', code: 'FEMALE' },
             ],
-            stations: [
-                { name: 'Station 1' },
-                { name: 'Station 2' },
-            ],
-            submitted: false
+            submitted: false,
+            stationsList: []
         }
     },
 
@@ -96,7 +92,7 @@ export default {
                 last_name: { required },
                 gender: { required },
                 email: { required },
-                phone: { required },
+                phone_number: { required },
                 address: { required },
                 station: { required },
             }
@@ -110,18 +106,46 @@ export default {
         }
     },
 
+    async created() {
+        await this.fetchStations();
+        this.stationsList = this.getStations;
+    },
+
+
+    computed: {
+        ...mapState('employees', ['EMPLOYEES_POST_SUCCESS', 'EMPLOYEES_POST_ERROR']),
+        ...mapGetters('employees', ['getStations'])
+    },
 
     methods: {
+        ...mapActions('employees', ['saveEmployee', 'fetchStations']),
 
         closeModal() {
             this.$emit('close-modal', '')
         },
 
-
         async handleSubmit(isFormValid) {
             this.submitted = true;
             if (!isFormValid) {
                 return;
+            }
+
+            const newEmployee = {
+                first_name: this.employee.first_name,
+                middle_name: this.employee.middle_name,
+                last_name: this.employee.last_name,
+                gender: this.employee.gender.code,
+                email: this.employee.email,
+                phone_number: this.employee.phone_number,
+                address: this.employee.address,
+                station: parseInt(this.employee.station.code),
+            };
+            await this.saveEmployee(newEmployee);
+
+            if(this.EMPLOYEES_POST_SUCCESS) {
+                this.$emit('close-modal', this.EMPLOYEES_POST_SUCCESS)
+            } else if (this.EMPLOYEES_POST_ERROR) {
+                this.$toast.add({severity: 'error', summary: 'Error Occured.', detail :this.EMPLOYEES_POST_ERROR, group: 'tr', life: 10000});
             }
         }
     }

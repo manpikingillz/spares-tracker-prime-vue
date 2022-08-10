@@ -1,6 +1,7 @@
 <template>
     <div class="content-section implementation">
         <div class="card">
+            <Toast position="top-center" group="tr" />
             <Menubar :model="items">
                 <template #item="{item}">
                     <Button @click="showAddNewEmployee = true" :label="item.label" icon="pi pi-plus" />
@@ -10,14 +11,14 @@
                 </template>
             </Menubar>
             <DataTable :value="employeesList" :paginator="true" class="p-datatable-employees" :rows="10"
-                       dataKey="id" :rowHover="true" :loading="loading"
+                       dataKey="id" :rowHover="true" :loading="EMPLOYEES_LOADING"
                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                        :globalFilterFields="['first_name', 'last_name', 'middle_name', 'gender', 'email', 'phone', 'address', 'station']" responsiveLayout="scroll">
                 <template #empty>
                     No employees found.
                 </template>
-                <template #loading>
+                <template #EMPLOYEES_LOADING>
                     Loading employees data. Please wait.
                 </template>
                 <Column field="name" header="Name" sortable style="min-width: 14rem">
@@ -55,7 +56,7 @@
     </div>
     <AddEmployeeModal
         :show-modal='showAddNewEmployee'
-        @close-modal='showAddNewEmployee = false'
+        @close-modal='closeModal'
     />
 </template>
 
@@ -75,23 +76,33 @@ export default {
                 }
             ],
             showAddNewEmployee: false,
+            employeesList: []
         }
     },
     components: {
         AddEmployeeModal
     },
 
-    created() {
-        this.fetchEmployees()
+    async created() {
+        await this.fetchEmployees()
         this.employeesList = this.employees;
     },
 
     computed: {
-        ...mapState('employees', ['employees'])
+        ...mapState('employees', ['employees', 'EMPLOYEES_LOADING'])
     },
 
     methods: {
-        ...mapActions('employees', ['fetchEmployees'])
+        ...mapActions('employees', ['fetchEmployees']),
+
+        async closeModal(success) {
+				if (success) {
+                    await this.fetchEmployees();
+                    this.employeesList = this.employees;
+					this.$toast.add({severity: 'success', summary: 'Saved.', detail: 'Employee saved successfully.', group: 'tr', life: 10000});
+				}
+                this.showAddNewEmployee = false
+			},
     }
 }
 </script>
