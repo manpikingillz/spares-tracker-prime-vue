@@ -16,22 +16,20 @@
 				<div class="username-container">
 					<label>Username</label>
 					<div class="login-input">
-						<InputText placeholder="Username"/>
+						<InputText placeholder="Username" v-model="email"/>
 					</div>
 				</div>
 				<div class="password-container">
 					<label>Password</label>
 					<div class="login-input">
-							<InputText type="password" placeholder="Password"/>
+							<InputText type="password" placeholder="Password" v-model="password"/>
 					</div>
 				</div>
 				<div class="forgetpassword-container">
 					<a href="#" class="forget-password">Forget Password?</a>
 				</div>
 				<div>
-					<router-link to="/">
-						<Button label="Sign In" />
-					</router-link>
+					<Button label="Sign In" @click="authLogin" />
 				</div>
 			</div>
 
@@ -40,16 +38,42 @@
 </template>
 
 <script>
+	import { mapActions } from 'vuex'
+
 	export default {
 		data() {
 			return {
-				username: '',
+				email: '',
 				password: ''
+			}
+		},
+
+		methods: {
+			...mapActions('auth', ['performLogin']),
+
+			async authLogin() {
+				const data = {
+					email: this.email,
+					password: this.password
+				}
+				await this.performLogin(data)
+				this.$router.push('/')
 			}
 		}
 	}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
+.login-body {
+  background-image: linear-gradient(to right, #12aeee, #0080d4);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: top;
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  padding: 0;
+}
 </style>

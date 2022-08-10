@@ -33,8 +33,6 @@
 				:layoutMode="layoutMode" :wrapperMode="wrapperMode" @layout-mode-change="onLayoutModeChange"
 				@config-click="onConfigClick" @config-button-click="onConfigButtonClick"></AppConfig>
 
-			<AppFooter />
-
 			<div class="layout-mask"></div>
 		</div>
 	</div>
@@ -45,7 +43,6 @@ import AppTopBar from './AppTopbar.vue';
 import AppConfig from './AppConfig.vue';
 import AppMenu from './AppMenu.vue';
 import AppActionBar from './AppActionBar';
-import AppFooter from './AppFooter.vue';
 import EventBus from './event-bus';
 
 export default {
@@ -220,7 +217,6 @@ export default {
         'AppTopBar': AppTopBar,
         'AppConfig': AppConfig,
         'AppMenu': AppMenu,
-		'AppFooter': AppFooter,
 		'AppActionBar': AppActionBar
     },
 	beforeUnmount() {

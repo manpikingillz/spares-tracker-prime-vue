@@ -1,6 +1,8 @@
 import { createApp, h } from 'vue';
 import { reactive } from 'vue';
 import router from './router';
+import store from './store'
+import axios from 'axios'
 import AppWrapper from './AppWrapper.vue';
 import PrimeVue from 'primevue/config';
 import AutoComplete from 'primevue/autocomplete';
@@ -99,6 +101,60 @@ import 'primeicons/primeicons.css'
 import 'prismjs/themes/prism-coy.css';
 import './assets/demo/flags/flags.css';
 
+
+axios.defaults.baseURL = 'http://localhost:8000'
+
+const authToken = localStorage.getItem('auth_token');
+if (authToken) {
+    axios.defaults.headers['Authorization'] = 'Bearer ' + authToken
+}
+
+// Add a request interceptor
+axios.interceptors.request.use(function (config) {
+    // Do something before request is sent
+    return config;
+  }, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  });
+
+// Add a response interceptor
+axios.interceptors.response.use(function (response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    return response;
+  }, function (error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
+    return Promise.reject(error);
+  });
+
+// Ensure user is available in the state if for whatever reason they are not available anymore
+// E.g User may nolonger be available in store when a page refresh happens
+router.beforeEach(async (to) => {
+    const user = store.getters['auth/getUser']
+    const token = localStorage.getItem('auth_token')
+
+    // When token is not found locally, perform a logout and go to login page.
+    if (!token && to.name !== 'Login') {
+        console.info('Token not in local storage while away from Login Page. Calling logout!')
+        await store.dispatch('auth/performLogout')
+        return {name: 'Login'}
+    }
+
+    // When a user was not found, but we have a token, fetch the user
+    if (!user && token) {
+        console.info('User not in state, while token is available. Fetching user!')
+        await store.dispatch('auth/getCurrentUser')
+    }
+
+    // If user goes to login page but is logged, redirect them to home page.
+    if (to.name === 'Login' && token) {
+        console.info('Attempted to go to Login page while already loggedin. Redirecting to home!')
+        return {name: 'Dashboard'}
+    }
+});
+
 const app = createApp({
     render () { return h(AppWrapper); }
 });
@@ -109,6 +165,7 @@ app.use(PrimeVue, { ripple: true });
 app.use(ConfirmationService);
 app.use(ToastService);
 app.use(router);
+app.use(store)
 
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);
@@ -196,7 +253,6 @@ app.component('Tree', Tree);
 app.component('TreeSelect', TreeSelect);
 app.component('TreeTable', TreeTable);
 app.component('TriStateCheckbox', TriStateCheckbox);
-
 app.component('BlockViewer', BlockViewer);
 
 app.mount('#app');
