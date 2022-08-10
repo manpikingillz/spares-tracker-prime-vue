@@ -1,5 +1,5 @@
 <template>
-    <Dialog :header="`${vehicle.manufacture_year} ${vehicle.vehicle_model.vehicle_make.vehicle_make_name} ${vehicle.vehicle_model.vehicle_model_name}`"
+    <Dialog :header="`${vehicle?.manufacture_year} ${vehicle?.vehicle_model?.vehicle_make?.vehicle_make_name} ${vehicle?.vehicle_model?.vehicle_model_name}`"
             :visible="show" @input="$emit('close')"
             :breakpoints="{'960px': '75vw', '640px': '90vw'}"
             :style="{width: '50vw'}" :maximizable="true" :modal="true">
