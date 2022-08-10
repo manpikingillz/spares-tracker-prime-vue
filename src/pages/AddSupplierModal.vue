@@ -101,7 +101,6 @@ export default {
             await this.saveSupplier(newSupplier);
 
             if(this.SUPPLIERS_POST_SUCCESS) {
-                console.log('SUPPLIERS_POST_SUCCESS: ', this.SUPPLIERS_POST_SUCCESS)
                 this.$emit('close-modal', this.SUPPLIERS_POST_SUCCESS)
             } else if (this.SUPPLIERS_POST_ERROR) {
                 this.$toast.add({severity: 'error', summary: 'Error Occured.', detail :this.SUPPLIERS_POST_ERROR, group: 'tr', life: 10000});

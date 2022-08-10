@@ -7,13 +7,13 @@
                     <Button @click="showAddNewSupplier = true" :label="item.label" icon="pi pi-plus" />
                 </template>
                 <template #end>
-                    <InputText placeholder="Search" type="text" v-model="supplierFilters['global'].value" />
+                    <InputText placeholder="Search" type="text" />
                 </template>
             </Menubar>
             <DataTable :value="suppliersList" :paginator="true" class="p-datatable-suppliers" :rows="10"
                        dataKey="id" :rowHover="true" :loading="SUPPLIERS_LOADING"
                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
-                       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" responsiveLayout="scroll" v-model="supplierFilters">
+                       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" responsiveLayout="scroll">
                 <template #empty>
                     No suppliers found.
                 </template>
@@ -42,17 +42,16 @@
                 </Column>
             </DataTable>
         </div>
+        <AddSupplierModal
+            :show-modal='showAddNewSupplier'
+            @close-modal='closeModal'
+        />
     </div>
-    <AddSupplierModal
-        :show-modal='showAddNewSupplier'
-        @close-modal='closeModal'
-    />
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
 import AddSupplierModal from './AddSupplierModal.vue';
-import {FilterMatchMode} from 'primevue/api';
 
 export default {
     data() {
@@ -65,8 +64,7 @@ export default {
                 }
             ],
             suppliersList: [],
-            showAddNewSupplier: false,
-            supplierFilters: null
+            showAddNewSupplier: false
         }
     },
 
@@ -77,7 +75,6 @@ export default {
     async created() {
         await this.fetchSuppliers();
         this.suppliersList = this.suppliers;
-        this.initSupplierFilters()
     },
 
     computed: {
@@ -94,13 +91,7 @@ export default {
 					this.$toast.add({severity: 'success', summary: 'Saved.', detail: 'Supplier saved successfully.', group: 'tr', life: 10000});
 				}
                 this.showAddNewSupplier = false
-			},
-
-            initSupplierFilters() {
-                this.supplierFilters = {
-                    'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
-                }
-            }
+			}
     }
 }
 </script>
