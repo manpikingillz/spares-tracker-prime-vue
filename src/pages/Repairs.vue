@@ -11,14 +11,14 @@
                 </template>
             </Menubar>
             <DataTable :value="repairsList" :paginator="true" class="p-datatable-repairs" :rows="10"
-                       dataKey="id" :rowHover="true" :loading="loading"
+                       dataKey="id" :rowHover="true" :loading="REPAIRS_LOADING"
                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                        :globalFilterFields="['registration', 'problem', 'recommendation']" responsiveLayout="scroll">
                 <template #empty>
                     No repairs found.
                 </template>
-                <template #loading>
+                <template #REPAIRS_LOADING>
                     Loading repairs data. Please wait.
                 </template>
                 <Column field="registration" header="Number Plate" sortable style="min-width: 14rem">
@@ -89,7 +89,7 @@ export default {
     },
 
     computed: {
-        ...mapState('repairs', ['repairs'])
+        ...mapState('repairs', ['repairs', 'REPAIRS_LOADING'])
     },
 
     methods: {
