@@ -3,8 +3,8 @@
 		<Toast position="top-center" group="tr" />
 		<div class="col-12">
 			<div class="card">
-        <Button label="Add Vehicle" icon="pi pi-plus-circle" class="mr-2 mb-2" @click="showAddVehicleModal = true"></Button>
-				<DataView :value="vehiclesList" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
+        <Button v-if="hasPermission('vehicles.add_vehicle')" label="Add Vehicle" icon="pi pi-plus-circle" class="mr-2 mb-2" @click="showAddVehicleModal = true"></Button>
+				<DataView v-if="hasPermission('vehicles.view_vehicle')" :value="vehiclesList" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
 					<template #header>
 						<div class="grid grid-nogutter">
 							<div class="col-6 text-left">
@@ -50,7 +50,7 @@
 									<div class="text-2xl font-bold">{{slotProps.data.number_plate}}</div>
 									<div class="mb-3">Model Code: {{slotProps.data.vehicle_model_code}}</div>
 								</div>
-								<div class="flex align-items-center justify-content-between">
+								<div v-if="hasPermission('vehicles.view_vehicle')" class="flex align-items-center justify-content-between" >
 									<!-- <span class="text-2xl font-semibold">{{slotProps.data.transmission}}</span> -->
 									<Button icon="pi pi-eye" @click="showDetails(slotProps.data)"></Button>
 								</div>
@@ -76,7 +76,7 @@
 </template>
 
 <script>
-	import { mapState, mapActions } from 'vuex';
+	import { mapState, mapActions, mapGetters } from 'vuex';
 	import AddVehicleModal from './AddVehicleModal.vue'
     import ViewVehicleModal from '@/pages/ViewVehicleModal.vue';
 
@@ -100,7 +100,8 @@
 		},
 
 		computed: {
-			...mapState('vehicles', ['VEHICLE_POST_SUCCESS', 'vehicles'])
+			...mapState('vehicles', ['VEHICLE_POST_SUCCESS', 'vehicles']),
+			...mapGetters('auth', ['hasPermission'])
 		},
 
 		components:{
@@ -154,7 +155,7 @@
 				this.selectedVehicle = data;
 				this.showViewVehicleModal = true;
 				console.log('data: ', data)
-			}
+			},
 		}
 	}
 </script>

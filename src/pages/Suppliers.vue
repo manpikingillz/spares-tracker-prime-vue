@@ -4,13 +4,13 @@
         <div class="card">
             <Menubar :model="items">
                 <template #item="{item}">
-                    <Button @click="showAddNewSupplier = true" :label="item.label" icon="pi pi-plus" />
+                    <Button v-if="hasPermission('suppliers.add_supplier')" @click="showAddNewSupplier = true" :label="item.label" icon="pi pi-plus" />
                 </template>
                 <template #end>
-                    <InputText placeholder="Search" type="text" />
+                    <InputText v-if="hasPermission('suppliers.view_supplier')" placeholder="Search" type="text" />
                 </template>
             </Menubar>
-            <DataTable :value="suppliersList" :paginator="true" class="p-datatable-suppliers" :rows="10"
+            <DataTable v-if="hasPermission('suppliers.view_supplier')" :value="suppliersList" :paginator="true" class="p-datatable-suppliers" :rows="10"
                        dataKey="id" :rowHover="true" :loading="SUPPLIERS_LOADING"
                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" responsiveLayout="scroll">
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import AddSupplierModal from './AddSupplierModal.vue';
 
 export default {
@@ -78,7 +78,8 @@ export default {
     },
 
     computed: {
-        ...mapState('suppliers', ['suppliers', 'SUPPLIERS_LOADING'])
+        ...mapState('suppliers', ['suppliers', 'SUPPLIERS_LOADING']),
+        ...mapGetters('auth', ['hasPermission'])
     },
 
     methods: {
