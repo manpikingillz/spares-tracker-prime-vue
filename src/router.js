@@ -42,6 +42,16 @@ const routes = [
 		component: () => import('./pages/Repairs.vue')
 	},
 	{
+		path: '/repairs/:repairID',
+		name: 'repair-details',
+		meta: {
+			breadcrumb: [{parent:'Repair', label:''}],
+			title: 'Repair'
+		},
+		exact: true,
+		component: () => import('./pages/RepairDetailsPage.vue'),
+	},
+	{
 		path: '/employees',
 		name: 'Employees',
 		meta: {

@@ -12,6 +12,7 @@
             </Menubar>
             <DataTable :value="repairsList" :paginator="true" class="p-datatable-repairs" :rows="10"
                        dataKey="id" :rowHover="true" :loading="REPAIRS_LOADING"
+                       @row-click="viewRepairDetails"
                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                        :globalFilterFields="['registration', 'problem', 'recommendation']" responsiveLayout="scroll">
@@ -105,6 +106,10 @@ export default {
 			}
             this.showAddNewRepair = false
             await this.fetchRepairs();
+        },
+
+        viewRepairDetails(event) {
+            this.$router.push({name: 'repair-details', params: { repairID: event.data.pk ?? 1}})
         }
     },
     components: {
