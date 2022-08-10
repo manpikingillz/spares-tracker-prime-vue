@@ -21,10 +21,10 @@
 								<img :src="getUrl(slotProps.data)" class="my-4 md:my-0 w-9 md:w-10rem shadow-2 mr-0 md:mr-5" />
 								<div class="flex-1 text-center md:text-left">
 									<div class="font-bold text-2xl">{{slotProps.data.number_plate}}</div>
-									<div class="mb-3">{{slotProps.data.chasis_number}}</div>
+									<div class="mb-3">{{slotProps.data.vehicle_model.vehicle_model_name}} - {{slotProps.data.vehicle_model_code}}, Year : {{slotProps.data.manufacture_year}} </div>
 									<div class="flex align-items-center">
 										<i class="pi pi-tag mr-2"></i>
-										<span class="font-semibold">{{slotProps.data.vehicle_model_code}}</span>
+										<span class="font-semibold">{{slotProps.data.vehicle_model.vehicle_make.vehicle_make_name}}</span>
 									</div>
 
 								</div>
@@ -42,16 +42,16 @@
 								<div class="flex align-items-center justify-content-between">
 									<div class="flex align-items-center">
 										<i class="pi pi-tag mr-2"></i>
-										<span class="font-semibold">{{slotProps.data.number_plate}}</span>
+										<span class="font-semibold">  {{slotProps.data.manufacture_year}} {{slotProps.data.vehicle_model.vehicle_make.vehicle_make_name}} {{slotProps.data.vehicle_model.vehicle_model_name}}</span>
 									</div>
 								</div>
 								<div class="text-center">
 									<img :src="getUrl(slotProps.data)" class="w-9 shadow-2 my-3 mx-0"/>
-									<div class="text-2xl font-bold">{{slotProps.data.manufacture_year}}</div>
-									<div class="mb-3">{{slotProps.data.vehicle_model_code}}</div>
+									<div class="text-2xl font-bold">{{slotProps.data.number_plate}}</div>
+									<div class="mb-3">Model Code: {{slotProps.data.vehicle_model_code}}</div>
 								</div>
 								<div class="flex align-items-center justify-content-between">
-									<span class="text-2xl font-semibold">{{slotProps.data.transmission}}</span>
+									<!-- <span class="text-2xl font-semibold">{{slotProps.data.transmission}}</span> -->
 									<Button icon="pi pi-eye" @click="showDetails(slotProps.data)"></Button>
 								</div>
 							</div>

@@ -1,5 +1,5 @@
 <template>
-    <Dialog :header="`${vehicle.manufacture_year} ${vehicle.vehicle_model} ${vehicle.vehicle_model_code}`"
+    <Dialog :header="`${vehicle.manufacture_year} ${vehicle.vehicle_model.vehicle_make.vehicle_make_name} ${vehicle.vehicle_model.vehicle_model_name}`"
             :visible="show" @input="$emit('close')"
             :breakpoints="{'960px': '75vw', '640px': '90vw'}"
             :style="{width: '50vw'}" :maximizable="true" :modal="true">
@@ -17,9 +17,11 @@
         </Carousel>
         <ul class='info'>
             <template v-for='item in Object.keys(vehicle)' >
-                <li v-if="item !== 'vehicle_image'" :key='item' class=''>
+                <li v-if="!['vehicle_image', 'removed'].includes(item)" :key='item' class=''>
                     <h6>{{ item.replace('_', ' ') }}</h6>
-                    <p>{{ vehicle[item] }}</p>
+                    <p v-if="!['country_of_registration', 'vehicle_model'].includes(item)">{{ vehicle[item] }}</p>
+                    <p v-if="item === 'country_of_registration'">{{ vehicle[item].country_name }}</p>
+                    <p v-if="item === 'vehicle_model'">{{ vehicle[item].vehicle_model_name }}</p>
                 </li>
             </template>
         </ul>
