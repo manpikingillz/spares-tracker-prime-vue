@@ -3,8 +3,8 @@
 		<Toast position="top-center" group="tr" />
 		<div class="col-12">
 			<div class="card">
-        <Button label="Add Vehicle" icon="pi pi-plus-circle" class="mr-2 mb-2" @click="showAddVehicleModal = true"></Button>
-				<DataView :value="vehiclesList" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
+        <Button v-if="hasPermission('vehicles.add_vehicle')" label="Add Vehicle" icon="pi pi-plus-circle" class="mr-2 mb-2" @click="showAddVehicleModal = true"></Button>
+				<DataView v-if="hasPermission('vehicles.view_vehicle')" :value="vehiclesList" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
 					<template #header>
 						<div class="grid grid-nogutter">
 							<div class="col-6 text-left">

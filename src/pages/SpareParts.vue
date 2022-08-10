@@ -3,6 +3,7 @@
     <div class="flex justify-content-end">
       <SelectButton v-model="listOrGrid" :options="options" @click="changeListOrGrid()" />
     </div>
+    <div v-if="hasPermission('spareparts.view_sparepart')">
     <div class="grid" v-if="listOrGrid === 'Grid'">
       <div class="col-12">
         <Breadcrumb :home="home" :model="items">
@@ -147,6 +148,7 @@
               </Column>
           </DataTable>
     </div>
+    </div>
 
     <div v-if="listOrGrid == 'Purchases'">
         <Toast position="top-center" group="tr" />
@@ -154,7 +156,7 @@
 
             <template #header>
                   <div class="flex justify-content-between">
-                          <Button type="button" icon="pi pi-plus-circle" label="Add Purchase" @click="showAddSparePartPurchaseModal=true"/>
+                          <Button v-if="hasPermission('spareparts.add_sparepartpurchase')" type="button" icon="pi pi-plus-circle" label="Add Purchase" @click="showAddSparePartPurchaseModal=true"/>
                           <span class="p-input-icon-left">
                               <i class="pi pi-search" />
                               <InputText v-model="sparePartsFilters['global'].value" placeholder="Keyword Search" />
@@ -213,7 +215,7 @@
 </template>
 
 <script>
-	import { mapState, mapActions } from 'vuex';
+	import { mapState, mapActions, mapGetters } from 'vuex';
   import { FilterMatchMode } from 'primevue/api';
   import moment from 'moment'
 	import AddSparePartPurchaseModal from './AddSparePartPurchaseModal.vue'
@@ -262,11 +264,18 @@
 
 		computed: {
 			...mapState('vehicles', ['VEHICLE_POST_SUCCESS', 'vehicleMakes', 'vehicleModels']),
-      ...mapState('spareparts', ['sparepartsCategories', 'spareparts', 'sparepartsPurchases'])
+      ...mapState('spareparts', ['sparepartsCategories', 'spareparts', 'sparepartsPurchases']),
+      ...mapGetters('auth', ['hasPermission',])
 		},
 
     created() {
       this.initSparePartsFilters();
+      if(!this.hasPermission('spareparts.view_sparepartpurchase')){
+        this.options = this.options.filter(item => item !== 'Purchases')
+      }
+      if(!this.hasPermission('spareparts.view_sparepart')) {
+        this.options = this.options.filter(item => item !== 'Grid' && item !== 'List')
+      }
     },
 
 		async mounted() {

@@ -15,7 +15,7 @@ const getters = {
     getUser: state => state.user,
     isAuthenticated: state => !!state.token,
     hasPermission: state => permission =>  {
-        return state.user.permissions.includes(permission)
+        return state?.user?.permissions?.includes(permission)
     }
 }
 
