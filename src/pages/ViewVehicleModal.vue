@@ -1,9 +1,9 @@
 <template>
-    <Dialog :header="`${vehicle.manufacture_year} ${vehicle.make} ${vehicle.model}`"
+    <Dialog :header="`${vehicle.manufacture_year} ${vehicle.vehicle_model} ${vehicle.vehicle_model_code}`"
             :visible="show" @input="$emit('close')"
             :breakpoints="{'960px': '75vw', '640px': '90vw'}"
             :style="{width: '50vw'}" :maximizable="true" :modal="true">
-        <Carousel :value="vehicle.images"
+        <Carousel :value="getImages()"
                   :numVisible="1" :numScroll="1">
             <template #item="slotProps">
                 <div class="vehicle-item">
@@ -17,7 +17,7 @@
         </Carousel>
         <ul class='info'>
             <template v-for='item in Object.keys(vehicle)' >
-                <li v-if="item !== 'images'" :key='item' class=''>
+                <li v-if="item !== 'vehicle_image'" :key='item' class=''>
                     <h6>{{ item.replace('_', ' ') }}</h6>
                     <p>{{ vehicle[item] }}</p>
                 </li>
@@ -35,33 +35,32 @@ export default {
     name: 'ViewVehicleModal',
     data() {
         return {
-            vehicle: {
-                number_plate: 'UBH 2345',
-                country: 'Uganda',
-                chasis_number: '1234567890',
-                manufacture_year: '2006',
-                manufacture_month: 'February',
-                engine_size: 2,
-                registration_year: '2010',
-                registration_month: 'June',
-                exterior_color: 'Blue',
-                make: 'Toyota',
-                fuel: 'Petrol',
-                model: 'Yarris',
-                transmission: 'Manual',
-                model_code: 'YR2006',
-                body_type: 'Sedan',
-                steering: 'Right',
-                drivetrain: '4 Wheel Drive',
-                images: [
-                    'https://images.unsplash.com/photo-1581862142388-23e1c52ca091?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8dG95b3RhfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-                    'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fHRveW90YXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60',
-                ]
-            },
+            vehicleDetail: {}
         }
     },
 
-    props: ['show'],
+    props: {
+        show: {
+            type: Boolean,
+            default: false
+        },
+        vehicle: {
+            type: Object,
+            required: true
+        }
+    },
+
+    methods: {
+        getImages() {
+				if (this.vehicle && this.vehicle.vehicle_image && this.vehicle.vehicle_image.file) {
+					const url = 'http://localhost:8000'+this.vehicle.vehicle_image.file;
+                    let images = []
+                    images.push(url)
+					return images;
+				}
+				return []
+			},
+    }
 };
 
 </script>

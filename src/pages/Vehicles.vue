@@ -30,7 +30,7 @@
 								</div>
 								<div class="flex flex-row md:flex-column justify-content-between w-full md:w-auto align-items-center md:align-items-end mt-5 md:mt-0">
 									<span class="text-2xl font-semibold mb-2 align-self-center md:align-self-end">{{slotProps.data.price}}</span>
-									<Button icon="pi pi-eye" label="View" class="mb-2"></Button>
+									<Button icon="pi pi-eye" label="View" class="mb-2" @click="showDetails(slotProps.data)"></Button>
 								</div>
 							</div>
 						</div>
@@ -52,7 +52,7 @@
 								</div>
 								<div class="flex align-items-center justify-content-between">
 									<span class="text-2xl font-semibold">{{slotProps.data.transmission}}</span>
-									<Button icon="pi pi-eye" @click="showViewVehicleModal = true"></Button>
+									<Button icon="pi pi-eye" @click="showDetails(slotProps.data)"></Button>
 								</div>
 							</div>
 						</div>
@@ -67,7 +67,11 @@
 			:show-modal="showAddVehicleModal"
 		/>
 
-        <ViewVehicleModal :show='showViewVehicleModal' @close='showViewVehicleModal = false' />
+        <ViewVehicleModal
+			:show='showViewVehicleModal'
+			:vehicle="selectedVehicle"
+			@close='showViewVehicleModal = false'
+		/>
 	</div>
 </template>
 
@@ -90,7 +94,8 @@
 				],
 				showAddVehicleModal: false,
                 showViewVehicleModal: false,
-				vehiclesList: []
+				vehiclesList: [],
+				selectedVehicle: {}
 			}
 		},
 
@@ -143,6 +148,12 @@
 					return url;
 				}
 				return ''
+			},
+
+			showDetails(data) {
+				this.selectedVehicle = data;
+				this.showViewVehicleModal = true;
+				console.log('data: ', data)
 			}
 		}
 	}
