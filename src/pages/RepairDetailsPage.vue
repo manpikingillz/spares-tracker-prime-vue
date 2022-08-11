@@ -5,7 +5,7 @@
                 <div class='flex-between'>
                     <div class='group'>
                         <label>Car Number Plate</label>
-                        <h2 class='repair__registration'>UBH 321R</h2>
+                        <h2 class='repair__registration'> {{repair?.vehicle?.number_plate}}</h2>
                     </div>
                     <div class='group'>
                         <label for='status'>Status</label>
@@ -39,9 +39,9 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for='(item, index) in neededSpares' :key='`part-${index}`'>
-                                    <td>{{ item.part }}</td>
-                                    <td>{{ item.addedBy }}</td>
+                                <tr v-for='(item, index) in repair.spare_parts' :key='`part-${index}`'>
+                                    <td>{{ item.name }}</td>
+                                    <!-- <td>{{ item.addedBy }}</td> -->
                                     <td>
                                         <div class='availability'>
                                             <span :class="['availability__indicator', {available: item.isAvailable}]" />
@@ -77,9 +77,9 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for='(item, index) in problems' :key='`problem-${index}`'>
-                                    <td>{{ item.description }}</td>
-                                    <td>{{ item.addedBy }}</td>
+                                <tr v-for='(item, index) in repair.problems' :key='`problem-${index}`'>
+                                    <td>{{ item.name }}</td>
+                                    <!-- <td>{{ item.addedBy }}</td> -->
                                     <td>
                                         <button class="icon-button">
                                             <i class='pi pi-minus-circle'></i>
@@ -116,6 +116,8 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex';
+
 export default {
     name: 'RepairDetailsPage',
     data() {
@@ -179,7 +181,19 @@ export default {
         };
     },
 
+    async created() {
+        const repairId = this.$route.params.repairID
+        await this.fetchRepairDetails(repairId)
+    },
+
+    computed: {
+        ...mapState('repairs', ['repair'])
+    },
+
+
     methods: {
+        ...mapActions('repairs', ['fetchRepairDetails']),
+
         addNewComment() {
             if (this.newComment)
             this.comments.push({

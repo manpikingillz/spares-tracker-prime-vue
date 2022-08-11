@@ -1,8 +1,9 @@
 import axios from 'axios'
 
-const FETCH_REPAIR_PROBLEMS_URL = '/api/repairs/problems/'
-const FETCH_REPAIRS_URL = '/api/repairs/'
-const REPAIR_POST_URL = '/api/repairs/create/'
+const FETCH_REPAIR_PROBLEMS_URL = '/api/repairs/problems/';
+const FETCH_REPAIRS_URL = '/api/repairs/';
+const REPAIR_POST_URL = '/api/repairs/create/';
+
 
 const state = {
     //Repair Problems
@@ -21,6 +22,12 @@ const state = {
     REPAIR_POST_LOADING: false,
     REPAIR_POST_SUCCESS: false,
     REPAIR_POST_ERROR: '',
+
+    //View Repair
+    repair: [],
+    REPAIR_LOADING: false,
+    REPAIR_SUCCESS: false,
+    REPAIR_ERROR: '',
 }
 
 const getters = {
@@ -60,7 +67,7 @@ const mutations = {
         state.REPAIRS_ERROR = data
     },
 
-    // Create Repair
+    // Repair Create
     SET_REPAIR_POST_LOADING(state, data) {
         state.REPAIR_POST_LOADING = data;
     },
@@ -69,6 +76,20 @@ const mutations = {
     },
     SET_REPAIR_POST_ERROR(state, data) {
         state.REPAIR_POST_ERROR = data
+    },
+
+    // Repair detail
+    SET_REPAIR(state, data) {
+        state.repair = data;
+    },
+    SET_REPAIR_LOADING(state, data) {
+        state.REPAIR_LOADING = data;
+    },
+    SET_REPAIR_SUCCESS(state, data) {
+        state.REPAIR_SUCCESS = data
+    },
+    SET_REPAIR_ERROR(state, data) {
+        state.REPAIR_ERROR = data
     },
 }
 
@@ -96,6 +117,20 @@ const actions = {
             console.error('Error Fetching Repairs: ', error);
         })
     },
+
+    async fetchRepairDetails(context, pk) {
+        context.commit('SET_REPAIR_LOADING', true)
+        const url = FETCH_REPAIRS_URL + pk +'/'
+        return await axios.get(url).then(response => {
+            context.commit('SET_REPAIR_LOADING', false);
+            context.commit('SET_REPAIR', response.data)
+        }).catch(error => {
+            context.commit('SET_REPAIR_LOADING', false);
+            context.commit('SET_REPAIR_ERROR', error);
+            console.error('Error Fetching Repair: ', error);
+        })
+    },
+
 
     async saveRepair(context, data) {
         let formData = new FormData()

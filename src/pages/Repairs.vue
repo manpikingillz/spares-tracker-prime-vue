@@ -22,32 +22,32 @@
                 <template #REPAIRS_LOADING>
                     Loading repairs data. Please wait.
                 </template>
-                <Column field="registration" header="Number Plate" sortable style="min-width: 14rem">
+                <Column field="registration" header="Number Plate" sortable style="min-width: 14rem; cursor: pointer">
                     <template #body="{data}">
                         {{data.vehicle.number_plate}}
                     </template>
                 </Column>
-                <Column field="problem" header="Problem" sortable filterMatchMode="contains" style="min-width: 14rem">
+                <Column field="problem" header="Problem" sortable filterMatchMode="contains" style="min-width: 14rem; cursor: pointer">
                     <template #body="{data}">
                         <span>{{data.problem_description}}</span>
                     </template>
                 </Column>
-                <Column field="recommendation" header="Recommendation" sortable filterMatchMode="contains" style="min-width: 14rem">
+                <Column field="recommendation" header="Recommendation" sortable filterMatchMode="contains" style="min-width: 14rem; cursor: pointer">
                     <template #body="{data}">
                         <span>{{data.solution_description}}</span>
                     </template>
                 </Column>
-                <Column field="date" header="Date brought" sortable dataType="date" style="min-width: 8rem">
+                <Column field="date" header="Date brought" sortable dataType="date" style="min-width: 8rem; cursor: pointer">
                     <template #body="{data}">
                         {{formatDate(data.created_at)}}
                     </template>
                 </Column>
-                <Column field="prevVisits" header="Previous Visits" sortable dataType="numeric" style="min-width: 8rem">
+                <Column field="prevVisits" header="Previous Visits" sortable dataType="numeric" style="min-width: 8rem; cursor: pointer">
                     <template #body="{data}">
                         {{data.prevVisits}}
                     </template>
                 </Column>
-                <Column field="approvalStage" header="Where is it" sortable :filterMenuStyle="{'width':'14rem'}" style="min-width: 10rem">
+                <Column field="approvalStage" header="Where is it" sortable :filterMenuStyle="{'width':'14rem'}" style="min-width: 10rem; cursor: pointer">
                     <template #body="{data}">
                         <span>{{data.approvalStage}}</span>
                     </template>
@@ -110,7 +110,7 @@ export default {
         },
 
         viewRepairDetails(event) {
-            this.$router.push({name: 'repair-details', params: { repairID: event.data.pk ?? 1}})
+            this.$router.push({name: 'repair-details', params: { repairID: event.data.id ?? 1}})
         }
     },
     components: {
