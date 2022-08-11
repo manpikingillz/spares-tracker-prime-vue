@@ -9,7 +9,7 @@
         <ul>
             <li v-for="(item, index) in items" :key="`item-${index}`">
                 <span>{{ item.name }}</span>
-                <button @click="$emit('remove-item', item)">
+                <button @click="$emit('remove-item', item)" type="button">
                     <i class='pi pi-minus-circle'></i>
                 </button>
             </li>

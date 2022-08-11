@@ -107,6 +107,7 @@ export default {
 			}
             this.showAddNewRepair = false
             await this.fetchRepairs();
+            this.repairsList = this.repairs
         },
 
         viewRepairDetails(event) {

@@ -11,26 +11,31 @@
                         <label for='status'>Status</label>
                         <Dropdown id='status' v-model='selectedStatus'
                                   :options='statuses'
-                                  placeholder='Select' />
+                                  placeholder='Select'
+                                  optionLabel="name"/>
                     </div>
                 </div>
                 <Card>
                     <template #content>
-                        <p>Previous visits: 2</p>
-                        <p>Date brought for repair: June 20, 2022</p>
+                        <p  v-show="repair.vehicle">Previous visits: {{ !!prevVisits ? prevVisits : '0' }}</p>
+                        <p  v-show="repair.vehicle">Date of last visit: {{ !!prevVisits ? dateOfLastVisit : 'None' }}</p>
                     </template>
                 </Card>
                 <div class='group'>
                     <div class='header'>
                         <h6>Needed Spare Parts</h6>
-                        <button class="icon-button" type='button'>
+                        <button
+                            class="icon-button"
+                            type='button'
+                            @click="showAddSparePartOnRepairModal=true"
+                        >
                             <i class='pi pi-plus-circle'></i>
                         </button>
                     </div>
                     <Card>
                         <template #content>
                             <table>
-                                <thead>
+                                <thead v-if="spareParts.length">
                                 <tr>
                                     <th>Spare Part</th>
                                     <th>Added By</th>
@@ -39,9 +44,9 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for='(item, index) in repair.spare_parts' :key='`part-${index}`'>
+                                <tr v-for='(item, index) in spareParts' :key='`part-${index}`'>
                                     <td>{{ item.name }}</td>
-                                    <!-- <td>{{ item.addedBy }}</td> -->
+                                    <td>{{ item.addedBy }}</td>
                                     <td>
                                         <div class='availability'>
                                             <span :class="['availability__indicator', {available: item.isAvailable}]" />
@@ -49,7 +54,10 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <button class="icon-button">
+                                        <button
+                                            class="icon-button"
+                                            @click="removeSparePart(item)"
+                                        >
                                             <i class='pi pi-minus-circle'></i>
                                         </button>
                                     </td>
@@ -62,14 +70,18 @@
                 <div class='group'>
                     <div class='header'>
                         <h6>Identified Problems</h6>
-                        <button class="icon-button" type='button'>
+                        <button
+                            class="icon-button"
+                            type='button'
+                            @click="showAddProblemOnRepairModal=true"
+                        >
                             <i class='pi pi-plus-circle'></i>
                         </button>
                     </div>
                     <Card>
                         <template #content>
                             <table>
-                                <thead>
+                                <thead v-if="problems.length">
                                 <tr>
                                     <th>Problem</th>
                                     <th>Added By</th>
@@ -77,11 +89,14 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for='(item, index) in repair.problems' :key='`problem-${index}`'>
+                                <tr v-for='(item, index) in problems' :key='`problem-${index}`'>
                                     <td>{{ item.name }}</td>
-                                    <!-- <td>{{ item.addedBy }}</td> -->
+                                    <td>{{ item.addedBy }}</td>
                                     <td>
-                                        <button class="icon-button">
+                                        <button
+                                            class="icon-button"
+                                            @click="removeProblem(item)"
+                                        >
                                             <i class='pi pi-minus-circle'></i>
                                         </button>
                                     </td>
@@ -112,11 +127,27 @@
                 </div>
             </div>
         </div>
+
+        <AddProblemOnRepairModal
+            :show="showAddProblemOnRepairModal"
+            @close="showAddProblemOnRepairModal=false"
+            @accept-selection="acceptProblemSelection"
+            @remove-item="removeProblem"
+        />
+        <AddSparePartOnRepairModal
+            :show="showAddSparePartOnRepairModal"
+            @close="showAddSparePartOnRepairModal=false"
+            @accept-selection="acceptSparePartSelection"
+            @remove-item="removeSparePart"
+        />
     </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import AddProblemOnRepairModal from './AddProblemOnRepairModal.vue';
+import AddSparePartOnRepairModal from './AddSparePartOnRepairModal.vue';
+import moment from 'moment';
 
 export default {
     name: 'RepairDetailsPage',
@@ -128,11 +159,11 @@ export default {
                 },
             ],
             statuses: [
-                'Being Repaired',
-                'Checking Availability of Spare parts',
-                'Director Approval',
-                'Waiting Review',
-                'Ready for Picking',
+                {name: 'Received', code: 'RECEIVED'},
+                {name: 'For Review', code: 'FOR_REVIEW'},
+                {name: 'For Director Approval', code: 'FOR_DIRECTOR_APPROVAL'},
+                {name: 'For Repair', code: 'FOR_REPAIR'},
+                {name: 'For Picking', code: 'FOR_PICKING'}
             ],
             selectedStatus: 'Being Repaired',
             neededSpares: [
@@ -155,16 +186,7 @@ export default {
                     isAvailable: false,
                 },
             ],
-            problems: [
-                {
-                    description: 'Engine Problem',
-                    addedBy: 'Gibert',
-                },
-                {
-                    description: 'Break System Problem',
-                    addedBy: 'Kaka',
-                },
-            ],
+
             comments: [
                 {
                     sender: 'Gilbert',
@@ -178,21 +200,42 @@ export default {
                 },
             ],
             newComment: '',
+            problems: [],
+            spareParts: [],
+            prevVisits: '',
+            dateOfLastVisit: '',
+            showAddProblemOnRepairModal: false,
+            showAddSparePartOnRepairModal: false,
         };
+    },
+
+    components: {
+        AddProblemOnRepairModal,
+        AddSparePartOnRepairModal
     },
 
     async created() {
         const repairId = this.$route.params.repairID
         await this.fetchRepairDetails(repairId)
+        this.problems = this.repair.problems;
+        this.spareParts = this.repair.spare_parts;
+
+
+        const filters = {
+                'vehicle': this.repair.vehicle.id
+            }
+        await this.fetchRepairs(filters)
+        this.prevVisits = this.repairs.length
+        this.dateOfLastVisit = moment(this.repairs[this.repairs.length - 1].created_at).format('ll')
     },
 
     computed: {
-        ...mapState('repairs', ['repair'])
+        ...mapState('repairs', ['repair', 'repairs'])
     },
 
 
     methods: {
-        ...mapActions('repairs', ['fetchRepairDetails']),
+        ...mapActions('repairs', ['fetchRepairDetails', 'fetchRepairs']),
 
         addNewComment() {
             if (this.newComment)
@@ -202,7 +245,27 @@ export default {
                 message: this.newComment,
             });
             this.newComment = '';
-        }
+        },
+
+        removeProblem(data) {
+            this.problems = this.problems.filter(problem => problem.id !== data.id)
+        },
+
+        removeSparePart(data) {
+            this.spareParts = this.spareParts.filter(sparePart => sparePart.id !== data.id)
+        },
+
+        acceptProblemSelection(data) {
+            this.problems = data.map(item => {
+                return {'id': item.code, 'name': item.name}
+            })
+        },
+
+        acceptSparePartSelection(data) {
+            this.spareParts = data.map(item => {
+                return {'id': item.code, 'name': item.name}
+            })
+        },
     }
 };
 </script>
