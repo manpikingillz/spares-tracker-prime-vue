@@ -1,5 +1,6 @@
 <template>
     <div class='content-section implementation'>
+        <Message v-if="severity && message" :severity="severity">{{ message }}</Message>
         <div class='card'>
             <div class='repair'>
                 <div class='flex-between'>
@@ -12,7 +13,8 @@
                         <Dropdown id='status' v-model='selectedStatus'
                                   :options='statuses'
                                   placeholder='Select'
-                                  optionLabel="name"/>
+                                  optionLabel="name"
+                                  @change="saveStatus"/>
                     </div>
                 </div>
                 <Card>
@@ -165,7 +167,7 @@ export default {
                 {name: 'For Repair', code: 'FOR_REPAIR'},
                 {name: 'For Picking', code: 'FOR_PICKING'}
             ],
-            selectedStatus: 'Being Repaired',
+            selectedStatus: '',
             neededSpares: [
                 {
                     part: 'Exhaust',
@@ -206,7 +208,9 @@ export default {
             showAddSparePartOnRepairModal: false,
             problemRecommendationsList: [],
             sparepartRecommendationsList: [],
-            repairId: ''
+            repairId: '',
+            severity: '',
+            message: ''
         };
     },
 
@@ -218,6 +222,7 @@ export default {
     async created() {
         this.repairId = this.$route.params.repairID
         await this.fetchRepairDetails(this.repairId)
+        this.selectedStatus = this.statuses.find(item => item.code === this.repair.status);
 
         const filters = {
                 'vehicle': this.repair.vehicle.id
@@ -235,13 +240,19 @@ export default {
     },
 
     computed: {
-        ...mapState('repairs', ['repair', 'repairs', 'problemRecommendations', 'sparepartRecommendations']),
+        ...mapState('repairs', ['repair', 'repairs', 'problemRecommendations', 'sparepartRecommendations', 'REPAIR_POST_LOADING', 'REPAIR_POST_SUCCESS', 'REPAIR_POST_ERROR']),
         ...mapState('auth', ['user'])
     },
 
 
     methods: {
-        ...mapActions('repairs', ['fetchRepairDetails', 'fetchRepairs', 'fetchProblemRecommendations', 'fetchSparePartRecommendations']),
+        ...mapActions('repairs', [
+            'fetchRepairDetails',
+            'fetchRepairs',
+            'fetchProblemRecommendations',
+            'fetchSparePartRecommendations',
+            'updateRepair'
+        ]),
 
         addNewComment() {
             if (this.newComment)
@@ -298,6 +309,21 @@ export default {
                 })
             })
         },
+
+        async saveStatus(event) {
+            const updateData = {
+                'repair_id': this.repairId,
+                'status': event.value.code
+            };
+            await this.updateRepair(updateData);
+            if(this.REPAIR_POST_SUCCESS) {
+                this.severity = 'success';
+                this.message = 'Status updated.'
+            } else if(this.REPAIR_POST_ERROR) {
+                this.severity = 'error';
+                this.message = 'Status not updated.'
+            }
+        }
     }
 };
 </script>

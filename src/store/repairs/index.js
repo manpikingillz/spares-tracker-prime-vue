@@ -216,6 +216,27 @@ const actions = {
 
         context.commit('SET_REPAIR_POST_LOADING', false);
     },
+
+    async updateRepair(context, data) {
+        let formData = new FormData();
+        Object.keys(data).forEach(key => {
+            formData.append(key, data[key])
+        })
+
+        const repairId = data['repair_id'];
+
+        context.commit('SET_REPAIR_POST_LOADING', true);
+        context.commit('SET_REPAIR_POST_SUCCESS', false);
+        context.commit('SET_REPAIR_POST_ERROR', '');
+        await axios.post(`/api/repairs/${repairId}/update/`, formData).then(() => {
+            context.commit('SET_REPAIR_POST_SUCCESS', true);
+            //TODO: update success state
+        }).catch(error => {
+            context.commit('SET_REPAIR_POST_ERROR', error);
+            console.error('Vehicle update error: ' + error);
+        })
+        context.commit('SET_REPAIR_POST_LOADING', false);
+    },
 }
 
 
