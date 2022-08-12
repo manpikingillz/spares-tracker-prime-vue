@@ -5,6 +5,7 @@ const FETCH_REPAIRS_URL = '/api/repairs/';
 const REPAIR_POST_URL = '/api/repairs/create/';
 const FETCH_PROBLEM_RECOMMENDATIONS_URL = '/api/repairs/problems_recommendations/';
 const FETCH_SPAREPART_RECOMMENDATIONS_URL = '/api/repairs/spareparts_recommendations/';
+const SPAREPART_RECOMMENDATIONS_POST_URL = '/api/repairs/spareparts_recommendations/update/';
 
 
 const state = {
@@ -42,6 +43,11 @@ const state = {
     SPAREPART_RECOMMENDATIONS_LOADING: false,
     SPAREPART_RECOMMENDATIONS_SUCCESS: false,
     SPAREPART_RECOMMENDATIONS_ERROR: '',
+
+    //Sparepart Recommendation post
+    SPAREPART_RECOMMENDATIONS_POST_LOADING: false,
+    SPAREPART_RECOMMENDATIONS_POST_SUCCESS: false,
+    SPAREPART_RECOMMENDATIONS_POST_ERROR: '',
 }
 
 const getters = {
@@ -132,6 +138,17 @@ const mutations = {
     },
     SET_SPAREPART_RECOMMENDATIONS_ERROR(state, data) {
         state.SPAREPART_RECOMMENDATIONS_ERROR = data
+    },
+
+    //Sparepart recommendations post
+    SET_SPAREPART_RECOMMENDATIONS_POST_LOADING(state, data) {
+        state.SPAREPART_RECOMMENDATIONS_POST_LOADING = data;
+    },
+    SET_SPAREPART_RECOMMENDATIONS_POST_SUCCESS(state, data) {
+        state.SPAREPART_RECOMMENDATIONS_POST_SUCCESS = data
+    },
+    SET_SPAREPART_RECOMMENDATIONS_POST_ERROR(state, data) {
+        state.SPAREPART_RECOMMENDATIONS_POST_ERROR = data
     },
 }
 
@@ -236,6 +253,25 @@ const actions = {
             console.error('Vehicle update error: ' + error);
         })
         context.commit('SET_REPAIR_POST_LOADING', false);
+    },
+
+    async saveRepairSparePartRecommendation(context, data) {
+        let formData = new FormData()
+        Object.keys(data).forEach(key => {
+            formData.append(key, data[key])
+        });
+
+        context.commit('SET_SPAREPART_RECOMMENDATIONS_POST_LOADING', true)
+        context.commit('SET_SPAREPART_RECOMMENDATIONS_POST_SUCCESS', false);
+        context.commit('SET_SPAREPART_RECOMMENDATIONS_POST_ERROR', '');
+        await axios.post(SPAREPART_RECOMMENDATIONS_POST_URL, formData).then(() => {
+            context.commit('SET_SPAREPART_RECOMMENDATIONS_POST_SUCCESS', true);
+        }).catch(error => {
+            context.commit('SET_SPAREPART_RECOMMENDATIONS_POST_ERROR',  JSON.stringify(error));
+            console.error('Error Creating Repair: ', JSON.stringify(error));
+        })
+
+        context.commit('SET_SPAREPART_RECOMMENDATIONS_POST_LOADING', false);
     },
 }
 

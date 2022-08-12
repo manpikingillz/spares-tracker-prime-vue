@@ -240,7 +240,18 @@ export default {
     },
 
     computed: {
-        ...mapState('repairs', ['repair', 'repairs', 'problemRecommendations', 'sparepartRecommendations', 'REPAIR_POST_LOADING', 'REPAIR_POST_SUCCESS', 'REPAIR_POST_ERROR']),
+        ...mapState('repairs', [
+            'repair',
+            'repairs',
+            'problemRecommendations',
+            'sparepartRecommendations',
+            'REPAIR_POST_LOADING',
+            'REPAIR_POST_SUCCESS',
+            'REPAIR_POST_ERROR',
+            'SPAREPART_RECOMMENDATIONS_POST_SUCCESS',
+            'SPAREPART_RECOMMENDATIONS_POST_ERROR'
+
+        ]),
         ...mapState('auth', ['user'])
     },
 
@@ -251,7 +262,8 @@ export default {
             'fetchRepairs',
             'fetchProblemRecommendations',
             'fetchSparePartRecommendations',
-            'updateRepair'
+            'updateRepair',
+            'saveRepairSparePartRecommendation'
         ]),
 
         addNewComment() {
@@ -293,11 +305,11 @@ export default {
             })
         },
 
-        acceptSparePartSelection(data) {
+        async acceptSparePartSelection(data) {
             this.sparepartRecommendationsList = [];
             data.forEach(item => {
                 this.sparepartRecommendationsList.push({
-                    'id': item.id,
+                    'id': item.code,
                     'sparepart': {
                             name: item.name
                         },
@@ -308,6 +320,26 @@ export default {
                     }
                 })
             })
+
+            this.updateNeededSpareParts()
+        },
+
+        async updateNeededSpareParts() {
+            const sparepartsIds = this.sparepartRecommendationsList.map(
+                item => (item.id)
+            )
+            await this.saveRepairSparePartRecommendation({
+                'repair': this.repairId,
+                'spareparts': sparepartsIds.toString()
+            })
+
+            if(this.SPAREPART_RECOMMENDATIONS_POST_SUCCESS) {
+                this.severity = 'success';
+                this.message = 'Required Spare parts updated.'
+            } else if(this.SPAREPART_RECOMMENDATIONS_POST_ERROR) {
+                this.severity = 'error';
+                this.message = 'Error occured while updating required spare parts.'
+            }
         },
 
         async saveStatus(event) {
