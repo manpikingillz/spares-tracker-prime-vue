@@ -286,6 +286,7 @@ export default {
             this.sparepartRecommendationsList = this.sparepartRecommendationsList.filter(
                 sparePart => sparePart.sparepart.name !== data.sparepart.name
             )
+            this.updateNeededSpareParts()
         },
 
         async acceptProblemSelection(data) {
@@ -309,8 +310,8 @@ export default {
             this.sparepartRecommendationsList = [];
             data.forEach(item => {
                 this.sparepartRecommendationsList.push({
-                    'id': item.code,
                     'sparepart': {
+                            id: item.code,
                             name: item.name
                         },
                     'added_by': {
@@ -325,9 +326,16 @@ export default {
         },
 
         async updateNeededSpareParts() {
-            const sparepartsIds = this.sparepartRecommendationsList.map(
-                item => (item.id)
+            const sparepartsIds = this.sparepartRecommendationsList.map(item => {
+                // for data straight from the backend.
+                if(item.sparepart) {
+                    return item.sparepart.id
+                // for data constructed
+                } else if(item.code)
+                    return item.code
+                }
             )
+
             await this.saveRepairSparePartRecommendation({
                 'repair': this.repairId,
                 'spareparts': sparepartsIds.toString()
