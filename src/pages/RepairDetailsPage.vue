@@ -35,7 +35,7 @@
                     <Card>
                         <template #content>
                             <table>
-                                <thead v-if="sparepartRecommendations.length">
+                                <thead v-if="sparepartRecommendationsList.length">
                                 <tr>
                                     <th>Spare Part</th>
                                     <th>Added By</th>
@@ -44,7 +44,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for='(item, index) in sparepartRecommendations' :key='`part-${index}`'>
+                                <tr v-for='(item, index) in sparepartRecommendationsList' :key='`part-${index}`'>
                                     <td>{{ item.sparepart.name }}</td>
                                     <td>{{ item.added_by.employee.full_name }}</td>
                                     <td>
@@ -81,7 +81,7 @@
                     <Card>
                         <template #content>
                             <table>
-                                <thead v-if="problemRecommendations.length">
+                                <thead v-if="problemRecommendationsList.length">
                                 <tr>
                                     <th>Problem</th>
                                     <th>Added By</th>
@@ -89,7 +89,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for='(item, index) in problemRecommendations' :key='`problem-${index}`'>
+                                <tr v-for='(item, index) in problemRecommendationsList' :key='`problem-${index}`'>
                                     <td>{{ item.problem.name }}</td>
                                     <td>{{ item.added_by.employee.full_name }}</td>
                                     <td>
@@ -200,12 +200,13 @@ export default {
                 },
             ],
             newComment: '',
-            problems: [],
-            spareParts: [],
             prevVisits: '',
             dateOfLastVisit: '',
             showAddProblemOnRepairModal: false,
             showAddSparePartOnRepairModal: false,
+            problemRecommendationsList: [],
+            sparepartRecommendationsList: [],
+            repairId: ''
         };
     },
 
@@ -215,11 +216,8 @@ export default {
     },
 
     async created() {
-        const repairId = this.$route.params.repairID
-        await this.fetchRepairDetails(repairId)
-        this.problems = this.repair.problems;
-        this.spareParts = this.repair.spare_parts;
-
+        this.repairId = this.$route.params.repairID
+        await this.fetchRepairDetails(this.repairId)
 
         const filters = {
                 'vehicle': this.repair.vehicle.id
@@ -228,13 +226,17 @@ export default {
         this.prevVisits = this.repairs.length
         this.dateOfLastVisit = moment(this.repairs[this.repairs.length - 1].created_at).format('ll')
 
-        await this.fetchProblemRecommendations({'repair': repairId});
-        await this.fetchSparePartRecommendations({'repair': repairId});
+        await this.fetchProblemRecommendations({'repair': this.repairId});
+        this.problemRecommendationsList = this.problemRecommendations;
+
+        await this.fetchSparePartRecommendations({'repair': this.repairId});
+        this.sparepartRecommendationsList = this.sparepartRecommendations;
 
     },
 
     computed: {
-        ...mapState('repairs', ['repair', 'repairs', 'problemRecommendations', 'sparepartRecommendations'])
+        ...mapState('repairs', ['repair', 'repairs', 'problemRecommendations', 'sparepartRecommendations']),
+        ...mapState('auth', ['user'])
     },
 
 
@@ -252,22 +254,48 @@ export default {
         },
 
         removeProblem(data) {
-            this.problems = this.problems.filter(problem => problem.id !== data.id)
+            this.problemRecommendationsList = this.problemRecommendationsList.filter(
+                item => item.problem.name !== data.problem.name
+            )
         },
 
         removeSparePart(data) {
-            this.spareParts = this.spareParts.filter(sparePart => sparePart.id !== data.id)
+            this.sparepartRecommendationsList = this.sparepartRecommendationsList.filter(
+                sparePart => sparePart.sparepart.name !== data.sparepart.name
+            )
         },
 
-        acceptProblemSelection(data) {
-            this.problems = data.map(item => {
-                return {'id': item.code, 'name': item.name}
+        async acceptProblemSelection(data) {
+            this.problemRecommendationsList = [];
+            data.forEach(item => {
+                this.problemRecommendationsList.push({
+                    'id': item.id,
+                    'problem': {
+                            name: item.name
+                        },
+                    'added_by': {
+                        employee: {
+                            full_name: this.user.employee
+                        }
+                    }
+                })
             })
         },
 
         acceptSparePartSelection(data) {
-            this.spareParts = data.map(item => {
-                return {'id': item.code, 'name': item.name}
+            this.sparepartRecommendationsList = [];
+            data.forEach(item => {
+                this.sparepartRecommendationsList.push({
+                    'id': item.id,
+                    'sparepart': {
+                            name: item.name
+                        },
+                    'added_by': {
+                        employee: {
+                            full_name: this.user.employee
+                        }
+                    }
+                })
             })
         },
     }
