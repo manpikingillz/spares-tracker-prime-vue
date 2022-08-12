@@ -249,7 +249,9 @@ export default {
             'REPAIR_POST_SUCCESS',
             'REPAIR_POST_ERROR',
             'SPAREPART_RECOMMENDATIONS_POST_SUCCESS',
-            'SPAREPART_RECOMMENDATIONS_POST_ERROR'
+            'SPAREPART_RECOMMENDATIONS_POST_ERROR',
+            'PROBLEM_RECOMMENDATIONS_POST_SUCCESS',
+            'PROBLEM_RECOMMENDATIONS_POST_ERROR',
 
         ]),
         ...mapState('auth', ['user'])
@@ -263,7 +265,8 @@ export default {
             'fetchProblemRecommendations',
             'fetchSparePartRecommendations',
             'updateRepair',
-            'saveRepairSparePartRecommendation'
+            'saveRepairSparePartRecommendation',
+            'saveRepairProblemRecommendation'
         ]),
 
         addNewComment() {
@@ -280,6 +283,7 @@ export default {
             this.problemRecommendationsList = this.problemRecommendationsList.filter(
                 item => item.problem.name !== data.problem.name
             )
+            this.updateRepairProblems()
         },
 
         removeSparePart(data) {
@@ -293,8 +297,8 @@ export default {
             this.problemRecommendationsList = [];
             data.forEach(item => {
                 this.problemRecommendationsList.push({
-                    'id': item.id,
                     'problem': {
+                            id: item.code,
                             name: item.name
                         },
                     'added_by': {
@@ -304,6 +308,8 @@ export default {
                     }
                 })
             })
+
+            await this.updateRepairProblems()
         },
 
         async acceptSparePartSelection(data) {
@@ -347,6 +353,31 @@ export default {
             } else if(this.SPAREPART_RECOMMENDATIONS_POST_ERROR) {
                 this.severity = 'error';
                 this.message = 'Error occured while updating required spare parts.'
+            }
+        },
+
+        async updateRepairProblems() {
+            const problemsIds = this.problemRecommendationsList.map(item => {
+                // for data straight from the backend.
+                if(item.problem) {
+                    return item.problem.id
+                // for data constructed
+                } else if(item.code)
+                    return item.code
+                }
+            )
+
+            await this.saveRepairProblemRecommendation({
+                'repair': this.repairId,
+                'problems': problemsIds.toString()
+            })
+
+            if(this.PROBLEM_RECOMMENDATIONS_POST_SUCCESS) {
+                this.severity = 'success';
+                this.message = 'Identified Problems updated.'
+            } else if(this.PROBLEM_RECOMMENDATIONS_POST_ERROR) {
+                this.severity = 'error';
+                this.message = 'Error occured while updating identified problems.'
             }
         },
 

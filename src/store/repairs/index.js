@@ -6,6 +6,7 @@ const REPAIR_POST_URL = '/api/repairs/create/';
 const FETCH_PROBLEM_RECOMMENDATIONS_URL = '/api/repairs/problems_recommendations/';
 const FETCH_SPAREPART_RECOMMENDATIONS_URL = '/api/repairs/spareparts_recommendations/';
 const SPAREPART_RECOMMENDATIONS_POST_URL = '/api/repairs/spareparts_recommendations/update/';
+const PROBLEM_RECOMMENDATIONS_POST_URL = '/api/repairs/problems_recommendations/update/';
 
 
 const state = {
@@ -48,6 +49,11 @@ const state = {
     SPAREPART_RECOMMENDATIONS_POST_LOADING: false,
     SPAREPART_RECOMMENDATIONS_POST_SUCCESS: false,
     SPAREPART_RECOMMENDATIONS_POST_ERROR: '',
+
+    //Problem Recommendation post
+    PROBLEM_RECOMMENDATIONS_POST_LOADING: false,
+    PROBLEM_RECOMMENDATIONS_POST_SUCCESS: false,
+    PROBLEM_RECOMMENDATIONS_POST_ERROR: '',
 }
 
 const getters = {
@@ -150,6 +156,17 @@ const mutations = {
     SET_SPAREPART_RECOMMENDATIONS_POST_ERROR(state, data) {
         state.SPAREPART_RECOMMENDATIONS_POST_ERROR = data
     },
+
+    //Problem recommendations post
+    SET_PROBLEM_RECOMMENDATIONS_POST_LOADING(state, data) {
+        state.PROBLEM_RECOMMENDATIONS_POST_LOADING = data;
+    },
+    SET_PROBLEM_RECOMMENDATIONS_POST_SUCCESS(state, data) {
+        state.PROBLEM_RECOMMENDATIONS_POST_SUCCESS = data
+    },
+    SET_PROBLEM_RECOMMENDATIONS_POST_ERROR(state, data) {
+        state.PROBLEM_RECOMMENDATIONS_POST_ERROR = data
+    },
 }
 
 const actions = {
@@ -250,7 +267,7 @@ const actions = {
             //TODO: update success state
         }).catch(error => {
             context.commit('SET_REPAIR_POST_ERROR', error);
-            console.error('Vehicle update error: ' + error);
+            console.error('Repair update error: ' + error);
         })
         context.commit('SET_REPAIR_POST_LOADING', false);
     },
@@ -268,10 +285,29 @@ const actions = {
             context.commit('SET_SPAREPART_RECOMMENDATIONS_POST_SUCCESS', true);
         }).catch(error => {
             context.commit('SET_SPAREPART_RECOMMENDATIONS_POST_ERROR',  JSON.stringify(error));
-            console.error('Error Creating Repair: ', JSON.stringify(error));
+            console.error('Error Saving Sparepart Recommendation(s): ', JSON.stringify(error));
         })
 
         context.commit('SET_SPAREPART_RECOMMENDATIONS_POST_LOADING', false);
+    },
+
+    async saveRepairProblemRecommendation(context, data) {
+        let formData = new FormData()
+        Object.keys(data).forEach(key => {
+            formData.append(key, data[key])
+        });
+
+        context.commit('SET_PROBLEM_RECOMMENDATIONS_POST_LOADING', true)
+        context.commit('SET_PROBLEM_RECOMMENDATIONS_POST_SUCCESS', false);
+        context.commit('SET_PROBLEM_RECOMMENDATIONS_POST_ERROR', '');
+        await axios.post(PROBLEM_RECOMMENDATIONS_POST_URL, formData).then(() => {
+            context.commit('SET_PROBLEM_RECOMMENDATIONS_POST_SUCCESS', true);
+        }).catch(error => {
+            context.commit('SET_PROBLEM_RECOMMENDATIONS_POST_ERROR',  JSON.stringify(error));
+            console.error('Error Saving Problem Recommendation(s): ', JSON.stringify(error));
+        })
+
+        context.commit('SET_PROBLEM_RECOMMENDATIONS_POST_LOADING', false);
     },
 }
 
