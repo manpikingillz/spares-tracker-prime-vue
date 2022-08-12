@@ -35,7 +35,7 @@
                     <Card>
                         <template #content>
                             <table>
-                                <thead v-if="spareParts.length">
+                                <thead v-if="sparepartRecommendations.length">
                                 <tr>
                                     <th>Spare Part</th>
                                     <th>Added By</th>
@@ -44,9 +44,9 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for='(item, index) in spareParts' :key='`part-${index}`'>
-                                    <td>{{ item.name }}</td>
-                                    <td>{{ item.addedBy }}</td>
+                                <tr v-for='(item, index) in sparepartRecommendations' :key='`part-${index}`'>
+                                    <td>{{ item.sparepart.name }}</td>
+                                    <td>{{ item.added_by.employee.full_name }}</td>
                                     <td>
                                         <div class='availability'>
                                             <span :class="['availability__indicator', {available: item.isAvailable}]" />
@@ -81,7 +81,7 @@
                     <Card>
                         <template #content>
                             <table>
-                                <thead v-if="problems.length">
+                                <thead v-if="problemRecommendations.length">
                                 <tr>
                                     <th>Problem</th>
                                     <th>Added By</th>
@@ -89,9 +89,9 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for='(item, index) in problems' :key='`problem-${index}`'>
-                                    <td>{{ item.name }}</td>
-                                    <td>{{ item.addedBy }}</td>
+                                <tr v-for='(item, index) in problemRecommendations' :key='`problem-${index}`'>
+                                    <td>{{ item.problem.name }}</td>
+                                    <td>{{ item.added_by.employee.full_name }}</td>
                                     <td>
                                         <button
                                             class="icon-button"
@@ -227,15 +227,19 @@ export default {
         await this.fetchRepairs(filters)
         this.prevVisits = this.repairs.length
         this.dateOfLastVisit = moment(this.repairs[this.repairs.length - 1].created_at).format('ll')
+
+        await this.fetchProblemRecommendations({'repair': repairId});
+        await this.fetchSparePartRecommendations({'repair': repairId});
+
     },
 
     computed: {
-        ...mapState('repairs', ['repair', 'repairs'])
+        ...mapState('repairs', ['repair', 'repairs', 'problemRecommendations', 'sparepartRecommendations'])
     },
 
 
     methods: {
-        ...mapActions('repairs', ['fetchRepairDetails', 'fetchRepairs']),
+        ...mapActions('repairs', ['fetchRepairDetails', 'fetchRepairs', 'fetchProblemRecommendations', 'fetchSparePartRecommendations']),
 
         addNewComment() {
             if (this.newComment)

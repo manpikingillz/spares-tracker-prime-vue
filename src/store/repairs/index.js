@@ -3,6 +3,8 @@ import axios from 'axios'
 const FETCH_REPAIR_PROBLEMS_URL = '/api/repairs/problems/';
 const FETCH_REPAIRS_URL = '/api/repairs/';
 const REPAIR_POST_URL = '/api/repairs/create/';
+const FETCH_PROBLEM_RECOMMENDATIONS_URL = '/api/repairs/problems_recommendations/';
+const FETCH_SPAREPART_RECOMMENDATIONS_URL = '/api/repairs/spareparts_recommendations/';
 
 
 const state = {
@@ -28,6 +30,18 @@ const state = {
     REPAIR_LOADING: false,
     REPAIR_SUCCESS: false,
     REPAIR_ERROR: '',
+
+    //problem recommendations
+    problemRecommendations: [],
+    PROBLEM_RECOMMENDATIONS_LOADING: false,
+    PROBLEM_RECOMMENDATIONS_SUCCESS: false,
+    PROBLEM_RECOMMENDATIONS_ERROR: '',
+
+    //Sparepart recommendations
+    sparepartRecommendations: [],
+    SPAREPART_RECOMMENDATIONS_LOADING: false,
+    SPAREPART_RECOMMENDATIONS_SUCCESS: false,
+    SPAREPART_RECOMMENDATIONS_ERROR: '',
 }
 
 const getters = {
@@ -91,6 +105,34 @@ const mutations = {
     SET_REPAIR_ERROR(state, data) {
         state.REPAIR_ERROR = data
     },
+
+    // Problem Recommendations
+    SET_PROBLEM_RECOMMENDATIONS(state, data) {
+        state.problemRecommendations = data;
+    },
+    SET_PROBLEM_RECOMMENDATIONS_LOADING(state, data) {
+        state.PROBLEM_RECOMMENDATIONS_LOADING = data;
+    },
+    SET_PROBLEM_RECOMMENDATIONS_SUCCESS(state, data) {
+        state.PROBLEM_RECOMMENDATIONS_SUCCESS = data
+    },
+    SET_PROBLEM_RECOMMENDATIONS_ERROR(state, data) {
+        state.PROBLEM_RECOMMENDATIONS_ERROR = data
+    },
+
+    // Sparepart Recommendations
+    SET_SPAREPART_RECOMMENDATIONS(state, data) {
+        state.sparepartRecommendations = data;
+    },
+    SET_SPAREPART_RECOMMENDATIONS_LOADING(state, data) {
+        state.SPAREPART_RECOMMENDATIONS_LOADING = data;
+    },
+    SET_SPAREPART_RECOMMENDATIONS_SUCCESS(state, data) {
+        state.SPAREPART_RECOMMENDATIONS_SUCCESS = data
+    },
+    SET_SPAREPART_RECOMMENDATIONS_ERROR(state, data) {
+        state.SPAREPART_RECOMMENDATIONS_ERROR = data
+    },
 }
 
 const actions = {
@@ -128,6 +170,30 @@ const actions = {
             context.commit('SET_REPAIR_LOADING', false);
             context.commit('SET_REPAIR_ERROR', error);
             console.error('Error Fetching Repair: ', error);
+        })
+    },
+
+    async fetchProblemRecommendations(context, filters) {
+        context.commit('SET_PROBLEM_RECOMMENDATIONS_LOADING', true)
+        return await axios.get(FETCH_PROBLEM_RECOMMENDATIONS_URL, {params: filters}).then(response => {
+            context.commit('SET_PROBLEM_RECOMMENDATIONS_LOADING', false);
+            context.commit('SET_PROBLEM_RECOMMENDATIONS', response.data)
+        }).catch(error => {
+            context.commit('SET_PROBLEM_RECOMMENDATIONS_LOADING', false);
+            context.commit('SET_PROBLEM_RECOMMENDATIONS_ERROR', error);
+            console.error('Error Fetching Problem Recommendations: ', error);
+        })
+    },
+
+    async fetchSparePartRecommendations(context, filters) {
+        context.commit('SET_SPAREPART_RECOMMENDATIONS_LOADING', true)
+        return await axios.get(FETCH_SPAREPART_RECOMMENDATIONS_URL, {params: filters}).then(response => {
+            context.commit('SET_SPAREPART_RECOMMENDATIONS_LOADING', false);
+            context.commit('SET_SPAREPART_RECOMMENDATIONS', response.data)
+        }).catch(error => {
+            context.commit('SET_SPAREPART_RECOMMENDATIONS_LOADING', false);
+            context.commit('SET_SPAREPART_RECOMMENDATIONS_ERROR', error);
+            console.error('Error Fetching SparePart Recommendations: ', error);
         })
     },
 
