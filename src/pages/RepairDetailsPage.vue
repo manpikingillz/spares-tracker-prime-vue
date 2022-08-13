@@ -41,7 +41,8 @@
                                 <tr>
                                     <th>Spare Part</th>
                                     <th>Added By</th>
-                                    <th>Availability</th>
+                                    <!-- TODO: implement -->
+                                    <!-- <th>Availability</th> -->
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -49,12 +50,12 @@
                                 <tr v-for='(item, index) in sparepartRecommendationsList' :key='`part-${index}`'>
                                     <td>{{ item.sparepart.name }}</td>
                                     <td>{{ item.added_by.employee.full_name }}</td>
-                                    <td>
+                                    <!-- <td>
                                         <div class='availability'>
                                             <span :class="['availability__indicator', {available: item.isAvailable}]" />
                                             <span>{{ item.isAvailable ? 'Available' : 'Not Available' }}</span>
                                         </div>
-                                    </td>
+                                    </td> -->
                                     <td>
                                         <button
                                             class="icon-button"
