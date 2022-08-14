@@ -49,7 +49,7 @@
                 </Column>
                 <Column field="approvalStage" header="Where is it" sortable :filterMenuStyle="{'width':'14rem'}" style="min-width: 10rem; cursor: pointer">
                     <template #body="{data}">
-                        <Badge  severity="warning" class="mr-2">{{data.section.name}}</Badge>
+                        <Badge  severity="warning" class="mr-2">{{data?.section?.name}}</Badge>
                     </template>
                 </Column>
             </DataTable>
