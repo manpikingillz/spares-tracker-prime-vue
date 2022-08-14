@@ -118,7 +118,7 @@
                     <h3>Comments</h3>
                     <ul>
                         <li v-for='(comment, index) in repairCommentsList' :key='`comment-${index}`'>
-                            <p>{{ `${comment.commented_by.employee.full_name}, ${comment.role}` }}</p>
+                            <p>{{ `${comment.commented_by.employee.full_name}` }}</p>
                             <Card>
                                 <template #content>
                                     {{ comment.comment }}
