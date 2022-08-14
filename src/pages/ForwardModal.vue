@@ -1,20 +1,20 @@
 <template>
-    <Dialog header="Select spare parts"
+    <Dialog header="Where are you forwarding to?"
             :visible="show"
             :breakpoints="{'960px': '75vw', '640px': '90vw'}"
             :style="{width: '30vw'}" :maximizable="true" :modal="true">
 
-            <DataTable :value="getSpareparts" v-model:selection="selectedSpareParts" :filters="sparePartFilters"  dataKey="code" responsiveLayout="scroll" >
+            <DataTable :value="getSections" v-model:selection="selectedSection" :filters="sectionsFilters"  dataKey="code" responsiveLayout="scroll" >
                 <template #header>
                   <div class="flex justify-content-end">
                           <span class="p-input-icon-left">
                               <i class="pi pi-search" />
-                              <InputText v-model="sparePartFilters['global'].value" placeholder="Keyword Search" />
+                              <InputText v-model="sectionsFilters['global'].value" placeholder="Keyword Search" />
                           </span>
                       </div>
               </template>
-                <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
-                <Column field="description" header="Name"></Column>
+                <Column selectionMode="single" headerStyle="width: 3em"></Column>
+                <Column field="name" header="Name"></Column>
             </DataTable>
         <template #footer>
             <Button label="Cancel" icon="pi pi-times" @click="close" class="p-button-text"/>
@@ -31,26 +31,26 @@ import { mapActions, mapGetters } from 'vuex';
 export default {
     data() {
         return {
-            selectedSpareParts: null,
-            sparePartFilters: null
+            selectedSection: null,
+            sectionsFilters: null
         }
     },
     props: ['show'],
 
     async created() {
-        await this.fetchSpareparts()
-        this.initSparePartFilters()
+        await this.fetchSections()
+        this.initSectionsFilters()
     },
 
     computed: {
-        ...mapGetters('spareparts', ['getSpareparts'])
+        ...mapGetters('employees', ['getSections'])
     },
 
     methods: {
-        ...mapActions('spareparts', ['fetchSpareparts']),
+        ...mapActions('employees', ['fetchSections']),
 
-        initSparePartFilters() {
-            this.sparePartFilters = {
+        initSectionsFilters() {
+            this.sectionsFilters = {
                 'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
             }
         },
@@ -60,7 +60,7 @@ export default {
         },
 
         acceptSelection() {
-            this.$emit('accept-selection', this.selectedSpareParts)
+            this.$emit('forward-repair', this.selectedSection)
             this.$emit('close')
         }
     },

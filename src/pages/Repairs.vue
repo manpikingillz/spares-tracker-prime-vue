@@ -49,7 +49,7 @@
                 </Column>
                 <Column field="approvalStage" header="Where is it" sortable :filterMenuStyle="{'width':'14rem'}" style="min-width: 10rem; cursor: pointer">
                     <template #body="{data}">
-                        <span>{{data.approvalStage}}</span>
+                        <span>{{data.section.name}}</span>
                     </template>
                 </Column>
             </DataTable>

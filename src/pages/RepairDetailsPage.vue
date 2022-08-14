@@ -3,7 +3,9 @@
         <Message v-if="severity && message" :severity="severity">{{ message }}</Message>
         <div class='flex justify-content-end'>
             <Button @click="$router.go(-1)" label="Back" icon="pi pi-backward" class="p-button-rounded p-button-secondary" style="margin-bottom: 5px;"/>
+            <Button @click="showForwardModal=true" label="Forward" icon="pi pi-arrow-right" class="p-button-rounded p-button-success" style="margin-bottom: 5px;"/>
         </div>
+
         <div class='card'>
             <div class='repair'>
                 <div class='flex-between'>
@@ -145,6 +147,11 @@
             @accept-selection="acceptSparePartSelection"
             @remove-item="removeSparePart"
         />
+        <ForwardModal
+            :show="showForwardModal"
+            @close="showForwardModal=false"
+            @forward-repair="forwardRepair"
+        />
     </div>
 </template>
 
@@ -152,6 +159,7 @@
 import { mapActions, mapState } from 'vuex';
 import AddProblemOnRepairModal from './AddProblemOnRepairModal.vue';
 import AddSparePartOnRepairModal from './AddSparePartOnRepairModal.vue';
+import ForwardModal from './ForwardModal.vue'
 import moment from 'moment';
 
 export default {
@@ -176,13 +184,15 @@ export default {
             repairId: '',
             severity: '',
             message: '',
-            repairCommentsList: []
+            repairCommentsList: [],
+            showForwardModal: false
         };
     },
 
     components: {
         AddProblemOnRepairModal,
-        AddSparePartOnRepairModal
+        AddSparePartOnRepairModal,
+        ForwardModal
     },
 
     async created() {
@@ -241,6 +251,22 @@ export default {
             'saveRepairComment',
             'fetchRepairComments'
         ]),
+
+        async forwardRepair(data) {
+            const updateData = {
+                'repair_id': this.repairId,
+                'section': data.code
+            };
+
+            await this.updateRepair(updateData);
+            if(this.REPAIR_POST_SUCCESS) {
+                this.severity = 'success';
+                this.message = 'Repair Forwarded'
+            } else if(this.REPAIR_POST_ERROR) {
+                this.severity = 'error';
+                this.message = 'Repair not Forwarded.'
+            }
+        },
 
         async addNewComment() {
             if (this.newComment) {

@@ -3,6 +3,7 @@ import axios from 'axios'
 const FETCH_EMPLOYEES_URL = '/api/employees/';
 const POST_EMPLOYEES_URL = '/api/employees/create/';
 const FETCH_STATIONS_URL = '/api/employees/stations/';
+const FETCH_SECTIONS_URL = 'api/employees/sections/';
 
 const state = {
     //Employees
@@ -21,6 +22,12 @@ const state = {
     STATIONS_LOADING: false,
     STATIONS_SUCCESS: false,
     STATIONS_ERROR: '',
+
+    //Sections
+    sections: [],
+    SECTIONS_LOADING: false,
+    SECTIONS_SUCCESS: false,
+    SECTIONS_ERROR: '',
 }
 
 
@@ -36,7 +43,14 @@ const getters = {
             const description = station.name + ' <- ' + station.division.name + ' <- ' + station.division.region.name
             return {'name': station.name, 'code': station.id, 'description': description }
         })
-    }
+    },
+
+    getSections: state => {
+        return state.sections.map(section => {
+                return {'name': section.name, 'code': section.id}
+        })
+    },
+
 }
 
 
@@ -83,6 +97,20 @@ const mutations= {
         state.STATIONS_ERROR = data
     },
 
+    // Sections
+    SET_SECTIONS(state, data) {
+        state.sections = data;
+    },
+    SET_SECTIONS_LOADING(state, data) {
+        state.SECTIONS_LOADING = data;
+    },
+    SET_SECTIONS_SUCCESS(state, data) {
+        state.SECTIONS_SUCCESS = data
+    },
+    SET_SECTIONS_ERROR(state, data) {
+        state.SECTIONS_ERROR = data
+    },
+
 }
 
 const actions = {
@@ -127,6 +155,18 @@ const actions = {
             context.commit('SET_STATIONS_LOADING', false);
             context.commit('SET_STATIONS_ERROR', error);
             console.error('Error Fetching Stations: ', error);
+        })
+    },
+
+    async fetchSections(context, filters) {
+        context.commit('SET_SECTIONS_LOADING', true)
+        return await axios.get(FETCH_SECTIONS_URL, {params: filters}).then(response => {
+            context.commit('SET_SECTIONS_LOADING', false);
+            context.commit('SET_SECTIONS', response.data)
+        }).catch(error => {
+            context.commit('SET_SECTIONS_LOADING', false);
+            context.commit('SET_SECTIONS_ERROR', error);
+            console.error('Error Fetching Sections: ', error);
         })
     },
 
