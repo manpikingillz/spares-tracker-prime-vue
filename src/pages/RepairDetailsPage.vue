@@ -26,6 +26,7 @@
                     <template #content>
                         <p  v-show="repair.vehicle">Previous visits: {{ !!prevVisits ? prevVisits : '0' }}</p>
                         <p  v-show="repair.vehicle">Date of last visit: {{ !!prevVisits ? dateOfLastVisit : 'None' }}</p>
+                        Where is it?: <Badge  severity="warning" class="mr-2" style="margin-top: 10px">{{repair?.section?.name}}</Badge>
                     </template>
                 </Card>
                 <div class='group'>
