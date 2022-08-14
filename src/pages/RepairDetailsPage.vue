@@ -111,11 +111,11 @@
                 <div class='comments'>
                     <h3>Comments</h3>
                     <ul>
-                        <li v-for='(comment, index) in comments' :key='`comment-${index}`'>
-                            <p>{{ `${comment.sender}, ${comment.role}` }}</p>
+                        <li v-for='(comment, index) in repairCommentsList' :key='`comment-${index}`'>
+                            <p>{{ `${comment.commented_by.employee.full_name}, ${comment.role}` }}</p>
                             <Card>
                                 <template #content>
-                                    {{ comment.message }}
+                                    {{ comment.comment }}
                                 </template>
                             </Card>
                         </li>
@@ -124,7 +124,7 @@
                               placeholder='Type your comment here...'
                               :autoResize="true" rows="6" />
                     <div class='flex-end'>
-                        <Button @click="addNewComment" label="Comment" :disabled="!newComment" />
+                        <Button @click="addNewComment" label="Comment" :disabled="!newComment || REPAIR_COMMENT_POST_LOADING" />
                     </div>
                 </div>
             </div>
@@ -155,11 +155,6 @@ export default {
     name: 'RepairDetailsPage',
     data() {
         return {
-            items: [
-                {
-                    label: 'Filter by status',
-                },
-            ],
             statuses: [
                 {name: 'Received', code: 'RECEIVED'},
                 {name: 'For Review', code: 'FOR_REVIEW'},
@@ -168,39 +163,6 @@ export default {
                 {name: 'For Picking', code: 'FOR_PICKING'}
             ],
             selectedStatus: '',
-            neededSpares: [
-                {
-                    part: 'Exhaust',
-                    addedBy: 'Gilbert',
-                    stock: 1,
-                    isAvailable: true,
-                },
-                {
-                    part: 'Mirror',
-                    addedBy: 'Kaka',
-                    stock: 2,
-                    isAvailable: true,
-                },
-                {
-                    part: 'Indicator',
-                    addedBy: 'Kaka',
-                    stock: 2,
-                    isAvailable: false,
-                },
-            ],
-
-            comments: [
-                {
-                    sender: 'Gilbert',
-                    role: 'Mechanic',
-                    message: 'The car needs exhaust and mirrors. It\'s in a good mechanical condition, but just needs those parts.',
-                },
-                {
-                    sender: 'Alex',
-                    role: 'Director',
-                    message: 'The car should be repaired',
-                },
-            ],
             newComment: '',
             prevVisits: '',
             dateOfLastVisit: '',
@@ -210,7 +172,8 @@ export default {
             sparepartRecommendationsList: [],
             repairId: '',
             severity: '',
-            message: ''
+            message: '',
+            repairCommentsList: []
         };
     },
 
@@ -237,6 +200,7 @@ export default {
         await this.fetchSparePartRecommendations({'repair': this.repairId});
         this.sparepartRecommendationsList = this.sparepartRecommendations;
 
+        this.getComments()
     },
 
     computed: {
@@ -252,6 +216,10 @@ export default {
             'SPAREPART_RECOMMENDATIONS_POST_ERROR',
             'PROBLEM_RECOMMENDATIONS_POST_SUCCESS',
             'PROBLEM_RECOMMENDATIONS_POST_ERROR',
+            'repairComments',
+            'REPAIR_COMMENTS_ERROR',
+            'REPAIR_COMMENT_POST_ERROR',
+            'REPAIR_COMMENT_POST_LOADING',
 
         ]),
         ...mapState('auth', ['user'])
@@ -266,17 +234,35 @@ export default {
             'fetchSparePartRecommendations',
             'updateRepair',
             'saveRepairSparePartRecommendation',
-            'saveRepairProblemRecommendation'
+            'saveRepairProblemRecommendation',
+            'saveRepairComment',
+            'fetchRepairComments'
         ]),
 
-        addNewComment() {
-            if (this.newComment)
-            this.comments.push({
-                sender: 'Me',
-                role: 'Director',
-                message: this.newComment,
-            });
-            this.newComment = '';
+        async addNewComment() {
+            if (this.newComment) {
+                const comment = {
+                    repair: this.repairId,
+                    comment: this.newComment,
+                    commented_by: this.user.id
+                }
+                await this.saveRepairComment(comment)
+                if (this.REPAIR_COMMENT_POST_ERROR) {
+                    this.severity = 'error';
+                    this.message = 'Error Occured. Failed to save comment.'
+                }
+                this.getComments();
+                this.newComment = '';
+            }
+        },
+
+        async getComments() {
+            await this.fetchRepairComments({'repair': this.repairId});
+            this.repairCommentsList = this.repairComments
+            if (this.REPAIR_COMMENTS_ERROR) {
+                this.severity = 'error';
+                this.message = 'Error Occured. Failed to retrieve comments.'
+            }
         },
 
         removeProblem(data) {

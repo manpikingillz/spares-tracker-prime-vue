@@ -7,6 +7,8 @@ const FETCH_PROBLEM_RECOMMENDATIONS_URL = '/api/repairs/problems_recommendations
 const FETCH_SPAREPART_RECOMMENDATIONS_URL = '/api/repairs/spareparts_recommendations/';
 const SPAREPART_RECOMMENDATIONS_POST_URL = '/api/repairs/spareparts_recommendations/update/';
 const PROBLEM_RECOMMENDATIONS_POST_URL = '/api/repairs/problems_recommendations/update/';
+const FETCH_REPAIR_COMMENTS_URL = '/api/repairs/repair_comments/';
+const REPAIR_COMMENT_POST_URL = '/api/repairs/repair_comments/create/';
 
 
 const state = {
@@ -54,6 +56,17 @@ const state = {
     PROBLEM_RECOMMENDATIONS_POST_LOADING: false,
     PROBLEM_RECOMMENDATIONS_POST_SUCCESS: false,
     PROBLEM_RECOMMENDATIONS_POST_ERROR: '',
+
+    //Repair Comments
+    repairComments: [],
+    REPAIR_COMMENTS_LOADING: false,
+    REPAIR_COMMENTS_SUCCESS: false,
+    REPAIR_COMMENTS_ERROR: '',
+
+    // Repiar comment post
+    REPAIR_COMMENT_POST_LOADING: false,
+    REPAIR_COMMENT_POST_SUCCESS: false,
+    REPAIR_COMMENT_POST_ERROR: ''
 }
 
 const getters = {
@@ -167,6 +180,32 @@ const mutations = {
     SET_PROBLEM_RECOMMENDATIONS_POST_ERROR(state, data) {
         state.PROBLEM_RECOMMENDATIONS_POST_ERROR = data
     },
+
+    // Repair Comments
+    SET_REPAIR_COMMENTS(state, data) {
+        state.repairComments = data;
+    },
+    SET_REPAIR_COMMENTS_LOADING(state, data) {
+        state.REPAIR_COMMENTS_LOADING = data;
+    },
+    SET_REPAIR_COMMENTS_SUCCESS(state, data) {
+        state.REPAIR_COMMENTS_SUCCESS = data
+    },
+    SET_REPAIR_COMMENTS_ERROR(state, data) {
+        state.REPAIR_COMMENTS_ERROR = data
+    },
+
+    // Repair Comment post
+    SET_REPAIR_COMMENT_POST_LOADING(state, data) {
+        state.REPAIR_COMMENT_POST_LOADING = data;
+    },
+    SET_REPAIR_COMMENT_POST_SUCCESS(state, data) {
+        state.REPAIR_COMMENT_POST_SUCCESS = data
+    },
+    SET_REPAIR_COMMENT_POST_ERROR(state, data) {
+        state.REPAIR_COMMENT_POST_ERROR = data
+    },
+
 }
 
 const actions = {
@@ -308,6 +347,38 @@ const actions = {
         })
 
         context.commit('SET_PROBLEM_RECOMMENDATIONS_POST_LOADING', false);
+    },
+
+
+    async fetchRepairComments(context, filters) {
+        context.commit('SET_REPAIR_COMMENTS_LOADING', true)
+        return await axios.get(FETCH_REPAIR_COMMENTS_URL, {params: filters}).then(response => {
+            context.commit('SET_REPAIR_COMMENTS_LOADING', false);
+            context.commit('SET_REPAIR_COMMENTS', response.data)
+        }).catch(error => {
+            context.commit('SET_REPAIR_COMMENTS_LOADING', false);
+            context.commit('SET_REPAIR_COMMENTS_ERROR', error);
+            console.error('Error Fetching Repair Comments: ', error);
+        })
+    },
+
+    async saveRepairComment(context, data) {
+        let formData = new FormData()
+        Object.keys(data).forEach(key => {
+            formData.append(key, data[key])
+        });
+
+        context.commit('SET_REPAIR_COMMENT_POST_LOADING', true)
+        context.commit('SET_REPAIR_COMMENT_POST_SUCCESS', false);
+        context.commit('SET_REPAIR_COMMENT_POST_ERROR', '');
+        await axios.post(REPAIR_COMMENT_POST_URL, formData).then(() => {
+            context.commit('SET_REPAIR_COMMENT_POST_SUCCESS', true);
+        }).catch(error => {
+            context.commit('SET_REPAIR_COMMENT_POST_ERROR',  JSON.stringify(error));
+            console.error('Error Saving Repair Comment: ', JSON.stringify(error));
+        })
+
+        context.commit('SET_REPAIR_COMMENT_POST_LOADING', false);
     },
 }
 

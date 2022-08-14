@@ -3,7 +3,7 @@ import router from '../../router'
 
 
 const LOGIN_URL = '/api/auth/jwt/login/'
-const LOGOUT_URL = '/api/auth/jwt/logout'
+const LOGOUT_URL = '/api/auth/jwt/logout/'
 const CURRENT_USER_URL = '/api/auth/me/'
 
 const state = {
