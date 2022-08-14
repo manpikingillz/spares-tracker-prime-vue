@@ -1,6 +1,9 @@
 <template>
     <div class='content-section implementation'>
         <Message v-if="severity && message" :severity="severity">{{ message }}</Message>
+        <div class='flex justify-content-end'>
+            <Button @click="$router.go(-1)" label="Back" icon="pi pi-backward" class="p-button-rounded p-button-secondary" style="margin-bottom: 5px;"/>
+        </div>
         <div class='card'>
             <div class='repair'>
                 <div class='flex-between'>
