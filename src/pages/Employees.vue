@@ -48,7 +48,12 @@
                 </Column>
                 <Column field="station" header="Station" sortable :filterMenuStyle="{'width':'14rem'}" style="min-width: 10rem">
                     <template #body="{data}">
-                        <span>{{data.station}}</span>
+                        <span>{{`${data.station.name} - ${data.station.division.name} - ${data.station.division.region.name}`}}</span>
+                    </template>
+                </Column>
+                <Column field="section" header="Department Section" sortable :filterMenuStyle="{'width':'14rem'}" style="min-width: 10rem">
+                    <template #body="{data}">
+                        <span>{{data.section.name}}</span>
                     </template>
                 </Column>
             </DataTable>
