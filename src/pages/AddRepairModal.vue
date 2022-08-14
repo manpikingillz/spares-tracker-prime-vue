@@ -16,6 +16,8 @@
                 <div class="visits">
                     <p  v-show="repair.vehicle">Previous visits: {{ !!prevVisits ? prevVisits : '0' }}</p>
                     <p  v-show="repair.vehicle">Date of last visit: {{ !!prevVisits ? dateOfLastVisit : 'None' }}</p>
+                    <a style="cursor:pointer"  v-show="repair.vehicle" @click="viewVehicleDetails" class="p-button-link">Vehicle Details</a>
+
                 </div>
                 <div class="field">
                     <label for="problem" :class="{'p-error': v$.repair.problem_description.$invalid && submitted }">Problem Description</label>
@@ -50,6 +52,11 @@
         @accept-selection="acceptSparePartSelection"
         @remove-item="removeSparePart"/>
     />
+    <ViewVehicleModal
+        :show='showViewVehicleModal'
+        :vehicle="vehicleForRepair"
+        @close='showViewVehicleModal = false'
+    />
 </div>
 </template>
 
@@ -59,6 +66,7 @@ import { mapActions, mapGetters, mapState } from 'vuex'
 import ItemSelector from '../components/ItemSelector.vue'
 import AddProblemOnRepairModal from './AddProblemOnRepairModal.vue'
 import AddSparePartOnRepairModal from './AddSparePartOnRepairModal.vue'
+import ViewVehicleModal from './ViewVehicleModal.vue';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import moment from 'moment';
@@ -83,7 +91,9 @@ export default {
             spareParts: [],
             showAddProblemOnRepairModal: false,
             showAddSparePartOnRepairModal: false,
-            submitted: false
+            submitted: false,
+            showViewVehicleModal: false,
+            vehicleId: ''
         }
     },
 
@@ -106,17 +116,18 @@ export default {
     components: {
         ItemSelector,
         AddProblemOnRepairModal,
-        AddSparePartOnRepairModal
-        },
+        AddSparePartOnRepairModal,
+        ViewVehicleModal
+    },
 
     computed: {
         ...mapGetters('vehicles', ['getVehicles']),
         ...mapState('repairs', ['REPAIR_POST_SUCCESS', 'REPAIR_POST_ERROR', 'repairs']),
-        ...mapState('vehicles', ['vehicles'])
+        ...mapState('vehicles', ['vehicles', 'vehicle'])
     },
 
     methods: {
-        ...mapActions('vehicles', ['fetchVehicles']),
+        ...mapActions('vehicles', ['fetchVehicles', 'fetchOneVehicle']),
         ...mapActions('repairs', ['saveRepair', 'fetchRepairs']),
 
         removeProblem(data) {
@@ -177,12 +188,19 @@ export default {
         },
 
         async changeNumberPlateSelection(event){
+            this.vehicleId = event.value.code
             const filters = {
                 'vehicle': event.value.code
             }
             await this.fetchRepairs(filters)
             this.prevVisits = this.repairs.length
-            this.dateOfLastVisit = moment(this.repairs[this.repairs.length - 1].created_at).format('ll')
+            this.dateOfLastVisit = moment(this.repairs[this.repairs.length - 1]?.created_at).format('ll')
+        },
+
+        async viewVehicleDetails() {
+            await this.fetchOneVehicle(this.vehicleId);
+            this.vehicleForRepair = this.vehicle;
+            this.showViewVehicleModal = true;
         }
     },
 }
