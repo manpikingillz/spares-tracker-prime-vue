@@ -6,8 +6,8 @@
 					<i class="pi pi-building"></i>
 				</div>
 				<div class="overview-box-title">Total Spare Parts</div>
-				<div class="overview-box-value">5092 </div>
-				<div class="overview-box-status"><b>200</b> Added this month. <b>50</b> Used this month</div>
+				<div class="overview-box-value">{{ spareparts.length }} </div>
+				<!-- <div class="overview-box-status"><b>200</b> Added this month. <b>50</b> Used this month</div> -->
 			</div>
 		</div>
 		<div class="col-12 md:col-6 lg:col-3">
@@ -15,9 +15,9 @@
 				<div class="overview-box-icon">
 					<i class="pi pi-book"></i>
 				</div>
-				<div class="overview-box-title">Total Repairs Done</div>
-				<div class="overview-box-value">70</div>
-				<div class="overview-box-status">10 done this month </div>
+				<div class="overview-box-title">Total Repairs</div>
+				<div class="overview-box-value">{{ repairs.length }}</div>
+				<!-- <div class="overview-box-status">10 done this month </div> -->
 			</div>
 		</div>
 		<div class="col-12 md:col-6 lg:col-3">
@@ -26,8 +26,8 @@
 					<i class="pi pi-car"></i>
 				</div>
 				<div class="overview-box-title">Total Vehicles</div>
-				<div class="overview-box-value">9522</div>
-				<div class="overview-box-status">20 added this month </div>
+				<div class="overview-box-value">{{ vehicles.length }}</div>
+				<!-- <div class="overview-box-status">20 added this month </div> -->
 			</div>
 		</div>
 		<div class="col-12 md:col-6 lg:col-3">
@@ -36,8 +36,8 @@
 					<i class="pi pi-users"></i>
 				</div>
 				<div class="overview-box-title">Total Suppliers</div>
-				<div class="overview-box-value">11</div>
-				<div class="overview-box-status">10 added this month </div>
+				<div class="overview-box-value">{{ suppliers.length }}</div>
+				<!-- <div class="overview-box-status">10 added this month </div> -->
 			</div>
 		</div>
 
@@ -46,10 +46,10 @@
 				<h5>Repairs</h5>
 				<div class="container">
 					<div class="donut-chart">
-						<p>30</p>
-						<p>20</p>
-						<p>14</p>
-						<p>6</p>
+						<p>30%</p>
+						<p>20%</p>
+						<p>14%</p>
+						<p>6%</p>
 						<div class="part1 portion-block">
 							<div class="circle"></div>
 						</div>
@@ -65,7 +65,7 @@
 						<div class="part5 portion-block">
 							<div class="circle"></div>
 						</div>
-						<p class="center">70<span>Total</span></p>
+						<p class="center">{{ repairs.length}}<span>Total</span></p>
 					</div>
 					<div class="donut-chart-titles">
 						<div class="detail1 title">
@@ -93,10 +93,10 @@
 				<h5>Available Spare Parts</h5>
 				<div class="container">
 					<div class="donut-chart">
-						<p>100</p>
-						<p>80</p>
-						<p>30</p>
-						<p>15</p>
+						<p>15%</p>
+						<p>20%</p>
+						<p>30%</p>
+						<p>10%</p>
 						<div class="part1 portion-block">
 							<div class="circle"></div>
 						</div>
@@ -112,7 +112,7 @@
 						<div class="part5 portion-block">
 							<div class="circle"></div>
 						</div>
-						<p class="center">225<span>Total</span></p>
+						<p class="center">{{ spareparts.length }}<span>Total</span></p>
 					</div>
 					<div class="donut-chart-titles">
 						<div class="detail1 title">
@@ -137,13 +137,13 @@
 		</div>
 		<div class="col-12 md:col-6 lg:col-4">
 			<div class="card donut ">
-				<h5>Available Spare Parts</h5>
+				<h5>Available Vehicles</h5>
 				<div class="container">
 					<div class="donut-chart">
-						<p>8</p>
-						<p>5</p>
-						<p>4</p>
-						<p>3</p>
+						<p>8%</p>
+						<p>5%</p>
+						<p>4%</p>
+						<p>3%</p>
 						<div class="part1 portion-block">
 							<div class="circle"></div>
 						</div>
@@ -159,7 +159,7 @@
 						<div class="part5 portion-block">
 							<div class="circle"></div>
 						</div>
-						<p class="center">20<span>Total</span></p>
+						<p class="center">{{ vehicles.length }}<span>Total</span></p>
 					</div>
 					<div class="donut-chart-titles">
 						<div class="detail1 title">
@@ -186,6 +186,7 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex';
 import ProductService from '../service/ProductService';
 
 export default {
@@ -276,13 +277,31 @@ export default {
 		}
 	},
 	productService: null,
-	created() {
+
+	async created() {
 		this.productService = new ProductService();
+		await this.fetchSuppliers();
+		await this.fetchVehicles();
+		await this.fetchRepairs();
+		await this.fetchSpareparts();
 	},
 	mounted() {
 		this.productService.getProductsSmall().then(data => this.products = data);
 	},
+
+	computed: {
+		...mapState('suppliers', ['suppliers']),
+		...mapState('vehicles', ['vehicles']),
+		...mapState('repairs', ['repairs']),
+		...mapState('spareparts', ['spareparts']),
+	},
+
 	methods: {
+		...mapActions('suppliers', ['fetchSuppliers']),
+		...mapActions('vehicles', ['fetchVehicles']),
+		...mapActions('repairs', ['fetchRepairs']),
+		...mapActions('spareparts', ['fetchSpareparts']),
+
 		formatCurrency(value) {
 			return value.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
 		},
