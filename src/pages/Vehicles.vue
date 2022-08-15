@@ -68,6 +68,7 @@
 		/>
 
         <ViewVehicleModal
+			v-if="showViewVehicleModal"
 			:show='showViewVehicleModal'
 			:vehicle="selectedVehicle"
 			@close='showViewVehicleModal = false'

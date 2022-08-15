@@ -7,6 +7,7 @@
                   :numVisible="1" :numScroll="1">
             <template #item="slotProps">
                 <div class="vehicle-item">
+
                     <div class="vehicle-item-content">
                         <img :src="slotProps.data"
                              :alt="`${vehicle.manufactureYear} ${vehicle.make} ${vehicle.model}`"
@@ -28,16 +29,52 @@
         <template #footer>
             <Button label="Close" icon="pi pi-times" @click="$emit('close')" class="p-button-text"/>
         </template>
+        <br/>
+
+        <DataTable v-if="hasPermission('repairs.view_repair')" :value="repairsList" class="p-datatable-repairs"
+                       dataKey="id" :rowHover="true" :loading="REPAIRS_LOADING" responsiveLayout="scroll">
+                <template #empty>
+                    No repairs found.
+                </template>
+                <template #REPAIRS_LOADING>
+                    Loading repairs data. Please wait.
+                </template>
+                <Column field="date" header="Date Brought" dataType="date" style="min-width: 8rem; cursor: pointer">
+                    <template #body="{data}">
+                        {{formatDate(data.created_at)}}
+                    </template>
+                </Column>
+                <Column field="problem" header="Problem" filterMatchMode="contains" style="min-width: 14rem; cursor: pointer">
+                    <template #body="{data}">
+                        <span>{{data.problem_description}}</span>
+                    </template>
+                </Column>
+                <Column field="recommendation" header="Recommendation" filterMatchMode="contains" style="min-width: 14rem; cursor: pointer">
+                    <template #body="{data}">
+                        <span>{{data.solution_description}}</span>
+                    </template>
+                </Column>
+                <Column field="approvalStage" header="Where is it" :filterMenuStyle="{'width':'14rem'}" style="min-width: 10rem; cursor: pointer">
+                    <template #body="{data}">
+                        <Badge  severity="warning" class="mr-2">{{data?.section?.name}}</Badge>
+                    </template>
+                </Column>
+            </DataTable>
     </Dialog>
 
 </template>
 
 <script>
+import { mapActions, mapGetters, mapState } from 'vuex';
+import moment from 'moment';
+
 export default {
     name: 'ViewVehicleModal',
+
     data() {
         return {
-            vehicleDetail: {}
+            vehicleDetail: {},
+            repairsList: []
         }
     },
 
@@ -52,7 +89,24 @@ export default {
         }
     },
 
+    async created() {
+        console.log('vehicle: ', this.vehicle?.id)
+        await this.fetchRepairs({'vehicle': this.vehicle?.id});
+        this.repairsList = this.repairs
+    },
+
+    computed: {
+        ...mapState('repairs', ['repairs', 'REPAIRS_LOADING']),
+        ...mapGetters('auth', ['hasPermission'])
+    },
+
     methods: {
+        ...mapActions('repairs', ['fetchRepairs']),
+
+        formatDate(value) {
+            return moment(value).format('ll');
+        },
+
         getImages() {
 				if (this.vehicle && this.vehicle.vehicle_image && this.vehicle.vehicle_image.file) {
 					const url = 'http://localhost:8000'+this.vehicle.vehicle_image.file;
