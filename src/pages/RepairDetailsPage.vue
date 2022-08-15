@@ -114,6 +114,26 @@
                         </template>
                     </Card>
                 </div>
+                <div class='group'>
+                    <div class='header'>
+                        <h6>Solution Description</h6>
+                    </div>
+                    <Card>
+                        <template #content>
+                            {{ repair.solution_description }}
+                        </template>
+                    </Card>
+                </div>
+                <div class='group'>
+                    <div class='header'>
+                        <h6>Problem Description</h6>
+                    </div>
+                    <Card>
+                        <template #content>
+                            {{ repair.problem_description }}
+                        </template>
+                    </Card>
+                </div>
                 <div class='comments'>
                     <h3>Comments</h3>
                     <ul>

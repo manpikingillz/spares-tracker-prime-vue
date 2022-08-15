@@ -13,7 +13,7 @@
 				@click="$emit('topbar-item-click',{originalEvent:$event,item:'profile'})">
 				<a href="#">
 					<div class="user-profile-info profile-link">
-						<span class="user-profile-name">Gilbert Twesigomwe</span>
+						<span class="user-profile-name">{{ getUser.employee }}</span>
 						<span class="user-profile-role">{{ getUser.email }}</span>
 					</div>
 					<img class="logo" src="layout/images/avatar/man_avatar.png" alt="prestige-layout" />
@@ -24,8 +24,8 @@
 							<div class="user-profile-info">
 								<img class="logo" src="layout/images/avatar/man_avatar.png" alt="prestige-layout" />
 								<div class="profile-info">
-									<span class="user-profile-name">Gilbert Twesigomwe</span>
-									<span class="user-profile-role">Mechanical Engineer</span>
+									<span class="user-profile-name">{{ getUser.employee }}</span>>
+									<span class="user-profile-role">{{ getUser.email }}</span>
 								</div>
 							</div>
 						</li>

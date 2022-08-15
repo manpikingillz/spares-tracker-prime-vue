@@ -53,7 +53,7 @@
                 </Column>
                 <Column field="section" header="Department Section" sortable :filterMenuStyle="{'width':'14rem'}" style="min-width: 10rem">
                     <template #body="{data}">
-                        <span>{{data.section.name}}</span>
+                        <span>{{data?.section?.name}}</span>
                     </template>
                 </Column>
             </DataTable>
